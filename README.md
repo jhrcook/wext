@@ -8,7 +8,7 @@
 [![License: GPL
 v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![CRAN
-status](https://www.r-pkg.org/badges/version/ggasym)](https://cran.r-project.org/package=wext)
+status](https://www.r-pkg.org/badges/version/wext)](https://cran.r-project.org/package=wext)
 [![AppVeyor build
 status](https://ci.appveyor.com/api/projects/status/github/jhrcook/wext?branch=master&svg=true)](https://ci.appveyor.com/project/jhrcook/wext)
 [![Travis build

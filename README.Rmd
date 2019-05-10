@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![CRAN status](https://www.r-pkg.org/badges/version/ggasym)](https://cran.r-project.org/package=wext)
+[![CRAN status](https://www.r-pkg.org/badges/version/wext)](https://cran.r-project.org/package=wext)
 [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/jhrcook/wext?branch=master&svg=true)](https://ci.appveyor.com/project/jhrcook/wext)
 [![Travis build status](https://travis-ci.org/jhrcook/wext.svg?branch=master)](https://travis-ci.org/jhrcook/wext)
 [![Codecov test coverage](https://codecov.io/gh/jhrcook/wext/branch/master/graph/badge.svg)](https://codecov.io/gh/jhrcook/wext?branch=master)
