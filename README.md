@@ -1,0 +1,56 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# WExT
+
+<!-- badges: start -->
+
+[![License: GPL
+v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/ggasym)](https://cran.r-project.org/package=wext)
+[![AppVeyor build
+status](https://ci.appveyor.com/api/projects/status/github/jhrcook/wext?branch=master&svg=true)](https://ci.appveyor.com/project/jhrcook/wext)
+[![Travis build
+status](https://travis-ci.org/jhrcook/wext.svg?branch=master)](https://travis-ci.org/jhrcook/wext)
+[![Codecov test
+coverage](https://codecov.io/gh/jhrcook/wext/branch/master/graph/badge.svg)](https://codecov.io/gh/jhrcook/wext?branch=master)
+<!-- badges: end -->
+
+The somatic mutations in the pathways that drive cancer development tend
+to be mutually exclusive across tumors, providing a signal for
+distinguishing driver mutations from a larger number of random passenger
+mutations. This mutual exclusivity signal can be confounded by high and
+highly variable mutation rates across a cohort of samples. Current
+statistical tests for exclusivity that incorporate both per-gene and
+per-sample mutational frequencies are computationally expensive and have
+limited precision.
+
+WExT is a weighted exact test for assessing the significance of mutual
+exclusivity in an arbitrary number of mutational events. It conditions
+on the number of samples with a mutation as well as per-event,
+per-sample mutation probabilities. We provide a recursive formula to
+compute *P*-values for the weighted test exactly as well as a highly
+accurate and efficient saddle-point approximation of the test.
+
+[The Weighted Exclusivity Test
+(WExT)](https://github.com/raphael-group/wext) was developed by the
+[Raphael research group](http://compbio.cs.brown.edu/) at Brown
+University and originally implemented as a command line tool running in
+Python. This is an adaptation for R with specific intention to be
+compatible with the [‘tidyverse’](https://www.tidyverse.org).
+
+## Installation
+
+You can install the released version of wext from
+[CRAN](https://CRAN.R-project.org) with:
+
+``` r
+install.packages("wext")
+```
+
+or from GitHub using ‘devtools’:
+
+``` r
+devtools::install_github("jhrcook/wext")
+```

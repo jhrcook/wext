@@ -1,0 +1,22 @@
+Package: wext
+Type: Package
+Title: Weighted Exclusivity Test (WExT)
+Version: 0.0.0.9000
+Authors@R: person(c("Joshua", "H"), "Cook", email = "joshuacook0023@gmail.com",
+    role = c("aut", "cre"),
+    comment = c(ORCID = "0000-0001-9815-6879"))
+Description: The Weighted Exclusivity Test (WExT) was developed by the Raphael
+    research group at Brown University. WExT is a weighted exact test for
+    assessing the significance of mutual exclusivity in an arbitrary number
+    of mutational events. The test conditions on the number of samples with a
+    mutation as well as per-event, per-sample mutation probabilities.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Suggests: 
+    spelling,
+    testthat,
+    covr
+Language: en-US
+URL: https://github.com/jhrcook/wext
+BugReports: https://github.com/jhrcook/wext/issues
