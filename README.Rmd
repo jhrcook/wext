@@ -12,7 +12,7 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-# WExT
+# WExT <a href="https://jhrcook.github.io/wext/"> <img src="man/figures/logo.png" align="right" alt="" width="120" /> </a>
 
 <!-- badges: start -->
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
