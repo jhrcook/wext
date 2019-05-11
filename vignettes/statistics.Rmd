@@ -1,0 +1,173 @@
+---
+title: "WExT Statistics"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{WExT Statistics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Notation
+
+$\{g_i\}^m_{i=1}$: a set of $m$ genes \
+$\{s_j\}^n_{j=1}$: a set of $m$ samples
+
+$A_{m \times n} \in \{0,1\}$: a binary mutation matrix; $a_{ij} = 1$ is gene $g_i$ is mutated in sample $s_j$
+
+$M \subseteq \{g_i\}^m_{i=1}$ a set of $k$ genes
+
+*co-occurring*: a sample $s_j$ has multiple genes in $M$ mutated \
+&nbsp;&nbsp;&nbsp;&nbsp;$g_i, g_l \in M$ and $a_{ij}=1; a_{il}=1$
+
+*mutually exclusive*: a sample $s_j$ has multiple only one gene in $M$ mutated \
+&nbsp;&nbsp;&nbsp;&nbsp;$g_i, g_l \in M$ and $a_{ij}=0; a_{il}=1$
+
+$r_i = \sum^{m}_{j=1}{a_{ij}}$: (row-sum) number of samples with mutations in gene $g_i$ \
+$c_i = \sum^{n}_{i=1}{a_{ij}}$: (col-sum) number of genes mutated in sample $s_j$
+
+$z_M$: number of samples with co-occurring mutations in $M$ \
+$t_M$: number of samples with mutually exclusive mutations in $M$
+
+$B(M)$: the submatrix of a mutation matrix $B$ with the rows corresponding to the gene set $M$ \
+$t_{B(M)}$: the number of mutually exclusive mutation in $B(M)$ \
+&nbsp;&nbsp;&nbsp;&nbsp;we use $t_M = t_{A(M)}$ from here on
+
+
+## Permutation tests for mutual exclusivity
+
+
+### Row-exclusivity
+
+**This test finds the probability $\Phi_{R}(M)$ of observing at least $t_M$ mutually exclusive mutations in a gene set $M$ given that each $g_i \in M$ is mutated in $r_i$ samples.**
+
+Therefore, this test conditions on the row sums of the mutation matrix.
+
+$\Omega_R$: the set of mutation matrices with the same row sums as $A$ (observed mutation matrix)
+
+$\varepsilon_R = \{ B \in \Omega_R: t_{B(M)} \ge t_M \}$: the set of mutation matrices with at least $t_M$ mutually exclusive mutation in $M$.
+
+We can then define the probability
+
+$$
+\begin{align}
+\tag{1}
+\Phi_{R}(M) = \frac{|\varepsilon_R|}{|\Omega_R|}
+\end{align}
+$$
+
+which is the number of possible mutation matrices with the same row sums as $A$ but as equal or more extreme mutual exclusivity divided by the total possible number of mutation matrices with the same row sums as $A$. Thus, this is the $p$-value of the row-exclusivity test.
+
+
+### Row-column-exclusivity
+
+**This test finds the probability $\Phi_{RC}(M)$ of observing at least $t_M$ mutually exclusive mutations in a gene set $M$ given that each $g_i \in M$ is mutated in $r_i$ samples and each $s_j$ is mutated in $c_j$ genes.**
+
+Therefore, this test conditions on the row and column sums of the mutation matrix by holding the frequency of mutation of a gene and number of mutations per sample constant.
+
+$\Omega_{RC}$: the set of mutation matrices with the same row and column sums as $A$ (observed mutation matrix)
+
+$\varepsilon_{RC} = \{ B \in \Omega_{RC}: t_{B(M)} \ge t_M \}$: the set of mutation matrices with at least $t_M$ mutually exclusive mutations in $M$.
+
+We can then define the probability
+
+$$
+\begin{align}
+\tag{2}
+\Phi_{RC}(M) = \frac{|\varepsilon_{RC}|}{|\Omega_{RC}|}
+\end{align}
+$$
+
+which is the number of possible mutation matrices with the same row and column sums as $A$ but as equal or more extreme mutual exclusivity divided by the total possible number of mutation matrices with the same row and column sums as $A$. Thus, this is the $p$-value of the row-column-exclusivity test.
+
+
+### Weighted exact test for mutual exclusivity
+
+> This is the new test contributed by this paper.
+
+**This test finds the probability $\Phi_{WR}(M)$ of observing at least $t_M$ mutually exclusive mutations in a gene set $M$ given that $g_i \in M$ is mutated in $r_i$ samples and a per-gene, per-sample mutation probability matrix $W$ that prescribes weights with the presence or absence of individual mutations.**
+
+Therefore, this test conditions on the row sums of the mutation matrix (the number of mutations in each sample is held constant) and a mutation probability weight matrix. Therefore, this model takes into account the fact that not all genes are mutated with the same probability (due to length of the gene, chromatin accessibility, etc.).
+
+$\{X_{ij}\}^{n}_{j=1}$: a set of Bernoulli random variables for each gene $g_i$ with success probabilities $W = [w_{ij}]$. It is therefore defined as
+
+$$
+\begin{align}
+\tag{3}
+\text{Pr}(X_{ij} = l) = \begin{cases}
+    w_{ij} & \text{if } l=1\\
+    1-w_{ij} & \text{if } l=0
+  \end{cases}
+\end{align}
+$$
+
+where $w_{ij}$ is the probability that gene $g_i$ is mutated in sample $s_j$.
+
+$T_{Mj}$: a random variable equal to $1$ if $s_j$ has a mutually exclusive mutation in a gene set $M$ and $0$ otherwise.
+
+$T_M = \sum^{n}_{j=1}{T_{Mj}}$: the number of mutually exclusive mutation in $M$ (the test statistic)
+
+The sum of Bernoulli trials creates a distribution known as a [Poisson binomial distribution](https://en.wikipedia.org/wiki/Poisson_binomial_distribution). It is therefore the number of successes in $n$ independent yes/no experiments with probabilities of success $\{p_1, p_2, ..., p_n\}$. If the probabilities for each experiment are the same, this special case is called a [binomial distribution](https://en.wikipedia.org/wiki/Binomial_distribution). Therefore, we define $Y_i$ below as a Poisson binomial distribution.
+
+$Y_i = \sum^{n}_{j=1}{X_{ij}}$: a Poisson binomial distributed variable for the number of mutation in $g_i$ \
+&nbsp;&nbsp;&nbsp;&nbsp;let $Y_M = [Y_i]_{i \in M}$
+
+
+Therefore, we want to find the tail probability (the *p*-value) of observing $t_M$ mutually exclusive mutations in $M$ given that $g_i$ is mutated in $r_i$ samples (i.e. holding the row-sums constant). We can define this as
+
+$$
+\begin{align}
+\tag{4}
+\Phi_{WR}(M) = \text{Pr}(T_M \ge t_M | Y_M = \vec{r}_M)
+\end{align}
+$$
+
+ where $\vec{r}_M = [r_i]_{i \in M}$. This is the probability of observing at least $t_M$ mutually exclusive mutations in a gene set $M$ under the proposed model.
+
+The conditional of $\Phi_{WR}(M)$ assumes that $Y_i = r_i$. This implies the following list of equalities that will need to be satisfied by $W$:
+
+$$
+\begin{align}
+\tag{5}
+\sum^{n}_{j=1}{w_{ij}} &= \sum^{n}_{j=1}{E[X_{ij}]}
+  = E \left[ \sum^{n}_{j=1}{X_{ij}} \right]
+  = E[Y_i]
+  = r_i
+\end{align}
+$$
+
+## Approximating the permutation tests with the weighted exclusivity test
+
+Both sets of mutation matrices $\Omega_{R}$ and $\Omega_{RC}$ determines a per-gene, per-samples weight matrix $W$ comprised of the probability $w_ij$ of observing a mutation in gene $g_i$ in sample $s_j$
+
+$$
+\begin{align}
+\tag{6}
+W = \frac{1}{|\Omega|} \sum_{B \in \Omega}{B}
+\end{align}
+$$
+
+where $\Omega$ is either $\Omega_{R}$ or $\Omega_{RC}$ for $W_R$ or $W_{RC}$, respectively. Because both $\Omega_{R}$ and $\Omega_{RC}$ keep the row-sums fixed, this definition of $W$ satisfies the equalities in equation $(5)$.
+
+For the row-exclusivity test, each row of $B \in \Omega_R$ can be considered separately. Thus, $W$ simplifies to
+
+$$
+\begin{align}
+\tag{7}
+W_R = \left[w_{ij} = \frac{r_i}{n} \right]
+\end{align}
+$$
+
+The authors do not know of a closed-form expression for the weights $w_{ij}$ for $W_RC$ because the rows and columns cannot be considered separately. Thus, they resorted to generating an empirical weight matrix $W^{N}_{RC} = [w_{ij}$ for $\Omega_{RC}$ by drawing $N$ matrixes $\Omega^{N}_{RC}$ uniformly at random from $\Omega_{RC}$ and calculating the weights from each using equation $(6)$. They assume that every gene has a non-zero probability of being mutated, thus set $w_{ij} = \frac{1}{2N}$ if there is no mutation in gene $g_i$ for sample $s_j$ in the matrix from $\Omega^N_{RC}$.
+
+---
+
+Please report and mistakes or suggest additional clarification as an [Issue](https://github.com/jhrcook/wext/issues) on GitHub.
+
+Link to the original manuscript by Leiserson *et al.* (2016): [A weighted exact test for mutually exclusive mutations in cancer.](https://academic.oup.com/bioinformatics/article/32/17/i736/2450792)
