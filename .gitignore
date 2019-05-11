@@ -80,3 +80,4 @@ packrat/lib*/
 packrat/src/*
 .Rproj.user
 
+inst/doc

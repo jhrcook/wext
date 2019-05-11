@@ -13,11 +13,20 @@ Description: The Weighted Exclusivity Test (WExT) was developed by the Raphael
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
+Depends: R (>= 3.5.0)
 Suggests: 
     spelling,
-    testthat,
-    covr
+    testthat (>= 2.1.0),
+    covr,
+    knitr,
+    rmarkdown
 Language: en-US
 URL: https://github.com/jhrcook/wext
 BugReports: https://github.com/jhrcook/wext/issues
 RoxygenNote: 6.1.1
+VignetteBuilder: knitr
+Imports: 
+    magrittr,
+    tibble,
+    tidyr,
+    dplyr

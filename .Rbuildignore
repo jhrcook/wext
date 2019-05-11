@@ -10,3 +10,5 @@
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
+^raphael_examples$
+^data-raw$
