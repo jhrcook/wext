@@ -1,0 +1,118 @@
+---
+title: "Computing the weighted exclusivity test"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Computing the weighted exclusivity test}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+In the ["WExT Statistics"](statistics.html) vignette, I walked through the statistical theory underlying WExT. Here, I explain the two algorithms Leirson *et al.* devised to execute the test. 
+
+As a reminder, we are trying to solve
+
+$$
+\begin{align}
+\tag{4}
+\Phi_{WR}(M) = \text{Pr}(T_M \ge t_M | Y_M = \vec{r}_M)
+\end{align}
+$$
+
+This is the probability of observing at least $t_M$ mutually exclusive mutations in a gene set $M$ under the proposed model where $Y_i = \sum^{n}_{j=1}{X_{ij}}$ is a Poisson binomial distributed variable for the number of mutation in $g_i$ ($Y_M = [Y_i]_{i \in M}$).
+
+## Recursive formula for the weighted exclusivity test
+
+For any gene sets $M$ of size $k$, assuming $\{Y_i\}^m_{i=1}$ are mutually independent (i.e. the mutations in one sample do not affect another), equation $(4)$ can be writted as
+
+$$
+\tag{8}
+\Phi_{WR}(M) = \frac{\text{Pr}(T_M \ge t_M, Y_M = \vec{r}_M)}{\prod_{i \in M}{\text{Pr}(Y_i = r_i)}}
+$$
+
+This is the evaluation of the conditional probability using Bayes' Theorem
+
+$$
+P(A|B) = \frac{P(B|A)P(A)}{P(B)}
+$$
+
+In our case, the prbability of B is indendpent of A, thus, the equation simplifies to 
+
+$$
+P(A|B) = \frac{P(B)P(A)}{P(B)}
+$$
+
+### A recursive formula for the numerator
+
+Without loss of generality, let $M = \{1, ..., k\}$.
+
+The joint prbability in the numerator of $(8)$ can be found using a recursive formula.
+
+ With $F(t_M, r_1, ... , r_k, n) = \text{Pr}(T_M \ge t_M, Y_M = \vec{r}_M)$, the recurrence relationship can be written as
+ 
+$$
+\tag{9}
+F(t, x_1, ..., x_k, j) =
+  \sum_{\pi \in \{0,1\}^k}
+    \prod^k_{i=1} q_{ij \pi_i}
+      F(w_{\pi}(t), y_{\pi_1}(x_1), ..., y_{\pi_k}(x_k), j-1)
+$$
+
+where
+
+$$
+\tag{10}
+q_{ijl}= \begin{cases}
+    p_{ij} & \text{if } l=1 \\
+    0 & \text{otherwise}
+  \end{cases}
+$$
+$$
+\tag{11}
+w_{\pi}(t)= \begin{cases}
+    t-1 & \text{if } \sum^{k}_{i=1}{\pi_{i}} = 1 \\
+    t & \text{otherwise}
+  \end{cases}
+$$
+
+$$
+\tag{12}
+y_{l}(x)= \begin{cases}
+    x-1 & \text{if } l=1 \\
+    x & \text{otherwise}
+  \end{cases}
+$$
+
+The base cases for $(8)$ are
+
+$$
+\tag{13}
+F(t, x_1, ..., x_k, j) = \begin{cases}
+    1 & \text{if } t = x_1 = ... = x_k = j = 0 \\
+    0 & \text{if } \text{min}\{ t, x_1, ..., x_k, j \} < 0, \text{ or }
+      t > \sum^{k}_{i=1}{x_i}, \text{ or }
+      \text{max}^{k}_{i=1}x_i > n
+  \end{cases}
+$$
+
+#### Explanation
+
+The outer sum of $(9)$ introduces $\pi$, a vector of length $k$ with all values either $0$ or $1$. Thus, the sum runs through all possible sets $\pi$. For instance, if $M$ had three genes (i.e. $k = 3$), then $\pi$ would run through the vectors $\{0,0,0\}, \{1,0,0\}, \{0,1,0\}, \{0,0,1\}, ..., \{1,1,1\}$. Each vector is the possible mutations of a sample, where $1$ indicates is mutated and $0$ indicates is not.
+
+Within the sum in $(9)$, there is a product that iterates over each gene in $M$ (indexed as $i \in \{1, .., k\}$). For each gene, it is multiplying two values: $q_{ij \pi_i}$ and $F(w_{\pi}(t), y_{\pi_1}(x_1), ..., y_{\pi_k}(x_k), j-1)$.
+
+The first value, $q_{ij \pi_i}$ is $p_{ij}$ if $\pi_i = 1$ and $0$ otherwise. Thus, if the $i^{th}$ value of $\pi$ from the considered sample $\pi$ is $1$ (i.e. gene number $i$ is mutated), then the probability of sample $j$ having a mutation in gene $g_i$ (i.e.the $i^{th}$ row and $j^{th}$ column of the weight matrix $W$, $W[i,j]$). (**Note:** the paper is not really clear what $p_{ij}$ is, so I made an assumption here based on my understanding of their formula and the common use of $p$ for "probability".)
+
+The function $F$ takes in several paramters. The first is $w_{\pi}(t)$ which is $t-1$ is the sum of all values in the binary vector $\pi$ is equal to $1$, and $t$ otherwise. If the sum of $\pi$ is $1$, this indicates that there is only one gene being considered in that step of the iteration, so the number of mutually exclusive events ($t = t_M$) is reduced by $1$ for $F$. This ensures the number of mutually exclusive events is held constant.
+
+The next set of paramaters for $F$ are $y_{\pi}(x)$ for every row-sum (i.e. number of samples with a mutation in gene $g_i$) of genes in $M$. This simply reduces the row-sum by $1$ if the the index in $\pi$ is $1$. This holds the row-sums constant.
+
+Finally, $j-1$ redueces the number of samples by $1$ to make room for the new one introduced by the outer sum as $\pi$.
+
+In the end, the function $F$ is not well described here. **TODO**
