@@ -14,10 +14,14 @@ knitr::opts_chunk$set(
 )
 ```
 
+Here, I explain the statistics behind the weighted exclsuvity test. It begins with a section on notation, followed by three sections, one for each test, culminating with the weighted exclusivity test that was the major contributgion of the paper.
+
+In the ["Computing the weighted exclusivity test"](computing_probabilities.html), I explain how the test is computationally executed.
+
 ## Notation
 
 $\{g_i\}^m_{i=1}$: a set of $m$ genes \
-$\{s_j\}^n_{j=1}$: a set of $m$ samples
+$\{s_j\}^n_{j=1}$: a set of $n$ samples
 
 $A_{m \times n} \in \{0,1\}$: a binary mutation matrix; $a_{ij} = 1$ is gene $g_i$ is mutated in sample $s_j$
 

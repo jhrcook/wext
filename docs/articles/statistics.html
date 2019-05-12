@@ -60,6 +60,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/computing_probabilities.html">Computing the weighted exclusivity test</a>
+    </li>
+    <li>
       <a href="../articles/simple-example.html">Simple Example</a>
     </li>
     <li>
@@ -106,10 +109,12 @@
 
     
     
+<p>Here, I explain the statistics behind the weighted exclsuvity test. It begins with a section on notation, followed by three sections, one for each test, culminating with the weighted exclusivity test that was the major contributgion of the paper.</p>
+<p>In the <a href="computing_probabilities.html">“Computing the weighted exclusivity test”</a>, I explain how the test is computationally executed.</p>
 <div id="notation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#notation" class="anchor"></a>Notation</h2>
-<p><span class="math inline">\(\{g_i\}^m_{i=1}\)</span>: a set of <span class="math inline">\(m\)</span> genes<br><span class="math inline">\(\{s_j\}^n_{j=1}\)</span>: a set of <span class="math inline">\(m\)</span> samples</p>
+<p><span class="math inline">\(\{g_i\}^m_{i=1}\)</span>: a set of <span class="math inline">\(m\)</span> genes<br><span class="math inline">\(\{s_j\}^n_{j=1}\)</span>: a set of <span class="math inline">\(n\)</span> samples</p>
 <p><span class="math inline">\(A_{m \times n} \in \{0,1\}\)</span>: a binary mutation matrix; <span class="math inline">\(a_{ij} = 1\)</span> is gene <span class="math inline">\(g_i\)</span> is mutated in sample <span class="math inline">\(s_j\)</span></p>
 <p><span class="math inline">\(M \subseteq \{g_i\}^m_{i=1}\)</span> a set of <span class="math inline">\(k\)</span> genes</p>
 <p><em>co-occurring</em>: a sample <span class="math inline">\(s_j\)</span> has multiple genes in <span class="math inline">\(M\)</span> mutated<br>
