@@ -30,6 +30,8 @@ WExT is a weighted exact test for assessing the significance of mutual exclusivi
 
 ## Installation
 
+**This package is still in development and not ready for use.**
+
 You can install the released version of wext from [CRAN](https://CRAN.R-project.org) with:
 
 ``` {r cran_install, eval=FALSE}
@@ -41,4 +43,3 @@ or from GitHub using 'devtools':
 ```{r github_install, eval=FALSE}
 devtools::install_github("jhrcook/wext")
 ```
-

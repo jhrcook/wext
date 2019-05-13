@@ -42,6 +42,8 @@ compatible with the [‘tidyverse’](https://www.tidyverse.org).
 
 ## Installation
 
+**This package is still in development and not ready for use.**
+
 You can install the released version of wext from
 [CRAN](https://CRAN.R-project.org) with:
 

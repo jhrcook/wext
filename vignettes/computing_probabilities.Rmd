@@ -114,3 +114,6 @@ Finally, $j-1$ reduces the number of samples by $1$ to pass to the next layer in
 
 The base case for $F$ is the final value for the recursion.
 
+### A dynamic programming solution for the denominator
+
+The authors claim that a standard dynamic programming method exists for calculating the denominator. It is a Poisson-Binomial probability mass function, so I will need to look into R functions for this.
