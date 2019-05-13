@@ -1,0 +1,57 @@
+---
+title: "Simple Example (the hard way)"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Simple Example (the hard way)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, warning=FALSE, message=FALSE}
+library(tibble)
+library(dplyr)
+library(wext)
+```
+
+The data used for this example is the same data set in the "simple" example from the Raphael group's [GitHub repository](https://github.com/raphael-group/wext/tree/master/examples/simple). The original file format was one line per sample with a list of the genes that were mutated. I have already prepared this into a tidy format in "data-raw/simple_dataset.R", as it is likely what the user will start with.
+
+```{r}
+simple_dataset
+```
+
+In this vignette, I show how WExT works by running each step separately. The ["Simple Example (the easy way)"]() explains how a normal user would run the analysis.
+
+---
+
+## Building the weighted matrix for the row-exclusivity test $W_R$. This is simply defined as
+
+$$
+W_R = \frac{1}{\Omega_R} \sum_{B \in \Omega_R}{B}
+$$
+
+but since every row of $B \in \Omega_R$ can be considered independently, this simplifies to
+
+$$
+W_R = \left[ w_{ij} = \frac{r_i}{n} \right]
+$$
+
+Thus, we compute the weights for the data
+
+```{r calc_WR}
+W_R <- calculate_row_exclusivity_weights(dat = simple_dataset,
+                                         sample_col = sample_name,
+                                         mutgene_col = mutated_gene)
+```
+
+```{r show_WR, echo = FALSE}
+W_R
+```
+
+
