@@ -36,17 +36,7 @@ $$
 \Phi_{WR}(M) = \frac{\text{Pr}(T_M \ge t_M, Y_M = \vec{r}_M)}{\prod_{i \in M}{\text{Pr}(Y_i = r_i)}}
 $$
 
-This is the evaluation of the conditional probability using Bayes' Theorem
-
-$$
-P(A|B) = \frac{P(B|A)P(A)}{P(B)}
-$$
-
-In our case, the prbability of B is indendpent of A, thus, the equation simplifies to 
-
-$$
-P(A|B) = \frac{P(B)P(A)}{P(B)}
-$$
+This is the probability of each more extreme case than $t_M$ divided by the total probability of any assortment of mutations given fixed rows.
 
 ### A recursive formula for the numerator
 
@@ -54,7 +44,7 @@ Without loss of generality, let $M = \{1, ..., k\}$.
 
 The joint prbability in the numerator of $(8)$ can be found using a recursive formula.
 
- With $F(t_M, r_1, ... , r_k, n) = \text{Pr}(T_M \ge t_M, Y_M = \vec{r}_M)$, the recurrence relationship can be written as
+With $F(t_M, r_1, ... , r_k, n) = \text{Pr}(T_M \ge t_M, Y_M = \vec{r}_M)$, the recurrence relationship can be written as
  
 $$
 \tag{9}
@@ -107,12 +97,20 @@ The outer sum of $(9)$ introduces $\pi$, a vector of length $k$ with all values 
 
 Within the sum in $(9)$, there is a product that iterates over each gene in $M$ (indexed as $i \in \{1, .., k\}$). For each gene, it is multiplying two values: $q_{ij \pi_i}$ and $F(w_{\pi}(t), y_{\pi_1}(x_1), ..., y_{\pi_k}(x_k), j-1)$.
 
-The first value, $q_{ij \pi_i}$ is $p_{ij}$ if $\pi_i = 1$ and $0$ otherwise. Thus, if the $i^{th}$ value of $\pi$ from the considered sample $\pi$ is $1$ (i.e. gene number $i$ is mutated), then the probability of sample $j$ having a mutation in gene $g_i$ (i.e.the $i^{th}$ row and $j^{th}$ column of the weight matrix $W$, $W[i,j]$). (**Note:** the paper is not really clear what $p_{ij}$ is, so I made an assumption here based on my understanding of their formula and the common use of $p$ for "probability".)
+The first value, $q_{ij \pi_i}$, is $p_{ij}$ if $\pi_i = 1$ and $0$ otherwise. Thus, if the $i^{th}$ value of $\pi$ is $1$ (i.e. gene number $i$ is mutated), then the probability of sample $j$ having a mutation in gene $g_i$ is returned. This probability comes from the weight matrix $W$, defined in the ["WExT Statistics"](statistics.html) vignette, which is the probability of observing a mutation in gene $g_i$ in sample $s_j$
 
-The function $F$ takes in several paramters. The first is $w_{\pi}(t)$ which is $t-1$ is the sum of all values in the binary vector $\pi$ is equal to $1$, and $t$ otherwise. If the sum of $\pi$ is $1$, this indicates that there is only one gene being considered in that step of the iteration, so the number of mutually exclusive events ($t = t_M$) is reduced by $1$ for $F$. This ensures the number of mutually exclusive events is held constant.
+$$
+\begin{align}
+\tag{6}
+W = [w_{ij}] = \frac{1}{|\Omega|} \sum_{B \in \Omega}{B}
+\end{align}
+$$
 
-The next set of paramaters for $F$ are $y_{\pi}(x)$ for every row-sum (i.e. number of samples with a mutation in gene $g_i$) of genes in $M$. This simply reduces the row-sum by $1$ if the the index in $\pi$ is $1$. This holds the row-sums constant.
+The function $F$ takes in several paramters. The first is $w_{\pi}(t)$ which is $t-1$ is the sum of all values in the binary vector $\pi$ is equal to $1$, and $t$ otherwise. If the sum of $\pi$ is $1$, this indicates that there is only one gene being considered in that step of the iteration, so the number of mutually exclusive events ($t = t_M$) is reduced by $1$ for the next step in the recursion through $F$. This ensures the number of mutually exclusive events is held constant.
 
-Finally, $j-1$ redueces the number of samples by $1$ to make room for the new one introduced by the outer sum as $\pi$.
+The next set of paramaters for $F$ are $y_{\pi}(x)$ for every row-sum (i.e. number of samples with a mutation in gene $g_i$) of genes in $M$. This simply reduces the row-sum by $1$ if the the index in $\pi$ is $1$. This holds the row-sums constant through the recursion.
 
-In the end, the function $F$ is not well described here. **TODO**
+Finally, $j-1$ reduces the number of samples by $1$ to pass to the next layer in recusrion.
+
+The base case for $F$ is the final value for the recursion.
+
