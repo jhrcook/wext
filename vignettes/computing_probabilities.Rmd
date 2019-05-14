@@ -1,8 +1,8 @@
 ---
-title: "Computing the weighted exclusivity test"
+title: "Computing the Weighted Exclusivity Test (WExT)"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Computing the weighted exclusivity test}
+  %\VignetteIndexEntry{Computing the Weighted Exclusivity Test (WExT)}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

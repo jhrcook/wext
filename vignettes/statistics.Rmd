@@ -168,7 +168,9 @@ W_R = \left[w_{ij} = \frac{r_i}{n} \right]
 \end{align}
 $$
 
-The authors do not know of a closed-form expression for the weights $w_{ij}$ for $W_RC$ because the rows and columns cannot be considered separately. Thus, they resorted to generating an empirical weight matrix $W^{N}_{RC} = [w_{ij}$ for $\Omega_{RC}$ by drawing $N$ matrixes $\Omega^{N}_{RC}$ uniformly at random from $\Omega_{RC}$ and calculating the weights from each using equation $(6)$. They assume that every gene has a non-zero probability of being mutated, thus set $w_{ij} = \frac{1}{2N}$ if there is no mutation in gene $g_i$ for sample $s_j$ in the matrix from $\Omega^N_{RC}$.
+The authors do not know of a closed-form expression for the weights $w_{ij}$ for $W_RC$ because the rows and columns cannot be considered separately. Thus, they resorted to generating an empirical weight matrix $W^{N}_{RC} = [w_{ij}$ for $\Omega_{RC}$ by drawing $N$ matrixes $\Omega^{N}_{RC}$ uniformly at random from $\Omega_{RC}$ and calculating the weights from each using equation $(6)$. See the ["Creating the Row-Column-Exclusivity Null Distribution"](rc_exclusivity_nulldist.html) vignette for how this is accomplished.
+
+They assume that every gene has a non-zero probability of being mutated, thus set $w_{ij} = \frac{1}{2N}$ if there is no mutation in gene $g_i$ for sample $s_j$ in the matrix from $\Omega^N_{RC}$.
 
 ---
 

@@ -30,7 +30,9 @@ In this vignette, I show how WExT works by running each step separately. The ["S
 
 ---
 
-## Building the weighted matrix for the row-exclusivity test $W_R$. This is simply defined as
+## Building the weighted matrix for the row-exclusivity test $W_R$.
+
+This is simply defined as
 
 $$
 W_R = \frac{1}{\Omega_R} \sum_{B \in \Omega_R}{B}

@@ -60,7 +60,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/computing_probabilities.html">Computing the weighted exclusivity test</a>
+      <a href="../articles/computing_probabilities.html">Computing the Weighted Exclusivity Test (WExT)</a>
+    </li>
+    <li>
+      <a href="../articles/rc_exclusivity_nulldist.html">Creating the Row-Column-Exclusivity Null Distribution</a>
     </li>
     <li>
       <a href="../articles/simpleexample-hardway.html">Simple Example (the hard way)</a>
@@ -223,7 +226,8 @@ W = \frac{1}{|\Omega|} \sum_{B \in \Omega}{B}
 W_R = \left[w_{ij} = \frac{r_i}{n} \right]
 \end{align}
 \]</span></p>
-<p>The authors do not know of a closed-form expression for the weights <span class="math inline">\(w_{ij}\)</span> for <span class="math inline">\(W_RC\)</span> because the rows and columns cannot be considered separately. Thus, they resorted to generating an empirical weight matrix <span class="math inline">\(W^{N}_{RC} = [w_{ij}\)</span> for <span class="math inline">\(\Omega_{RC}\)</span> by drawing <span class="math inline">\(N\)</span> matrixes <span class="math inline">\(\Omega^{N}_{RC}\)</span> uniformly at random from <span class="math inline">\(\Omega_{RC}\)</span> and calculating the weights from each using equation <span class="math inline">\((6)\)</span>. They assume that every gene has a non-zero probability of being mutated, thus set <span class="math inline">\(w_{ij} = \frac{1}{2N}\)</span> if there is no mutation in gene <span class="math inline">\(g_i\)</span> for sample <span class="math inline">\(s_j\)</span> in the matrix from <span class="math inline">\(\Omega^N_{RC}\)</span>.</p>
+<p>The authors do not know of a closed-form expression for the weights <span class="math inline">\(w_{ij}\)</span> for <span class="math inline">\(W_RC\)</span> because the rows and columns cannot be considered separately. Thus, they resorted to generating an empirical weight matrix <span class="math inline">\(W^{N}_{RC} = [w_{ij}\)</span> for <span class="math inline">\(\Omega_{RC}\)</span> by drawing <span class="math inline">\(N\)</span> matrixes <span class="math inline">\(\Omega^{N}_{RC}\)</span> uniformly at random from <span class="math inline">\(\Omega_{RC}\)</span> and calculating the weights from each using equation <span class="math inline">\((6)\)</span>. See the <a href="rc_exclusivity_nulldist.html">“Creating the Row-Column-Exclusivity Null Distribution”</a> vignette for how this is accomplished.</p>
+<p>They assume that every gene has a non-zero probability of being mutated, thus set <span class="math inline">\(w_{ij} = \frac{1}{2N}\)</span> if there is no mutation in gene <span class="math inline">\(g_i\)</span> for sample <span class="math inline">\(s_j\)</span> in the matrix from <span class="math inline">\(\Omega^N_{RC}\)</span>.</p>
 <hr>
 <p>Please report and mistakes or suggest additional clarification as an <a href="https://github.com/jhrcook/wext/issues">Issue</a> on GitHub.</p>
 <p>Link to the original manuscript by Leiserson <em>et al.</em> (2016): <a href="https://academic.oup.com/bioinformatics/article/32/17/i736/2450792">A weighted exact test for mutually exclusive mutations in cancer.</a></p>

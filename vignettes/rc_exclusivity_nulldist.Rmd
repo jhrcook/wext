@@ -1,0 +1,27 @@
+---
+title: "Creating the Row-Column-Exclusivity Null Distribution"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Creating the Row-Column-Exclusivity Null Distribution}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(wext)
+```
+
+This vignette explains how the null distribution for the Row-Column-Exclusivity test is generated.
+
+A great explanation of the process can be found in the Methods section of "Mutual exclusivity analysis identifies oncogenic network modules" by Ciriello *et al.* (2012).
+
+It is based off of the algorithm created by Milo *et al.* in "On the uniform generation of random graphs with prescribed degree sequences" (2003).
+
+In R, the edge swaps can be conducted using `igraph::rewire(gr, keeping_degseq(loops = FALSE, niter = N))` where `N <- 100 * igraph::ecount(gr)`.
