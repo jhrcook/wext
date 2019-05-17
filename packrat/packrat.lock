@@ -276,6 +276,12 @@ Version: 3.0
 Hash: 8911d81ced4a99d8515618ed0a9a31e3
 Requires: Rcpp, digest
 
+Package: igraph
+Source: CRAN
+Version: 1.2.4.1
+Hash: 0d76047f1a1aa89e989018646a78d462
+Requires: magrittr, pkgconfig
+
 Package: ini
 Source: CRAN
 Version: 0.3.1
@@ -592,6 +598,13 @@ Source: CRAN
 Version: 2.1.1
 Hash: e9d844f966bd4d40556b50c3b2239646
 Requires: cli, crayon, fansi, pillar, pkgconfig, rlang
+
+Package: tidygraph
+Source: CRAN
+Version: 1.1.2
+Hash: b68f1f7f1dc497e240c646e71ec75588
+Requires: R6, Rcpp, dplyr, igraph, magrittr, pillar, rlang, tibble,
+    tidyr
 
 Package: tidyr
 Source: CRAN
