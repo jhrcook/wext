@@ -30,17 +30,19 @@ In this vignette, I show how WExT works by running each step separately. The ["S
 
 ---
 
-## Building the weighted matrix for the row-exclusivity test $W_R$.
+## The weighted matrix for the row-exclusivity test $W_R$.
 
 This is simply defined as
 
 $$
+\tag{1}
 W_R = \frac{1}{\Omega_R} \sum_{B \in \Omega_R}{B}
 $$
 
 but since every row of $B \in \Omega_R$ can be considered independently, this simplifies to
 
 $$
+\tag{2}
 W_R = \left[ w_{ij} = \frac{r_i}{n} \right]
 $$
 
@@ -56,4 +58,13 @@ W_R <- calculate_row_exclusivity_weights(dat = simple_dataset,
 W_R
 ```
 
+## The weighted matrix for the row-exclusivity test $W_{RC}$.
+
+We still need to calculate equation $(1)$, but there is no closed form formula for $W_{RC}$ as there is equation $(2)$ for $W_R$. Thus, the authors generate an emperical weight matrix $W^{N}_{RC}$ by drawing $N$ matrices $\Omega^{N}_{RC}$ from $\Omega_{RC}$ and calculating equation $(1)$ from those matrices. I specially, demonstrate this process in the ["Creating the Row-Column-Exclusivity Null Distribution"](rc_exclusivity_nulldist.html) vignette. The process is implemented in the function `calculate_row_col_exclusivity_weights()`
+
+```{r calc_WRC}
+W_RC <- calculate_row_col_exclusivity_weights(dat = simple_dataset,
+                                              sample_col = sample_name,
+                                              mutgene_col = mutated_gene)
+```
 
