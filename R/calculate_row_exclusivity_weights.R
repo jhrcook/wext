@@ -23,8 +23,7 @@ calculate_row_exclusivity_weights <- function(dat, sample_col, mutgene_col) {
     # number of samples
     n <- rlang::eval_tidy(sample_col, dat) %>%
         unlist() %>%
-        unique() %>%
-        length()
+        dplyr::n_distinct()
 
     if (n < 2) stop("Not enough unique samples to compare.")
 
