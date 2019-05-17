@@ -29,7 +29,7 @@ This is the probability of observing at least $t_M$ mutually exclusive mutations
 
 ## Recursive formula for the weighted exclusivity test
 
-For any gene sets $M$ of size $k$, assuming $\{Y_i\}^m_{i=1}$ are mutually independent (i.e. the mutations in one sample do not affect another), equation $(4)$ can be writted as
+For any gene sets $M$ of size $k$, assuming $\{Y_i\}^m_{i=1}$ are mutually independent (i.e. the mutations in one sample do not affect another), equation $(4)$ can be written as
 
 $$
 \tag{8}
