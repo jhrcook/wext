@@ -30,4 +30,6 @@ Imports:
     tibble,
     tidyr,
     dplyr,
-    rlang
+    rlang,
+    tidygraph (>= 1.1.0),
+    igraph (>= 1.2.4)
