@@ -16,14 +16,22 @@
 #' calculate_row_col_exclusivity_weights(dat = simple_dataset,
 #'                                       sample_col = sample_name,
 #'                                       mutgene_col = mutated_gene,
-#'                                       N = 1E4)
+#'                                       Q = 5)
 #'
 #' @importFrom magrittr %>%
+#' @importFrom tidygraph %N>%
 #' @export calculate_row_col_exclusivity_weights
 calculate_row_col_exclusivity_weights <- function(dat, sample_col, mutgene_col,
                                                   Q = 100) {
+
+    original_colnames <- c(
+        rlang::as_string(rlang::ensym(sample_col)),
+        rlang::as_string(rlang::ensym(mutgene_col))
+    )
+
     sample_col <- rlang::enquo(sample_col)
     mutgene_col <- rlang::enquo(mutgene_col)
+
 
     n <- rlang::eval_tidy(sample_col, dat) %>%
         unlist() %>%
@@ -41,21 +49,19 @@ calculate_row_col_exclusivity_weights <- function(dat, sample_col, mutgene_col,
         unique() %>%
         dplyr::mutate(edge_sum = 0)
     names(tib) <- c("samples", "genes", "edge_sum")
+    cat("edge-swap number: ")
     for (i in 1:Q) {
-        perm_gr <- edge_swap(bipartite_gr, Q = Q) %>%
-            igraph::as_edgelist(names = TRUE)
-        colnames(perm_gr) <- names(tib)[1:2]
-        perm_gr <-tibble::as_tibble(perm_gr) %>%
-            mutate(edge_sum = 1)
-        print(perm_gr)
-        stop()
-        tib <- dplyr::bind_rows(tib, perm_gr) %>%
-            dplyr::group_by(samples, genes) %>%
+        cat(i, " ")
+        perm_el <- bipartite_edge_swap(bipartite_gr, Q = Q) %>%
+            to_edgelist(col_names = original_colnames)
+        tib <- dplyr::bind_rows(tib, perm_el) %>%
+            dplyr::group_by(!!sample_col, !!mutgene_col) %>%
             dplyr::summarise(edge_sum = sum(edge_sum)) %>%
-            ungroup()
+            dplyr::ungroup()
     }
-    print(tib)
+    cat("\n")
     tib <- tib %>%
+        dplyr::filter(!is.na(!!sample_col) & !is.na(!!mutgene_col)) %>%
         dplyr::mutate(row_col_ex_weights = edge_sum / !!Q) %>%
         dplyr::select(!!sample_col, !!mutgene_col, row_col_ex_weights)
     return(tib)
@@ -65,21 +71,18 @@ calculate_row_col_exclusivity_weights <- function(dat, sample_col, mutgene_col,
 # make the sample-gene bipartite graph
 make_sample_gene_biprartite <- function(s, g) {
     bgr <- tibble::tibble(samples = s, genes = g) %>%
-        tidygraph::as_tbl_graph(directed = FALSE) %>%
-        igraph::as.igraph()
+        tidygraph::as_tbl_graph(directed = FALSE) %N>%
+        tidygraph::mutate(type = name %in% s)
     return(bgr)
 }
 
 
-# edge swap algorithm from Milo et al., 2003
-# gr: an igraph graph object
-# N: number of edges to swap
-edge_swap <- function(gr, Q, N = NULL) {
-    if (is.null(N)) N <- Q * igraph::ecount(gr)
-    igraph::rewire(gr, igraph::keeping_degseq(loops = FALSE, niter = N))
+to_edgelist <- function(gr, col_names, names = TRUE) {
+    el <- igraph::as_edgelist(gr, names = names)
+    colnames(el) <- col_names
+    el <- tibble::as_tibble(el) %>%
+        dplyr::mutate(edge_sum = 1)
+    return(el)
 }
 
-
-# PROBLEMS:
-#  1. edge_swap is not maintaining bipartition
-#  2. column names of the final tibble do not match those from the original data
+utils::globalVariables(c("edge_sum","row_col_ex_weights", "name"), add = TRUE)

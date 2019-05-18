@@ -7,6 +7,12 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r setup, warning=FALSE, message=FALSE}
+library(tibble)
+library(dplyr)
+library(wext)
+```
+
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -14,11 +20,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup, warning=FALSE, message=FALSE}
-library(tibble)
-library(dplyr)
-library(wext)
-```
 
 The data used for this example is the same data set in the "simple" example from the Raphael group's [GitHub repository](https://github.com/raphael-group/wext/tree/master/examples/simple). The original file format was one line per sample with a list of the genes that were mutated. I have already prepared this into a tidy format in "data-raw/simple_dataset.R", as it is likely what the user will start with.
 
@@ -60,11 +61,12 @@ W_R
 
 ## The weighted matrix for the row-exclusivity test $W_{RC}$.
 
-We still need to calculate equation $(1)$, but there is no closed form formula for $W_{RC}$ as there is equation $(2)$ for $W_R$. Thus, the authors generate an emperical weight matrix $W^{N}_{RC}$ by drawing $N$ matrices $\Omega^{N}_{RC}$ from $\Omega_{RC}$ and calculating equation $(1)$ from those matrices. I specially, demonstrate this process in the ["Creating the Row-Column-Exclusivity Null Distribution"](rc_exclusivity_nulldist.html) vignette. The process is implemented in the function `calculate_row_col_exclusivity_weights()`
+We still need to calculate equation $(1)$, but there is no closed form formula for $W_{RC}$ as there is equation $(2)$ for $W_R$. Thus, the authors generate an emperical weight matrix $W^{N}_{RC}$ by drawing $N$ matrices $\Omega^{N}_{RC}$ from $\Omega_{RC}$ and calculating equation $(1)$ from those matrices. The algorithm used is explained in  ["Creating the Row-Column-Exclusivity Null Distribution"](rc_exclusivity_nulldist.html) vignette. The process is implemented in the function `calculate_row_col_exclusivity_weights()`
 
-```{r calc_WRC}
+```{r calc_WRC, cache=TRUE}
 W_RC <- calculate_row_col_exclusivity_weights(dat = simple_dataset,
                                               sample_col = sample_name,
-                                              mutgene_col = mutated_gene)
+                                              mutgene_col = mutated_gene,
+                                              Q = 5)
 ```
 
