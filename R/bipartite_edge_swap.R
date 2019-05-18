@@ -94,14 +94,6 @@ make_node_vector <- function(e1, e2, ns1, ns2) {
 }
 
 
-# check that graph `gr` has a node attribute `node_attr`
-check_gr <- function(gr, node_attr) {
-    node_attrs <- colnames(tidygraph::as_tibble(gr, active = "nodes"))
-    if (!node_attr %in% node_attrs) {
-        stop(paste(node_attr, "not a node attribute in the graph"))
-    }
-    invisible(TRUE)
-}
 
 
 utils::globalVariables(c("type", ".idx"), add = TRUE)

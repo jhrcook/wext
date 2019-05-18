@@ -11,7 +11,8 @@
 #' @param ignore_nodes_connected_to a vector of indices for the nodes whose
 #'   edges to ignore
 #'
-#' @return a vector of two indices for the nodes of the edge selected
+#' @return a vector of two indices for the nodes of the edge selected; if no
+#'   edge was able to be selected, then \code{integer(0)} is returned
 #'
 #' @examples
 #' set.seed(0)
@@ -23,6 +24,14 @@
 #' @importFrom tidygraph %N>% %E>%
 #' @export random_edge_nodes
 random_edge_nodes <- function(gr, ignore_nodes_connected_to = c()) {
+    # check that the node attribute ".idx" exists
+    check_gr(gr, ".idx")
+
+    # check an edge exists
+    if (igraph::ecount(gr) < 1) {
+        stop("graph does not contain any edges to pull from")
+    }
+
     ig_nodes <- unlist(ignore_nodes_connected_to)  # easier to use in the pipeline
     gr %N>%
         tidygraph::filter(!tidygraph::node_is_adjacent(to = ig_nodes,
