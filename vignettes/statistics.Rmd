@@ -168,9 +168,15 @@ W_R = \left[w_{ij} = \frac{r_i}{n} \right]
 \end{align}
 $$
 
-The authors do not know of a closed-form expression for the weights $w_{ij}$ for $W_RC$ because the rows and columns cannot be considered separately. Thus, they resorted to generating an empirical weight matrix $W^{N}_{RC} = [w_{ij}]$ for $\Omega_{RC}$ by drawing $N$ matrices $\Omega^{N}_{RC}$ uniformly at random from $\Omega_{RC}$ and calculating the weights from each using equation $(6)$. See the ["Creating the Row-Column-Exclusivity Null Distribution"](rc_exclusivity_nulldist.html) vignette for how this is accomplished.
+The authors do not know of a closed-form expression for the weights $w_{ij}$ for $W_RC$ because the rows and columns cannot be considered separately. Thus, they resorted to generating an empirical weight matrix $W^{N}_{RC} = [w_{ij}]$ for $\Omega_{RC}$ by drawing $N$ matrices $\Omega^{N}_{RC}$ uniformly at random from $\Omega_{RC}$ and calculating the weights from each using equation $(6)$. A great explanation of the process can be found in the Methods section of "Mutual exclusivity analysis identifies oncogenic network modules" by Ciriello *et al.* (2012). It is based off of the algorithm created by Milo *et al.* in "On the uniform generation of random graphs with prescribed degree sequences" (2003). Breifly the algorithm is as follows for a bipartite graph $G$ with node groups $X$ and $Y$:
 
-They assume that every gene has a non-zero probability of being mutated, thus set $w_{ij} = \frac{1}{2N}$ if there is no mutation in gene $g_i$ for sample $s_j$ in the matrix from $\Omega^N_{RC}$.
+1. Randomly select two edges $e_1 = (a,b)$ and $e_2 = (c,d)$  where nodes $a,c \in X$ and $b,d \in Y$ and there are no edges between the nodes already; i.e. $(a,d) \notin G(E); (c,b) \notin G(E)$.
+2. Remove edges $e_1 = (a,b)$ and $e_2 = (c,d)$.
+3. Add new edges $(a,d)$ and $(c,b)$
+
+It was found emperically that iterating this process $Q \times |G(E)|$, where Q is the number of random graphs you want in total and $|G(E)|$ is the number of edges, if sufficient.
+
+Fainlly, they assume that every gene has a non-zero probability of being mutated, thus set $w_{ij} = \frac{1}{2N}$ if there is no mutation in gene $g_i$ for sample $s_j$ in the matrix from $\Omega^N_{RC}$.
 
 ---
 
