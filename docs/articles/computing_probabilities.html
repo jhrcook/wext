@@ -54,7 +54,7 @@
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
+    Vignettes
      
     <span class="caret"></span>
   </a>
@@ -131,7 +131,7 @@
 <h3 class="hasAnchor">
 <a href="#a-recursive-formula-for-the-numerator" class="anchor"></a>A recursive formula for the numerator</h3>
 <p>Without loss of generality, let <span class="math inline">\(M = \{1, ..., k\}\)</span>.</p>
-<p>The joint prbability in the numerator of <span class="math inline">\((8)\)</span> can be found using a recursive formula.</p>
+<p>The joint probability in the numerator of <span class="math inline">\((8)\)</span> can be found using a recursive formula.</p>
 <p>With <span class="math inline">\(F(t_M, r_1, ... , r_k, n) = \text{Pr}(T_M \ge t_M, Y_M = \vec{r}_M)\)</span>, the recurrence relationship can be written as</p>
 <p><span class="math display">\[
 \tag{9}
@@ -183,9 +183,9 @@ F(t, x_1, ..., x_k, j) = \begin{cases}
 W = [w_{ij}] = \frac{1}{|\Omega|} \sum_{B \in \Omega}{B}
 \end{align}
 \]</span></p>
-<p>The function <span class="math inline">\(F\)</span> takes in several paramters. The first is <span class="math inline">\(w_{\pi}(t)\)</span> which is <span class="math inline">\(t-1\)</span> is the sum of all values in the binary vector <span class="math inline">\(\pi\)</span> is equal to <span class="math inline">\(1\)</span>, and <span class="math inline">\(t\)</span> otherwise. If the sum of <span class="math inline">\(\pi\)</span> is <span class="math inline">\(1\)</span>, this indicates that there is only one gene being considered in that step of the iteration, so the number of mutually exclusive events (<span class="math inline">\(t = t_M\)</span>) is reduced by <span class="math inline">\(1\)</span> for the next step in the recursion through <span class="math inline">\(F\)</span>. This ensures the number of mutually exclusive events is held constant.</p>
-<p>The next set of paramaters for <span class="math inline">\(F\)</span> are <span class="math inline">\(y_{\pi}(x)\)</span> for every row-sum (i.e. number of samples with a mutation in gene <span class="math inline">\(g_i\)</span>) of genes in <span class="math inline">\(M\)</span>. This simply reduces the row-sum by <span class="math inline">\(1\)</span> if the the index in <span class="math inline">\(\pi\)</span> is <span class="math inline">\(1\)</span>. This holds the row-sums constant through the recursion.</p>
-<p>Finally, <span class="math inline">\(j-1\)</span> reduces the number of samples by <span class="math inline">\(1\)</span> to pass to the next layer in recusrion.</p>
+<p>The function <span class="math inline">\(F\)</span> takes in several parameters. The first is <span class="math inline">\(w_{\pi}(t)\)</span> which is <span class="math inline">\(t-1\)</span> is the sum of all values in the binary vector <span class="math inline">\(\pi\)</span> is equal to <span class="math inline">\(1\)</span>, and <span class="math inline">\(t\)</span> otherwise. If the sum of <span class="math inline">\(\pi\)</span> is <span class="math inline">\(1\)</span>, this indicates that there is only one gene being considered in that step of the iteration, so the number of mutually exclusive events (<span class="math inline">\(t = t_M\)</span>) is reduced by <span class="math inline">\(1\)</span> for the next step in the recursion through <span class="math inline">\(F\)</span>. This ensures the number of mutually exclusive events is held constant.</p>
+<p>The next set of parameters for <span class="math inline">\(F\)</span> are <span class="math inline">\(y_{\pi}(x)\)</span> for every row-sum (i.e. number of samples with a mutation in gene <span class="math inline">\(g_i\)</span>) of genes in <span class="math inline">\(M\)</span>. This simply reduces the row-sum by <span class="math inline">\(1\)</span> if the the index in <span class="math inline">\(\pi\)</span> is <span class="math inline">\(1\)</span>. This holds the row-sums constant through the recursion.</p>
+<p>Finally, <span class="math inline">\(j-1\)</span> reduces the number of samples by <span class="math inline">\(1\)</span> to pass to the next layer in recursion</p>
 <p>The base case for <span class="math inline">\(F\)</span> is the final value for the recursion.</p>
 </div>
 </div>

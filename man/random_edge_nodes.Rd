@@ -14,7 +14,8 @@ with the node indices}
 edges to ignore}
 }
 \value{
-a vector of two indices for the nodes of the edge selected
+a vector of two indices for the nodes of the edge selected; if no
+  edge was able to be selected, then \code{integer(0)} is returned
 }
 \description{
 Return the nodes of an edge in the graph \code{gr} selected at

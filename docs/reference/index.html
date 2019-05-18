@@ -87,7 +87,7 @@
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
+    Vignettes
      
     <span class="caret"></span>
   </a>
@@ -147,8 +147,28 @@
     <tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
+          <h2 id="section-statistical-functions" class="hasAnchor"><a href="#section-statistical-functions" class="anchor"></a>Statistical functions</h2>
+          <p class="section-desc"><p>Functions that underpin the statistics for the Weighted Exclusivity Test (WExT)</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="calculate_row_exclusivity_weights.html">calculate_row_exclusivity_weights()</a></code> </p>
+        </td>
+        <td><p>Calculate the weights for the Row-Exclusivity test</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="calculate_row_col_exclusivity_weights.html">calculate_row_col_exclusivity_weights()</a></code> </p>
+        </td>
+        <td><p>Calculate the weights for the Row-Column-Exclusivity test</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-edge-swapping" class="hasAnchor"><a href="#section-edge-swapping" class="anchor"></a>Edge swapping</h2>
+          <p class="section-desc"><p>Functions used for the edge swap algorithm to sample possible matrices in the Row-Column-Exclusivity test</p></p>
         </th>
       </tr>
       <tr>
@@ -160,15 +180,35 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="calculate_row_col_exclusivity_weights.html">calculate_row_col_exclusivity_weights()</a></code> </p>
+          <p><code><a href="swap_an_edge.html">swap_an_edge()</a></code> </p>
         </td>
-        <td><p>Calculate the weights for the Row-Column-Exclusivity test</p></td>
+        <td><p>Swap a single edge</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="calculate_row_exclusivity_weights.html">calculate_row_exclusivity_weights()</a></code> </p>
+          <p><code><a href="random_edge_nodes.html">random_edge_nodes()</a></code> </p>
         </td>
-        <td><p>Calculate the weights for the Row-Exclusivity test</p></td>
+        <td><p>Return the nodes for a randomly selected edge</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="remove_edge.html">remove_edge()</a></code> </p>
+        </td>
+        <td><p>Remove an edge</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-utilities" class="hasAnchor"><a href="#section-utilities" class="anchor"></a>Utilities</h2>
+          <p class="section-desc"><p>utilitiy functions used throughout</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="matrix_to_tibble.html">matrix_to_tibble()</a></code> </p>
+        </td>
+        <td><p>Convert between a mutation matrix and tibble</p></td>
       </tr><tr>
         
         <td>
@@ -178,21 +218,23 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="matrix_to_tibble.html">matrix_to_tibble()</a></code> </p>
+          <p><code><a href="check_gr.html">check_gr()</a></code> </p>
         </td>
-        <td><p>Convert between a mutation matrix and tibble</p></td>
-      </tr><tr>
+        <td><p>Check that a node attribute exists for a graph</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-example-data-sets" class="hasAnchor"><a href="#section-example-data-sets" class="anchor"></a>Example data sets</h2>
+          <p class="section-desc"><p>Small data sets used for examples and testing</p></p>
+        </th>
+      </tr>
+      <tr>
         
         <td>
           <p><code><a href="simple_dataset.html">simple_dataset</a></code> </p>
         </td>
         <td><p>Simple example data for WExT</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="swap_an_edge.html">swap_an_edge()</a></code> </p>
-        </td>
-        <td><p>Swap a single edge</p></td>
       </tr>
     </tbody>
     </table>
@@ -201,7 +243,10 @@
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-all-functions">All functions</a></li>
+      <li><a href="#section-statistical-functions">Statistical functions</a></li>
+      <li><a href="#section-edge-swapping">Edge swapping</a></li>
+      <li><a href="#section-utilities">Utilities</a></li>
+      <li><a href="#section-example-data-sets">Example data sets</a></li>
     </ul>
   </div>
 </div>
