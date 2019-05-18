@@ -19,7 +19,7 @@ edges"}
 a tidygraph graph object with two edges swapped
 }
 \description{
-Swap an edge of a bipartite graph while maintaing the partition
+Swap an edge of a bipartite graph while maintaining the partition
 }
 \examples{
 set.seed(0)

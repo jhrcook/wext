@@ -20,7 +20,7 @@ calculate_row_col_exclusivity_weights(dat, sample_col, mutgene_col,
 The weight for each mutation in the Row-Column-Exclusivity test
   cannot be calculated exactly for most use cases because there is no closed
   formula and a very large number of possible matrices to consider. Thus, the
-  weights are calculated emperically from a sufficiently large number of
+  weights are calculated empirically from a sufficiently large number of
   samples of possible matrices.
 }
 \examples{

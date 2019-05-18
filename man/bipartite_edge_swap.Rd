@@ -15,11 +15,11 @@ holds boolean values (i.e. either \code{TRUE} or \code{FALSE})}
 \item{N}{the number of edge swaps; default is \eqn{Q \times |E(G)|}}
 }
 \value{
-the graph woth \eqn{N} random edge swaps with constrained marginals
+the graph with \eqn{N} random edge swaps with constrained marginals
 }
 \description{
 Run the edge swapping algorithm from Milo et al. (2003) on a
-  bipartite graph while maintaing the separation of the nodes intwo groups.
+  bipartite graph while maintaining the separation of the nodes in two groups.
 }
 \examples{
 set.seed(0)

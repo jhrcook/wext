@@ -1,14 +1,14 @@
 #' Swap edges of a bipartite graph
 #'
 #' @description Run the edge swapping algorithm from Milo et al. (2003) on a
-#'   bipartite graph while maintaing the separation of the nodes intwo groups.
+#'   bipartite graph while maintaining the separation of the nodes in two groups.
 #'
 #' @param gr a tidygraph object with a node attribute called \code{type} that
 #'   holds boolean values (i.e. either \code{TRUE} or \code{FALSE})
 #' @param Q number of permutations you are conducting
 #' @param N the number of edge swaps; default is \eqn{Q \times |E(G)|}
 #'
-#' @return the graph woth \eqn{N} random edge swaps with constrained marginals
+#' @return the graph with \eqn{N} random edge swaps with constrained marginals
 #' @examples
 #' set.seed(0)
 #' bgr <- tidygraph::create_ring(6, directed = FALSE)
@@ -37,7 +37,7 @@ bipartite_edge_swap <- function(gr, Q, N = Q * igraph::ecount(gr)) {
 
 #' Swap a single edge
 #'
-#' @description Swap an edge of a bipartite graph while maintaing the partition
+#' @description Swap an edge of a bipartite graph while maintaining the partition
 #'
 #' @param gr tidygraph graph object
 #' @param n1,n2 vectors that indicate the grouping of the nodes (by index)
@@ -55,6 +55,7 @@ bipartite_edge_swap <- function(gr, Q, N = Q * igraph::ecount(gr)) {
 #' swaped_gr <- swap_an_edge(gr, c(1,3,5), c(2,4,6))
 #' plot(bind_graphs(gr, swaped_gr))
 #'
+#' @importFrom magrittr %>%
 #' @export swap_an_edge
 swap_an_edge <- function(gr, n1, n2, max_try = 100) {
     # attempt to get two edges to swap up to `max_tries` number of times
@@ -93,13 +94,6 @@ make_node_vector <- function(e1, e2, ns1, ns2) {
 }
 
 
-# remove any edge between `a` and `b` in the graph `gr`
-remove_edge <- function(gr, a, b) {
-    gr %E>%
-        tidygraph::filter(!tidygraph::edge_is_between(a, b, ignore_dir = TRUE))
-}
-
-
 # check that graph `gr` has a node attribute `node_attr`
 check_gr <- function(gr, node_attr) {
     node_attrs <- colnames(tidygraph::as_tibble(gr, active = "nodes"))
@@ -108,23 +102,6 @@ check_gr <- function(gr, node_attr) {
     }
     invisible(TRUE)
 }
-
-
-# return the nodes of an edge of `gr` selected at random
-# all nodes connected to those in `ignore_nodes_connected_to` are removed first
-random_edge_nodes <- function(gr, ignore_nodes_connected_to = c()) {
-    ig_nodes <- unlist(ignore_nodes_connected_to)  # easier to use in the pipeline
-    gr %N>%
-        tidygraph::filter(!tidygraph::node_is_adjacent(to = ig_nodes,
-                                            mode = "all",
-                                            include_to = TRUE)) %E>%
-        tidygraph::sample_n(1) %N>%
-        tidygraph::filter(tidygraph::centrality_degree(mode = "all") > 0) %>%
-        tidygraph::as_tibble(active = "nodes") %>%
-        dplyr::pull(.idx) %>%
-        unlist()
-}
-
 
 
 utils::globalVariables(c("type", ".idx"), add = TRUE)

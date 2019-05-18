@@ -3,7 +3,7 @@
 #' @description The weight for each mutation in the Row-Column-Exclusivity test
 #'   cannot be calculated exactly for most use cases because there is no closed
 #'   formula and a very large number of possible matrices to consider. Thus, the
-#'   weights are calculated emperically from a sufficiently large number of
+#'   weights are calculated empirically from a sufficiently large number of
 #'   samples of possible matrices.
 #'
 #' @param dat tibble with mutation information
