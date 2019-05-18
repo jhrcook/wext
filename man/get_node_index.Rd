@@ -15,7 +15,7 @@ get_node_index(gr, expr)
 a vector of the indices of the nodes remaining after the filter
 }
 \description{
-Evalute the expression in \code{tidygraph::filter(expr)} and
+Evaluate the expression in \code{tidygraph::filter(expr)} and
   return the indices of the remaining nodes
 }
 \examples{

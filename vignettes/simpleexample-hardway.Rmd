@@ -61,7 +61,7 @@ W_R
 
 ## The weighted matrix for the row-exclusivity test $W_{RC}$.
 
-We still need to calculate equation $(1)$, but there is no closed form formula for $W_{RC}$ as there is equation $(2)$ for $W_R$. Thus, the authors generate an emperical weight matrix $W^{N}_{RC}$ by drawing $N$ matrices $\Omega^{N}_{RC}$ from $\Omega_{RC}$ and calculating equation $(1)$ from those matrices. The algorithm used is explained in  ["Creating the Row-Column-Exclusivity Null Distribution"](rc_exclusivity_nulldist.html) vignette. The process is implemented in the function `calculate_row_col_exclusivity_weights()`
+We still need to calculate equation $(1)$, but there is no closed form formula for $W_{RC}$ as there is equation $(2)$ for $W_R$. Thus, the authors generate an empirical weight matrix $W^{N}_{RC}$ by drawing $N$ matrices $\Omega^{N}_{RC}$ from $\Omega_{RC}$ and calculating equation $(1)$ from those matrices. The algorithm used is explained in  ["Creating the Row-Column-Exclusivity Null Distribution"](rc_exclusivity_nulldist.html) vignette. The process is implemented in the function `calculate_row_col_exclusivity_weights()`
 
 ```{r calc_WRC, cache=TRUE}
 W_RC <- calculate_row_col_exclusivity_weights(dat = simple_dataset,

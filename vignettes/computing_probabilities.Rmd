@@ -42,7 +42,7 @@ This is the probability of each more extreme case than $t_M$ divided by the tota
 
 Without loss of generality, let $M = \{1, ..., k\}$.
 
-The joint prbability in the numerator of $(8)$ can be found using a recursive formula.
+The joint probability in the numerator of $(8)$ can be found using a recursive formula.
 
 With $F(t_M, r_1, ... , r_k, n) = \text{Pr}(T_M \ge t_M, Y_M = \vec{r}_M)$, the recurrence relationship can be written as
  
@@ -106,11 +106,11 @@ W = [w_{ij}] = \frac{1}{|\Omega|} \sum_{B \in \Omega}{B}
 \end{align}
 $$
 
-The function $F$ takes in several paramters. The first is $w_{\pi}(t)$ which is $t-1$ is the sum of all values in the binary vector $\pi$ is equal to $1$, and $t$ otherwise. If the sum of $\pi$ is $1$, this indicates that there is only one gene being considered in that step of the iteration, so the number of mutually exclusive events ($t = t_M$) is reduced by $1$ for the next step in the recursion through $F$. This ensures the number of mutually exclusive events is held constant.
+The function $F$ takes in several parameters. The first is $w_{\pi}(t)$ which is $t-1$ is the sum of all values in the binary vector $\pi$ is equal to $1$, and $t$ otherwise. If the sum of $\pi$ is $1$, this indicates that there is only one gene being considered in that step of the iteration, so the number of mutually exclusive events ($t = t_M$) is reduced by $1$ for the next step in the recursion through $F$. This ensures the number of mutually exclusive events is held constant.
 
-The next set of paramaters for $F$ are $y_{\pi}(x)$ for every row-sum (i.e. number of samples with a mutation in gene $g_i$) of genes in $M$. This simply reduces the row-sum by $1$ if the the index in $\pi$ is $1$. This holds the row-sums constant through the recursion.
+The next set of parameters for $F$ are $y_{\pi}(x)$ for every row-sum (i.e. number of samples with a mutation in gene $g_i$) of genes in $M$. This simply reduces the row-sum by $1$ if the the index in $\pi$ is $1$. This holds the row-sums constant through the recursion.
 
-Finally, $j-1$ reduces the number of samples by $1$ to pass to the next layer in recusrion.
+Finally, $j-1$ reduces the number of samples by $1$ to pass to the next layer in recursion
 
 The base case for $F$ is the final value for the recursion.
 

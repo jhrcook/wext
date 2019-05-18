@@ -1,6 +1,6 @@
 #' Get the indices of nodes after evaluating 'expr'
 #'
-#' @description Evalute the expression in \code{tidygraph::filter(expr)} and
+#' @description Evaluate the expression in \code{tidygraph::filter(expr)} and
 #'   return the indices of the remaining nodes
 #'
 #' @param gr tidygraph graph object
