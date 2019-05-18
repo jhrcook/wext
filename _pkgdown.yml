@@ -23,6 +23,15 @@ navbar:
     reference:
       text: Reference
       href: reference/index.html
+    articles:
+      text: Vignettes
+      menu:
+      - text: WExT Statistics
+        href: articles/statistics.html
+      - text: Computing the Weighted Exclusivity Test (WExT)
+        href: articles/computing_probabilities.html
+      - text: Simple Example (the hard way)
+        href: articles/simpleexample-hardway.html
     news:
       text: Changelog
       href: news/index.html
@@ -32,3 +41,35 @@ navbar:
     twitter:
       icon: fab fa-twitter fa-lg
       href: https://twitter.com/JoshDoesa
+
+
+reference:
+- title: Statistical functions
+  desc: >
+    Functions that underpin the statistics for the Weighted Exclusivity
+    Test (WExT)
+  contents:
+  - '`calculate_row_exclusivity_weights`'
+  - '`calculate_row_col_exclusivity_weights`'
+
+- title: Edge swapping
+  desc: >
+    Functions used for the edge swap algorithm to sample possible matrices in
+    the Row-Column-Exclusivity test
+  contents:
+  - '`bipartite_edge_swap`'
+  - '`swap_an_edge`'
+  - '`random_edge_nodes`'
+  - '`remove_edge`'
+
+- title: Utilities
+  desc: utilitiy functions used throughout
+  contents:
+  - '`matrix_to_tibble`'
+  - '`get_node_index`'
+  - '`check_gr`'
+
+- title: Example data sets
+  desc: Small data sets used for examples and testing
+  contents:
+  - '`simple_dataset`'
