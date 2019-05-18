@@ -3,7 +3,6 @@ pkgdown: 1.3.0
 pkgdown_sha: ~
 articles:
   computing_probabilities: computing_probabilities.html
-  rc_exclusivity_nulldist: rc_exclusivity_nulldist.html
   simpleexample-hardway: simpleexample-hardway.html
   statistics: statistics.html
 

@@ -63,9 +63,6 @@
       <a href="../articles/computing_probabilities.html">Computing the Weighted Exclusivity Test (WExT)</a>
     </li>
     <li>
-      <a href="../articles/rc_exclusivity_nulldist.html">Creating the Row-Column-Exclusivity Null Distribution</a>
-    </li>
-    <li>
       <a href="../articles/simpleexample-hardway.html">Simple Example (the hard way)</a>
     </li>
     <li>
@@ -133,15 +130,17 @@
 <a class="sourceLine" id="cb2-15" data-line-number="15"><span class="co">#&gt; # … with 26 more rows</span></a></code></pre></div>
 <p>In this vignette, I show how WExT works by running each step separately. The <a href="">“Simple Example (the easy way)”</a> explains how a normal user would run the analysis.</p>
 <hr>
-<div id="building-the-weighted-matrix-for-the-row-exclusivity-test-w_r-" class="section level2">
+<div id="the-weighted-matrix-for-the-row-exclusivity-test-w_r-" class="section level2">
 <h2 class="hasAnchor">
-<a href="#building-the-weighted-matrix-for-the-row-exclusivity-test-w_r-" class="anchor"></a>Building the weighted matrix for the row-exclusivity test <span class="math inline">\(W_R\)</span>.</h2>
+<a href="#the-weighted-matrix-for-the-row-exclusivity-test-w_r-" class="anchor"></a>The weighted matrix for the row-exclusivity test <span class="math inline">\(W_R\)</span>.</h2>
 <p>This is simply defined as</p>
 <p><span class="math display">\[
+\tag{1}
 W_R = \frac{1}{\Omega_R} \sum_{B \in \Omega_R}{B}
 \]</span></p>
 <p>but since every row of <span class="math inline">\(B \in \Omega_R\)</span> can be considered independently, this simplifies to</p>
 <p><span class="math display">\[
+\tag{2}
 W_R = \left[ w_{ij} = \frac{r_i}{n} \right]
 \]</span></p>
 <p>Thus, we compute the weights for the data</p>
@@ -164,6 +163,16 @@ W_R = \left[ w_{ij} = \frac{r_i}{n} \right]
 #&gt; 10 2           h                    0.0714
 #&gt; # … with 26 more rows</code></pre>
 </div>
+<div id="the-weighted-matrix-for-the-row-exclusivity-test-w_rc-" class="section level2">
+<h2 class="hasAnchor">
+<a href="#the-weighted-matrix-for-the-row-exclusivity-test-w_rc-" class="anchor"></a>The weighted matrix for the row-exclusivity test <span class="math inline">\(W_{RC}\)</span>.</h2>
+<p>We still need to calculate equation <span class="math inline">\((1)\)</span>, but there is no closed form formula for <span class="math inline">\(W_{RC}\)</span> as there is equation <span class="math inline">\((2)\)</span> for <span class="math inline">\(W_R\)</span>. Thus, the authors generate an emperical weight matrix <span class="math inline">\(W^{N}_{RC}\)</span> by drawing <span class="math inline">\(N\)</span> matrices <span class="math inline">\(\Omega^{N}_{RC}\)</span> from <span class="math inline">\(\Omega_{RC}\)</span> and calculating equation <span class="math inline">\((1)\)</span> from those matrices. The algorithm used is explained in <a href="rc_exclusivity_nulldist.html">“Creating the Row-Column-Exclusivity Null Distribution”</a> vignette. The process is implemented in the function <code><a href="../reference/calculate_row_col_exclusivity_weights.html">calculate_row_col_exclusivity_weights()</a></code></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">W_RC &lt;-<span class="st"> </span><span class="kw"><a href="../reference/calculate_row_col_exclusivity_weights.html">calculate_row_col_exclusivity_weights</a></span>(<span class="dt">dat =</span> simple_dataset,</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">                                              <span class="dt">sample_col =</span> sample_name,</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3">                                              <span class="dt">mutgene_col =</span> mutated_gene,</a>
+<a class="sourceLine" id="cb5-4" data-line-number="4">                                              <span class="dt">Q =</span> <span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt; edge-swap number: 1  2  3  4  5</span></a></code></pre></div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -171,7 +180,8 @@ W_R = \left[ w_{ij} = \frac{r_i}{n} \right]
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#building-the-weighted-matrix-for-the-row-exclusivity-test-w_r-">Building the weighted matrix for the row-exclusivity test <span class="math inline">\(W_R\)</span>.</a></li>
+<li><a href="#the-weighted-matrix-for-the-row-exclusivity-test-w_r-">The weighted matrix for the row-exclusivity test <span class="math inline">\(W_R\)</span>.</a></li>
+      <li><a href="#the-weighted-matrix-for-the-row-exclusivity-test-w_rc-">The weighted matrix for the row-exclusivity test <span class="math inline">\(W_{RC}\)</span>.</a></li>
       </ul>
 </div>
       </div>
