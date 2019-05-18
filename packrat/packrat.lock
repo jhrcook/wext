@@ -72,6 +72,12 @@ Source: CRAN
 Version: 0.1-3
 Hash: c590d29e555926af053055e23ee79efb
 
+Package: bipartite
+Source: CRAN
+Version: 2.11
+Hash: ff7a1b39cf5197132b04d566aa5afd11
+Requires: fields, igraph, permute, sna, vegan
+
 Package: bitops
 Source: CRAN
 Version: 1.0-6
@@ -116,6 +122,11 @@ Package: clisymbols
 Source: CRAN
 Version: 1.2.0
 Hash: a76a309884277a4fd8a5d741965fbef5
+
+Package: coda
+Source: CRAN
+Version: 0.19-2
+Hash: e0d016096b2ba2fc99e9ad8d168697dd
 
 Package: colorspace
 Source: CRAN
@@ -169,6 +180,11 @@ Source: CRAN
 Version: 0.6.18
 Hash: 65f62365ec69ddd17230d2ffe891a6ab
 
+Package: dotCall64
+Source: CRAN
+Version: 1.0-0
+Hash: aa37ed222a6b59bbba59f2496eadbec5
+
 Package: dplyr
 Source: CRAN
 Version: 0.8.0.1
@@ -190,6 +206,12 @@ Package: fansi
 Source: CRAN
 Version: 0.4.0
 Hash: f147621f72b561485bfffcae78c4f5d5
+
+Package: fields
+Source: CRAN
+Version: 9.8-1
+Hash: 08bebbde4148cd1c7f5ae8509e59f521
+Requires: maps, spam
 
 Package: forcats
 Source: CRAN
@@ -324,6 +346,11 @@ Source: CRAN
 Version: 1.5
 Hash: bdc4d48c3135e8f3b399536ddf160df4
 
+Package: maps
+Source: CRAN
+Version: 3.3.0
+Hash: 0815ed94aca05c7aeb177ebddd4ee23b
+
 Package: markdown
 Source: CRAN
 Version: 0.9
@@ -353,6 +380,12 @@ Version: 0.5.0
 Hash: 38d0efee9bb99bef143bde41c4ce715c
 Requires: colorspace
 
+Package: network
+Source: CRAN
+Version: 1.15
+Hash: 7576ce9fad76e3569992b1c09246ffba
+Requires: magrittr, tibble
+
 Package: openssl
 Source: CRAN
 Version: 1.3
@@ -363,6 +396,11 @@ Package: packrat
 Source: CRAN
 Version: 0.5.0
 Hash: 498643e765d1442ba7b1160a1df3abf9
+
+Package: permute
+Source: CRAN
+Version: 0.9-5
+Hash: 0ec7207b2d094811f4e1383c417e0c1e
 
 Package: pillar
 Source: CRAN
@@ -554,11 +592,29 @@ Version: 1.1.1
 Hash: 9e50c8458e611f166ba702277cbb5096
 Requires: cli, withr
 
+Package: sna
+Source: CRAN
+Version: 2.4
+Hash: b04131c916a202a9e560c433f1445f68
+Requires: network, statnet.common
+
+Package: spam
+Source: CRAN
+Version: 2.2-2
+Hash: 4fd570c0bb08bb8b4bdd59e62c792586
+Requires: dotCall64
+
 Package: spelling
 Source: CRAN
 Version: 2.1
 Hash: b7476981ed910b8dd0fce24ebfd7c6af
 Requires: commonmark, hunspell, knitr, xml2
+
+Package: statnet.common
+Source: CRAN
+Version: 4.2.0
+Hash: 0e193df770208f4f021748c7ba122f97
+Requires: coda
 
 Package: stopwords
 Source: CRAN
@@ -664,6 +720,12 @@ Package: utf8
 Source: CRAN
 Version: 1.1.4
 Hash: f3f97ce59092abc8ed3fd098a59e236c
+
+Package: vegan
+Source: CRAN
+Version: 2.5-5
+Hash: 2aae3c064fb83fff37f2c9b1774a0b43
+Requires: permute
 
 Package: viridisLite
 Source: CRAN
