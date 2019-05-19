@@ -45,18 +45,65 @@ test_that("a random edge is selected", {
 })
 
 
-# test_that("swapping of a single edge works", {
-#     library(tidygraph)
-#     library(dplyr)
-#
-#     gr <- create_ring(10) %>%
-#         mutate()
-#
-# })
+test_that("swapping of a single edge works", {
+    library(igraph)
+    library(tidygraph)
+    library(dplyr)
 
-# test_that("properly swap edges of a bipartite graph", {
-#     library(tidygraph)
-#     gr <- as_tbl_graph(simple_dataset, directed = FALSE) %N>%
-#         mutate(type = name %in% unlist(simple_dataset$sample_name))
-#
-# })
+    # return a bolean vector of length(xs) for if each x in xs is even
+    is_even <- function(xs) purrr::map_lgl(xs, .is_even)
+    .is_even <- function(x) x %% 2 == 0
+
+    # check that only one of the nodes for each edge is even
+    check_edges <- function(nodes) {
+        xor(is_even(nodes[[1]]), is_even(nodes[[2]]))
+    }
+
+    gr <- create_ring(10) %>%
+        mutate(.idx = 1:n(),
+               name = c("A", "b", "C", "d", "E", "f", "G", "h", "I", "j"))
+    for (i in 1:100) {
+        set.seed(i)
+        swap_gr <- swap_an_edge(gr, seq(1, 9, 2), seq(2, 10, 2))
+        expect_true(vcount(swap_gr) == vcount(gr))
+        expect_true(ecount(swap_gr) == ecount(gr))
+        el <- igraph::as_edgelist(gr, names = FALSE)
+        checks <- apply(el, 1, check_edges)
+        expect_true(all(checks))
+    }
+})
+
+test_that("properly swap edges of a bipartite graph", {
+    library(igraph)
+    library(tidygraph)
+
+    gr <- as_tbl_graph(simple_dataset, directed = FALSE)
+    expect_error(bipartite_edge_swap(gr, Q = 100), regexp = "not a node attribute")
+    gr <- gr %N>%
+        mutate(type = name %in% unlist(simple_dataset$sample_name))
+
+    swapped_gr <- bipartite_edge_swap(gr, Q = 10)
+
+    expect_true(vcount(gr) == vcount(swapped_gr))
+    expect_true(ecount(gr) == ecount(swapped_gr))
+
+    el <- as_edgelist(swapped_gr, names = TRUE)
+
+    # {boolean} is x a digit
+    is_digit <- function(x) stringr::str_detect(x, "[:digit:]")
+    # {boolean} is x a letter
+    is_letter <- function(x) stringr::str_detect(x, "[:alpha:]")
+
+    check_edge <- function(nodes) {
+        if (is_digit(nodes[[1]]) & is_letter(nodes[[2]])) {
+            return(TRUE)
+        } else if (is_digit(nodes[[2]]) & is_letter(nodes[[1]])) {
+            return(TRUE)
+        } else {
+            return(FALSE)
+        }
+    }
+
+    checks <- apply(el, 1, check_edge)
+    expect_true(all(checks))
+})
