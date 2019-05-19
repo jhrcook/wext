@@ -147,21 +147,20 @@ W_R = \left[ w_{ij} = \frac{r_i}{n} \right]
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">W_R &lt;-<span class="st"> </span><span class="kw"><a href="../reference/calculate_row_exclusivity_weights.html">calculate_row_exclusivity_weights</a></span>(<span class="dt">dat =</span> simple_dataset,</a>
 <a class="sourceLine" id="cb3-2" data-line-number="2">                                         <span class="dt">sample_col =</span> sample_name,</a>
 <a class="sourceLine" id="cb3-3" data-line-number="3">                                         <span class="dt">mutgene_col =</span> mutated_gene)</a></code></pre></div>
-<pre><code>#&gt; # A tibble: 36 x 3
-#&gt; # Groups:   mutated_gene [8]
+<pre><code>#&gt; # A tibble: 112 x 3
 #&gt;    sample_name mutated_gene row_ex_weights
 #&gt;    &lt;chr&gt;       &lt;chr&gt;                 &lt;dbl&gt;
 #&gt;  1 1           a                    0.429 
-#&gt;  2 1           c                    0.643 
-#&gt;  3 1           d                    0.643 
-#&gt;  4 1           e                    0.143 
-#&gt;  5 1           f                    0.0714
-#&gt;  6 2           b                    0.429 
-#&gt;  7 2           c                    0.643 
-#&gt;  8 2           d                    0.643 
-#&gt;  9 2           g                    0.143 
-#&gt; 10 2           h                    0.0714
-#&gt; # … with 26 more rows</code></pre>
+#&gt;  2 1           b                    0.429 
+#&gt;  3 1           c                    0.643 
+#&gt;  4 1           d                    0.643 
+#&gt;  5 1           e                    0.143 
+#&gt;  6 1           f                    0.0714
+#&gt;  7 1           g                    0.143 
+#&gt;  8 1           h                    0.0714
+#&gt;  9 10          a                    0.429 
+#&gt; 10 10          b                    0.429 
+#&gt; # … with 102 more rows</code></pre>
 </div>
 <div id="the-weighted-matrix-for-the-row-exclusivity-test-w_rc-" class="section level2">
 <h2 class="hasAnchor">
