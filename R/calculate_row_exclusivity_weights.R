@@ -54,7 +54,9 @@ add_missing_combinations <- function(dat, sample_col, mutgene_col, col_names) {
     sample_col <- rlang::enquo(sample_col)
     mutgene_col <- rlang::enquo(mutgene_col)
 
+    # get already existing combinations of sample-gene
     current_combs <- get_current_combinations(dat, !!sample_col, !!mutgene_col)
+    # get missing combinations of sample-gene
     full_grid <- get_all_combinations(dat, !!sample_col, !!mutgene_col) %>%
         dplyr::filter(!(.comb %in% !!current_combs)) %>%
         dplyr::select(Var1, Var2)
@@ -62,6 +64,7 @@ add_missing_combinations <- function(dat, sample_col, mutgene_col, col_names) {
         # no combinaitons to add -- return original data
         return(dat)
     }
+    # add missing combinations to original data
     colnames(full_grid) <- col_names
     mod_dat <- dplyr::bind_rows(dat, full_grid)
     return(mod_dat)
