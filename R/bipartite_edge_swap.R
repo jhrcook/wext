@@ -31,8 +31,8 @@ bipartite_edge_swap <- function(gr, Q, N = Q * igraph::ecount(gr)) {
         mod_gr <- swap_an_edge(mod_gr, nodes_1, nodes_2)
     }
     return(mod_gr)
-
 }
+
 
 
 #' Swap a single edge
@@ -84,6 +84,7 @@ swap_an_edge <- function(gr, n1, n2, max_try = 100) {
 }
 
 
+
 # organize the nodes from the edges by their group in the bipartite graph
 make_node_vector <- function(e1, e2, ns1, ns2) {
     A <- e1[e1 %in% ns1]  # edge 1, group 1
@@ -92,8 +93,6 @@ make_node_vector <- function(e1, e2, ns1, ns2) {
     D <- e2[e2 %in% ns2]  # edge 2, group 2
     return(c(A, B, C, D))
 }
-
-
 
 
 utils::globalVariables(c("type", ".idx"), add = TRUE)

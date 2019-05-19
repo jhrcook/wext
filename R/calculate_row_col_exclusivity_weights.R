@@ -23,48 +23,54 @@
 #' @export calculate_row_col_exclusivity_weights
 calculate_row_col_exclusivity_weights <- function(dat, sample_col, mutgene_col,
                                                   Q = 100) {
-
+    # get original column names to use later
     original_colnames <- c(
         rlang::as_string(rlang::ensym(sample_col)),
         rlang::as_string(rlang::ensym(mutgene_col))
     )
 
+    # enquote the input column names
     sample_col <- rlang::enquo(sample_col)
     mutgene_col <- rlang::enquo(mutgene_col)
 
-
+    # number of unique samples
     n <- rlang::eval_tidy(sample_col, dat) %>%
         unlist() %>%
         dplyr::n_distinct()
     if (n < 2) stop("Not enough unique samples to compare.")
 
+    # make bipartite graph for the edge swapping
     bipartite_gr <- make_sample_gene_biprartite(
         rlang::eval_tidy(sample_col, dat),
         rlang::eval_tidy(mutgene_col, dat)
     )
 
     # run Q edge swap permutations
-    tib <- dat %>%
+    edge_tally <- dat %>%
         dplyr::select(!!sample_col, !!mutgene_col) %>%
         unique() %>%
         dplyr::mutate(edge_sum = 0)
-    names(tib) <- c("samples", "genes", "edge_sum")
+    names(edge_tally) <- c("samples", "genes", "edge_sum")
     cat("edge-swap number: ")
     for (i in 1:Q) {
         cat(i, " ")
+        # edge swaps of the bipartite graph
         perm_el <- bipartite_edge_swap(bipartite_gr, Q = Q) %>%
             to_edgelist(col_names = original_colnames)
-        tib <- dplyr::bind_rows(tib, perm_el) %>%
+        # add the permutation to the running total in `tib`
+        edge_tally <- dplyr::bind_rows(edge_tally, perm_el) %>%
             dplyr::group_by(!!sample_col, !!mutgene_col) %>%
             dplyr::summarise(edge_sum = sum(edge_sum)) %>%
             dplyr::ungroup()
     }
     cat("\n")
-    tib <- tib %>%
+
+    # calculate the probabilities by dividing by number of permutations
+    edge_tally <- edge_tally %>%
         dplyr::filter(!is.na(!!sample_col) & !is.na(!!mutgene_col)) %>%
         dplyr::mutate(row_col_ex_weights = edge_sum / !!Q) %>%
         dplyr::select(!!sample_col, !!mutgene_col, row_col_ex_weights)
-    return(tib)
+    return(edge_tally)
 }
 
 
@@ -77,6 +83,7 @@ make_sample_gene_biprartite <- function(s, g) {
 }
 
 
+# turn a graph into an edge list with the column names `colnames`
 to_edgelist <- function(gr, col_names, names = TRUE) {
     el <- igraph::as_edgelist(gr, names = names)
     colnames(el) <- col_names
@@ -84,5 +91,6 @@ to_edgelist <- function(gr, col_names, names = TRUE) {
         dplyr::mutate(edge_sum = 1)
     return(el)
 }
+
 
 utils::globalVariables(c("edge_sum","row_col_ex_weights", "name"), add = TRUE)
