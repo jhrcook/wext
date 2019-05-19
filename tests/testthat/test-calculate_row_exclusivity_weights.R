@@ -1,4 +1,9 @@
 test_that("The Row-Exclusivity weights are calculated correctly", {
+
+    empty_tib <- tibble::tibble(x = "A", y = "b")
+    expect_error(calculate_row_exclusivity_weights(empty_tib, x, y),
+                 regexp = "Not enough unique samples to compare.")
+
     empty_dat <- tibble::tibble(samples = NA, genes = NA) %>%
         dplyr::slice(0)
     expect_error(calculate_row_exclusivity_weights(empty_wr, samples, genes))
