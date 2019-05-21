@@ -1,0 +1,23 @@
+---
+title: "Comparing the RC-test to the Fisher's exact test"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Comparing the RC-test to the Fisher's exact test}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(dplyr)
+library(wext)
+```
+
+
+The plan is to compare the results of the Fisher's exact test and the RC test on the small sample dataset.
