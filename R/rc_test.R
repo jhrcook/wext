@@ -31,7 +31,7 @@ rc_test <- function(dat, sample_col, mutgene_col,
                     k = 2,
                     seed_genes = c(),
                     N_perms = 1e4,
-                    min_t_AM = 2) {
+                    min_mutex_events = 2) {
     # get original column names to use later
     original_colnames <- c(
         rlang::as_string(rlang::ensym(sample_col)),
@@ -57,12 +57,17 @@ rc_test <- function(dat, sample_col, mutgene_col,
 
     results_tib <- make_empty_results_tracker(genes, k, seed_genes = seed_genes) %>%
         dplyr::mutate(
-            t_AM = purrr::map(gene_sets, calc_mutex_events, bgr = bipartite_gr)
+            t_AM = purrr::map_dbl(gene_sets, calc_mutex_events, bgr = bipartite_gr)
         ) %>%
-        dplyr::filter(min_t_AM > 2)
+        dplyr::filter(t_AM > !!min_mutex_events)
+    if (nrow(results_tib) < 1) {
+        stop("No gene sets to test that pass the minumum number of real mutaully exclusvie events")
+    }
 
     for (i in 1:N_perms) {
+        cat("permutation:", i, "\t")
         perm_bgr <- bipartite_edge_swap(bipartite_gr, Q = 100)
+        cat("calculating results...\n")
         results_tib <- purrr::pmap_df(
             results_tib, update_results_tib, bgr = perm_bgr
         )
@@ -86,9 +91,9 @@ make_sample_gene_biprartite <- function(s, g) {
 
 # start the results tracking tibble with the gene sets and t_BM_gr = 0
 make_empty_results_tracker <- function(gs, k, seed_genes) {
-    # TODO: include seed genes
     combs <- combn(unlist(gs), k) %>%
-        apply(1, list)
+        apply(2, list) %>%
+        unlist(recursive = FALSE)
     if (length(seed_genes) > 0) {
         idx <- purrr::map_lgl(gs, ~ any(seed_genes %in% .x))
         combs <- combs[idx]
