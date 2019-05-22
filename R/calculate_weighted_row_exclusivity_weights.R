@@ -2,7 +2,7 @@
 #'
 #' @description The weighted test for mutual exclusivity aims to calculate the
 #'   probability of observing at least \eqn{t_M} mutually exclusive events given
-#'   a fixed number of samples (row-sums) and a per-gene, per-sample wieght
+#'   a fixed number of samples (row-sums) and a per-gene, per-sample weight
 #'   matrix \eqn{W}. For further explanation, see the "Computing the Weighted
 #'   Exclusivity Test (WExT)" vignette. This function creates the weight matrix
 #'   for the test.
@@ -10,14 +10,12 @@
 #' @param dat tibble with mutation information
 #' @param sample_col column of samples names (quoted)
 #' @param mutgene_col column of genes that are mutated (quoted)
-#' @param Q number of permutation matrices to use (default is 100)
 #'
 #' @examples
 #' library(wext)
-#' calculate_row_col_exclusivity_weights(dat = simple_dataset,
-#'                                       sample_col = sample_name,
-#'                                       mutgene_col = mutated_gene,
-#'                                       Q = 5)
+#' calculate_weighted_row_exclusivity_weights(dat = simple_dataset,
+#'                                            sample_col = sample_name,
+#'                                            mutgene_col = mutated_gene)
 #'
 #' @importFrom magrittr %>%
 #' @importFrom tidygraph %N>%
@@ -40,4 +38,6 @@ calculate_weighted_row_exclusivity_weights <- function(dat,
         unlist() %>%
         dplyr::n_distinct()
     if (n < 2) stop("Not enough unique samples to compare.")
+
+    return("FUNCTION IN PROGRESS")
 }

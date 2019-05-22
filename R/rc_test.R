@@ -12,16 +12,12 @@
 #' @param k size of gene sets to consider (default is 2)
 #' @param seed_genes a vector of gene(s) that must be in the gene set to be tested (optional)
 #' @param N_perms number of permutation matrices to use (default is 10,000)
-#' @param min_t_AM minumum number of real mutual exclusive events required to
+#' @param min_mutex_events minimum number of real mutual exclusive events required to
 #'   consider the gene set (default is 2)
 #'
 #' @examples
 #' library(wext)
-#' calculate_row_col_exclusivity_weights(dat = simple_dataset,
-#'                                       sample_col = sample_name,
-#'                                       mutgene_col = mutated_gene,
-#'                                       k = 2,
-#'                                       Q = 5)
+#' rc_test(simple_dataset, sample_name, mutated_gene, k = 2, N_perms = 5)
 #'
 #' @importFrom magrittr %>%
 #' @importFrom tidygraph %N>%
@@ -32,11 +28,6 @@ rc_test <- function(dat, sample_col, mutgene_col,
                     seed_genes = c(),
                     N_perms = 1e4,
                     min_mutex_events = 2) {
-    # get original column names to use later
-    original_colnames <- c(
-        rlang::as_string(rlang::ensym(sample_col)),
-        rlang::as_string(rlang::ensym(mutgene_col))
-    )
 
     # enquote the input column names
     sample_col <- rlang::enquo(sample_col)
@@ -64,14 +55,15 @@ rc_test <- function(dat, sample_col, mutgene_col,
         stop("No gene sets to test that pass the minumum number of real mutaully exclusvie events")
     }
 
+    cat("permutation: ")
     for (i in 1:N_perms) {
-        cat("permutation:", i, "\t")
+        cat(i, " ")
         perm_bgr <- bipartite_edge_swap(bipartite_gr, Q = 100)
-        cat("calculating results...\n")
         results_tib <- purrr::pmap_df(
             results_tib, update_results_tib, bgr = perm_bgr
         )
     }
+    cat("\n")
     results_tib <- results_tib %>%
         dplyr::mutate(p_val = t_BM_ge / N_perms)
     return(results_tib)
@@ -91,7 +83,7 @@ make_sample_gene_biprartite <- function(s, g) {
 
 # start the results tracking tibble with the gene sets and t_BM_gr = 0
 make_empty_results_tracker <- function(gs, k, seed_genes) {
-    combs <- combn(unlist(gs), k) %>%
+    combs <- utils::combn(unlist(gs), k) %>%
         apply(2, list) %>%
         unlist(recursive = FALSE)
     if (length(seed_genes) > 0) {
@@ -125,3 +117,9 @@ update_results_tib <- function(gene_sets, t_BM_ge, t_AM, bgr) {
                    t_BM_ge = t_BM_ge,
                    t_AM = t_AM)
 }
+
+
+utils::globalVariables(
+    c("type","name", "t_BM_ge", "gene_sets", "t_AM"),
+    add = TRUE
+)
