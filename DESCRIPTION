@@ -34,4 +34,5 @@ Imports:
     tidygraph (>= 1.1.0),
     igraph (>= 1.2.4),
     purrr,
-    ggplot2
+    ggplot2,
+    stringr
