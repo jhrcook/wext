@@ -53,6 +53,7 @@ reference:
   - '`calculate_row_col_exclusivity_weights`'
   - '`calculate_weighted_row_exclusivity_weights`'
   - '`rc_test`'
+  - '`calculate_events`'
 
 - title: Edge swapping
   desc: >
@@ -70,6 +71,7 @@ reference:
   - '`matrix_to_tibble`'
   - '`get_node_index`'
   - '`check_gr`'
+  - '`make_sample_gene_bipartite`'
 
 - title: Example data sets
   desc: Small data sets used for examples and testing
