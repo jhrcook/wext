@@ -11,8 +11,8 @@
 #'
 #' @examples
 #' set.seed(0)
-#' library(tidygraph)
-#' bgr <- make_sample_gene_biprartite(
+#' suppressPackageStartupMessages(library(tidygraph))
+#' bgr <- make_sample_gene_bipartite(
 #'     simple_dataset$sample_name,
 #'     simple_dataset$mutated_gene
 #' )

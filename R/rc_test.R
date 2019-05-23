@@ -55,7 +55,7 @@ rc_test <- function(dat, sample_col, mutgene_col,
     genes <- rlang::eval_tidy(mutgene_col, dat) %>% unlist() %>% unique()
 
     # make bipartite graph for the edge swapping
-    bipartite_gr <- make_sample_gene_biprartite(
+    bipartite_gr <- make_sample_gene_bipartite(
         rlang::eval_tidy(sample_col, dat),
         rlang::eval_tidy(mutgene_col, dat)
     )

@@ -12,7 +12,7 @@ many_mutex <- tribble(
 ) %>%
     tidyr::unnest(mut_genes) %>%
     mutate(mut_genes = unlist(mut_genes))
-many_mutex <- make_sample_gene_biprartite(
+many_mutex <- make_sample_gene_bipartite(
     many_mutex$samples,
     many_mutex$mut_genes
 )
@@ -26,7 +26,7 @@ many_comut <- tribble(
 ) %>%
     tidyr::unnest(mut_genes) %>%
     mutate(mut_genes = unlist(mut_genes))
-many_comut <- make_sample_gene_biprartite(
+many_comut <- make_sample_gene_bipartite(
     many_comut$samples,
     many_comut$mut_genes
 )
