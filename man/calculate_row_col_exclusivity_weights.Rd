@@ -5,7 +5,7 @@
 \title{Calculate the weights for the Row-Column-Exclusivity test}
 \usage{
 calculate_row_col_exclusivity_weights(dat, sample_col, mutgene_col,
-  Q = 100)
+  Q = 100, quiet = TRUE)
 }
 \arguments{
 \item{dat}{tibble with mutation information}
@@ -15,6 +15,9 @@ calculate_row_col_exclusivity_weights(dat, sample_col, mutgene_col,
 \item{mutgene_col}{column of genes that are mutated (quoted)}
 
 \item{Q}{number of permutation matrices to use (default is 100)}
+
+\item{quiet}{boolean for showing messages as run permutations (default is
+\code{TRUE})}
 }
 \description{
 The weight for each mutation in the Row-Column-Exclusivity test

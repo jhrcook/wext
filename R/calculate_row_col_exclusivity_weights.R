@@ -10,6 +10,8 @@
 #' @param sample_col column of samples names (quoted)
 #' @param mutgene_col column of genes that are mutated (quoted)
 #' @param Q number of permutation matrices to use (default is 100)
+#' @param quiet boolean for showing messages as run permutations (default is
+#'   \code{TRUE})
 #'
 #' @examples
 #' library(wext)
@@ -22,7 +24,7 @@
 #' @importFrom tidygraph %N>%
 #' @export calculate_row_col_exclusivity_weights
 calculate_row_col_exclusivity_weights <- function(dat, sample_col, mutgene_col,
-                                                  Q = 100) {
+                                                  Q = 100, quiet = TRUE) {
     # get original column names to use later
     original_colnames <- c(
         rlang::as_string(rlang::ensym(sample_col)),
@@ -51,9 +53,9 @@ calculate_row_col_exclusivity_weights <- function(dat, sample_col, mutgene_col,
         unique() %>%
         dplyr::mutate(edge_sum = 0)
     names(edge_tally) <- c("samples", "genes", "edge_sum")
-    cat("edge-swap number: ")
+    if (!quiet) cat("edge-swap number: ")
     for (i in 1:Q) {
-        cat(i, " ")
+        if (!quiet) cat(i, " ")
         # edge swaps of the bipartite graph
         perm_el <- bipartite_edge_swap(bipartite_gr, Q = Q) %>%
             to_edgelist(col_names = original_colnames)
@@ -63,7 +65,7 @@ calculate_row_col_exclusivity_weights <- function(dat, sample_col, mutgene_col,
             dplyr::summarise(edge_sum = sum(edge_sum)) %>%
             dplyr::ungroup()
     }
-    cat("\n")
+    if (!quiet) cat("\n")
 
     # calculate the probabilities by dividing by number of permutations
     edge_tally <- edge_tally %>%
