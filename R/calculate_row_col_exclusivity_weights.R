@@ -42,7 +42,7 @@ calculate_row_col_exclusivity_weights <- function(dat, sample_col, mutgene_col,
     if (n < 2) stop("Not enough unique samples to compare.")
 
     # make bipartite graph for the edge swapping
-    bipartite_gr <- make_sample_gene_biprartite(
+    bipartite_gr <- make_sample_gene_bipartite(
         rlang::eval_tidy(sample_col, dat),
         rlang::eval_tidy(mutgene_col, dat)
     )
@@ -76,13 +76,7 @@ calculate_row_col_exclusivity_weights <- function(dat, sample_col, mutgene_col,
 }
 
 
-# make the sample-gene bipartite graph
-make_sample_gene_biprartite <- function(s, g) {
-    bgr <- tibble::tibble(samples = s, genes = g) %>%
-        tidygraph::as_tbl_graph(directed = FALSE) %N>%
-        tidygraph::mutate(type = name %in% s)
-    return(bgr)
-}
+
 
 
 # turn a graph into an edge list with the column names `colnames`
