@@ -2,9 +2,10 @@
 % Please edit documentation in R/rc_test.R
 \name{rc_test}
 \alias{rc_test}
-\title{The Row-Column-Exclusivity test}
+\title{The Row-Column-Exclusivity or Co-mutation test}
 \usage{
-rc_test(dat, sample_col, mutgene_col, k = 2, seed_genes = c(),
+rc_test(dat, sample_col, mutgene_col, k = 2,
+  which_test = c("exclusivity", "comutation"), seed_genes = c(),
   N_perms = 10000, min_mutex_events = 2)
 }
 \arguments{
@@ -16,19 +17,23 @@ rc_test(dat, sample_col, mutgene_col, k = 2, seed_genes = c(),
 
 \item{k}{size of gene sets to consider (default is 2)}
 
-\item{seed_genes}{a vector of gene(s) that must be in the gene set to be tested (optional)}
+\item{which_test}{test for mutual exclusivity (\code{"exclusivity"}) or
+co-mutation (\code{"comutation"}); (default is \code{"comutation"})}
+
+\item{seed_genes}{a vector of gene(s) that must be in the gene set to be
+tested (optional)}
 
 \item{N_perms}{number of permutation matrices to use (default is 10,000)}
 
-\item{min_mutex_events}{minimum number of real mutual exclusive events required to
-consider the gene set (default is 2)}
+\item{min_mutex_events}{minimum number of real mutual exclusive events
+required to consider the gene set (default is 2)}
 }
 \description{
-The Row-Column-Exclusivity test cannot be calculated exactly for
-  most use cases because there is no closed formula and a very large number
-  of possible matrices to consider. Thus, the probabilities are calculated
-  empirically from a sufficiently large number of samples of possible
-  matrices.
+The Row-Column-Exclusivity or Co-mutation test cannot be
+  calculated exactly for most use cases because there is no closed formula
+  and a very large number of possible matrices to consider. Thus, the
+  probabilities are calculated empirically from a sufficiently large number
+  of samples of possible matrices.
 }
 \examples{
 library(wext)
