@@ -51,6 +51,8 @@ reference:
   contents:
   - '`calculate_row_exclusivity_weights`'
   - '`calculate_row_col_exclusivity_weights`'
+  - '`calculate_weighted_row_exclusivity_weights`'
+  - '`rc_test`'
 
 - title: Edge swapping
   desc: >

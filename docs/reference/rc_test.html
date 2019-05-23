@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Swap edges of a bipartite graph — bipartite_edge_swap • wext</title>
+<title>The Row-Column-Exclusivity test — rc_test • wext</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -37,10 +37,13 @@
 
 
 
-<meta property="og:title" content="Swap edges of a bipartite graph — bipartite_edge_swap" />
+<meta property="og:title" content="The Row-Column-Exclusivity test — rc_test" />
 
-<meta property="og:description" content="Run the edge swapping algorithm from Milo et al. (2003) on a
-  bipartite graph while maintaining the separation of the nodes in two groups." />
+<meta property="og:description" content="The Row-Column-Exclusivity test cannot be calculated exactly for
+  most use cases because there is no closed formula and a very large number
+  of possible matrices to consider. Thus, the probabilities are calculated
+  empirically from a sufficiently large number of samples of possible
+  matrices." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -139,97 +142,82 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Swap edges of a bipartite graph</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jhrcook/wext/blob/master/R/bipartite_edge_swap.R'><code>R/bipartite_edge_swap.R</code></a></small>
-    <div class="hidden name"><code>bipartite_edge_swap.Rd</code></div>
+    <h1>The Row-Column-Exclusivity test</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jhrcook/wext/blob/master/R/rc_test.R'><code>R/rc_test.R</code></a></small>
+    <div class="hidden name"><code>rc_test.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Run the edge swapping algorithm from Milo et al. (2003) on a
-  bipartite graph while maintaining the separation of the nodes in two groups.</p>
+    <p>The Row-Column-Exclusivity test cannot be calculated exactly for
+  most use cases because there is no closed formula and a very large number
+  of possible matrices to consider. Thus, the probabilities are calculated
+  empirically from a sufficiently large number of samples of possible
+  matrices.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>bipartite_edge_swap</span>(<span class='no'>gr</span>, <span class='no'>Q</span>, <span class='kw'>N</span> <span class='kw'>=</span> <span class='no'>Q</span> * <span class='kw pkg'>igraph</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/igraph/topics/gsize'>ecount</a></span>(<span class='no'>gr</span>))</pre>
+    <pre class="usage"><span class='fu'>rc_test</span>(<span class='no'>dat</span>, <span class='no'>sample_col</span>, <span class='no'>mutgene_col</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>seed_genes</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(),
+  <span class='kw'>N_perms</span> <span class='kw'>=</span> <span class='fl'>10000</span>, <span class='kw'>min_mutex_events</span> <span class='kw'>=</span> <span class='fl'>2</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>gr</th>
-      <td><p>a tidygraph object with a node attribute called <code>type</code> that
-holds boolean values (i.e. either <code>TRUE</code> or <code>FALSE</code>)</p></td>
+      <th>dat</th>
+      <td><p>tibble with mutation information</p></td>
     </tr>
     <tr>
-      <th>Q</th>
-      <td><p>number of permutations you are conducting</p></td>
+      <th>sample_col</th>
+      <td><p>column of samples names (quoted)</p></td>
     </tr>
     <tr>
-      <th>N</th>
-      <td><p>the number of edge swaps; default is \(Q \times |E(G)|\)</p></td>
+      <th>mutgene_col</th>
+      <td><p>column of genes that are mutated (quoted)</p></td>
+    </tr>
+    <tr>
+      <th>k</th>
+      <td><p>size of gene sets to consider (default is 2)</p></td>
+    </tr>
+    <tr>
+      <th>seed_genes</th>
+      <td><p>a vector of gene(s) that must be in the gene set to be tested (optional)</p></td>
+    </tr>
+    <tr>
+      <th>N_perms</th>
+      <td><p>number of permutation matrices to use (default is 10,000)</p></td>
+    </tr>
+    <tr>
+      <th>min_mutex_events</th>
+      <td><p>minimum number of real mutual exclusive events required to
+consider the gene set (default is 2)</p></td>
     </tr>
     </table>
     
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>the graph with \(N\) random edge swaps with constrained marginals</p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Random'>set.seed</a></span>(<span class='fl'>0</span>)
-<span class='no'>bgr</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>tidygraph</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/tidygraph/topics/create_graphs'>create_ring</a></span>(<span class='fl'>6</span>, <span class='kw'>directed</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-<span class='no'>bgr</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>tidygraph</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/tidygraph/topics/reexports'>mutate</a></span>(<span class='no'>bgr</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>), <span class='fl'>3</span>))
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/print'>print</a></span>(<span class='no'>bgr</span>)</div><div class='output co'>#&gt; <span style='color: #555555;'># A tbl_graph: 6 nodes and 6 edges
-#&gt; #
-#&gt; # A bipartite simple graph with 1 component
-#&gt; #
-#&gt; # Node Data: 6 x 1 (active)</span><span>
-#&gt;   type 
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span> TRUE 
-#&gt; </span><span style='color: #555555;'>2</span><span> FALSE
-#&gt; </span><span style='color: #555555;'>3</span><span> TRUE 
-#&gt; </span><span style='color: #555555;'>4</span><span> FALSE
-#&gt; </span><span style='color: #555555;'>5</span><span> TRUE 
-#&gt; </span><span style='color: #555555;'>6</span><span> FALSE
-#&gt; </span><span style='color: #555555;'>#
-#&gt; # Edge Data: 6 x 2</span><span>
-#&gt;    from    to
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span>     1     2
-#&gt; </span><span style='color: #555555;'>2</span><span>     2     3
-#&gt; </span><span style='color: #555555;'>3</span><span>     3     4
-#&gt; </span><span style='color: #555555;'># … with 3 more rows</span><span></div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/print'>print</a></span>(<span class='fu'>bipartite_edge_swap</span>(<span class='no'>bgr</span>, <span class='fl'>10</span>))</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tbl_graph: 6 nodes and 6 edges
-#&gt; #
-#&gt; # A bipartite simple graph with 1 component
-#&gt; #
-#&gt; # Edge Data: 6 x 2 (active)</span><span>
-#&gt;    from    to
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span>     1     6
-#&gt; </span><span style='color: #555555;'>2</span><span>     4     5
-#&gt; </span><span style='color: #555555;'>3</span><span>     1     2
-#&gt; </span><span style='color: #555555;'>4</span><span>     3     4
-#&gt; </span><span style='color: #555555;'>5</span><span>     5     6
-#&gt; </span><span style='color: #555555;'>6</span><span>     2     3
-#&gt; </span><span style='color: #555555;'>#
-#&gt; # Node Data: 6 x 2</span><span>
-#&gt;   type   .idx
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span> TRUE      1
-#&gt; </span><span style='color: #555555;'>2</span><span> FALSE     2
-#&gt; </span><span style='color: #555555;'>3</span><span> TRUE      3
-#&gt; </span><span style='color: #555555;'># … with 3 more rows</span><span></div><div class='input'>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>wext</span>)
+<span class='fu'>rc_test</span>(<span class='no'>simple_dataset</span>, <span class='no'>sample_name</span>, <span class='no'>mutated_gene</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>N_perms</span> <span class='kw'>=</span> <span class='fl'>5</span>)</div><div class='output co'>#&gt; permutation: 1  2  3  4  5  </div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 24 x 4</span><span>
+#&gt;    gene_sets t_BM_ge  t_AM p_val
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;list&gt;</span><span>      </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       3     7   0.6
+#&gt; </span><span style='color: #555555;'> 2</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       5     7   1  
+#&gt; </span><span style='color: #555555;'> 3</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       5     4   1  
+#&gt; </span><span style='color: #555555;'> 4</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       5     5   1  
+#&gt; </span><span style='color: #555555;'> 5</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       0    12   0  
+#&gt; </span><span style='color: #555555;'> 6</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       1     8   0.2
+#&gt; </span><span style='color: #555555;'> 7</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       2     7   0.4
+#&gt; </span><span style='color: #555555;'> 8</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       3     9   0.6
+#&gt; </span><span style='color: #555555;'> 9</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       5     8   1  
+#&gt; </span><span style='color: #555555;'>10</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       1     9   0.2
+#&gt; </span><span style='color: #555555;'># … with 14 more rows</span><span></div><div class='input'>
 </div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#value">Value</a></li>
-      
+            
       <li><a href="#examples">Examples</a></li>
     </ul>
 
