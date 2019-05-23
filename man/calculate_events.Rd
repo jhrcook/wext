@@ -25,7 +25,6 @@ Calculate the number of mutually exclusive or co-mutation events
 }
 \examples{
 set.seed(0)
-suppressPackageStartupMessages(library(dplyr))
 library(tidygraph)
 bgr <- make_sample_gene_biprartite(
     simple_dataset$sample_name,
