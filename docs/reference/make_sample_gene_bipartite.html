@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • wext</title>
+<title>Make the sample-gene bipartite graph — make_sample_gene_bipartite • wext</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -37,7 +37,10 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Make the sample-gene bipartite graph — make_sample_gene_bipartite" />
+
+<meta property="og:description" content="Create a bipartite graph connecting cancer samples and their
+  mutations." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -57,7 +60,7 @@
   </head>
 
   <body>
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -134,147 +137,80 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Make the sample-gene bipartite graph</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jhrcook/wext/blob/master/R/make_sample_gene_bipartite.R'><code>R/make_sample_gene_bipartite.R</code></a></small>
+    <div class="hidden name"><code>make_sample_gene_bipartite.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    
+    <p>Create a bipartite graph connecting cancer samples and their
+  mutations.</p>
+    
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
-
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-statistical-functions" class="hasAnchor"><a href="#section-statistical-functions" class="anchor"></a>Statistical functions</h2>
-          <p class="section-desc"><p>Functions that underpin the statistics for the Weighted Exclusivity Test (WExT)</p></p>
-        </th>
-      </tr>
-      <tr>
-        
-        <td>
-          <p><code><a href="calculate_row_exclusivity_weights.html">calculate_row_exclusivity_weights()</a></code> </p>
-        </td>
-        <td><p>Calculate the weights for the Row-Exclusivity test</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="calculate_row_col_exclusivity_weights.html">calculate_row_col_exclusivity_weights()</a></code> </p>
-        </td>
-        <td><p>Calculate the weights for the Row-Column-Exclusivity test</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="calculate_weighted_row_exclusivity_weights.html">calculate_weighted_row_exclusivity_weights()</a></code> </p>
-        </td>
-        <td><p>Calculate the weights for the Weighted-Row-Exclusivity test</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="rc_test.html">rc_test()</a></code> </p>
-        </td>
-        <td><p>The Row-Column-Exclusivity or Co-mutation test</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="calculate_events.html">calc_mutex_events()</a></code> <code><a href="calculate_events.html">calc_comut_events()</a></code> </p>
-        </td>
-        <td><p>Calculate the number of mutually exclusive or co-mutation events</p></td>
-      </tr>
-    </tbody><tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-edge-swapping" class="hasAnchor"><a href="#section-edge-swapping" class="anchor"></a>Edge swapping</h2>
-          <p class="section-desc"><p>Functions used for the edge swap algorithm to sample possible matrices in the Row-Column-Exclusivity test</p></p>
-        </th>
-      </tr>
-      <tr>
-        
-        <td>
-          <p><code><a href="bipartite_edge_swap.html">bipartite_edge_swap()</a></code> </p>
-        </td>
-        <td><p>Swap edges of a bipartite graph</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="swap_an_edge.html">swap_an_edge()</a></code> </p>
-        </td>
-        <td><p>Swap a single edge</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="random_edge_nodes.html">random_edge_nodes()</a></code> </p>
-        </td>
-        <td><p>Return the nodes for a randomly selected edge</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="remove_edge.html">remove_edge()</a></code> </p>
-        </td>
-        <td><p>Remove an edge</p></td>
-      </tr>
-    </tbody><tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-utilities" class="hasAnchor"><a href="#section-utilities" class="anchor"></a>Utilities</h2>
-          <p class="section-desc"><p>utilitiy functions used throughout</p></p>
-        </th>
-      </tr>
-      <tr>
-        
-        <td>
-          <p><code><a href="matrix_to_tibble.html">matrix_to_tibble()</a></code> </p>
-        </td>
-        <td><p>Convert between a mutation matrix and tibble</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_node_index.html">get_node_index()</a></code> </p>
-        </td>
-        <td><p>Get the indices of nodes after evaluating 'expr'</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="check_gr.html">check_gr()</a></code> </p>
-        </td>
-        <td><p>Check that a node attribute exists for a graph</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="make_sample_gene_bipartite.html">make_sample_gene_bipartite()</a></code> </p>
-        </td>
-        <td><p>Make the sample-gene bipartite graph</p></td>
-      </tr>
-    </tbody><tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-example-data-sets" class="hasAnchor"><a href="#section-example-data-sets" class="anchor"></a>Example data sets</h2>
-          <p class="section-desc"><p>Small data sets used for examples and testing</p></p>
-        </th>
-      </tr>
-      <tr>
-        
-        <td>
-          <p><code><a href="simple_dataset.html">simple_dataset</a></code> </p>
-        </td>
-        <td><p>Simple example data for WExT</p></td>
-      </tr>
-    </tbody>
+    <pre class="usage"><span class='fu'>make_sample_gene_bipartite</span>(<span class='no'>s</span>, <span class='no'>g</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>s</th>
+      <td><p>vector of samples</p></td>
+    </tr>
+    <tr>
+      <th>g</th>
+      <td><p>vector of mutated genes</p></td>
+    </tr>
     </table>
-  </div>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
+    <p>a tidygraph graph object with node attributes <code>name</code> and
+  <code>type</code>. Attribute <code>type</code> holds boolean values to indicate which
+  of the two groups the node belongs to - <code>TRUE</code> is for samples.</p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'>make_sample_gene_bipartite</span>(
+    <span class='no'>simple_dataset</span>$<span class='no'>sample_name</span>,
+    <span class='no'>simple_dataset</span>$<span class='no'>mutated_gene</span>
+)</div><div class='output co'>#&gt; <span style='color: #555555;'># A tbl_graph: 22 nodes and 36 edges
+#&gt; #
+#&gt; # A bipartite simple graph with 1 component
+#&gt; #
+#&gt; # Node Data: 22 x 2 (active)</span><span>
+#&gt;   name  type 
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>
+#&gt; </span><span style='color: #555555;'>1</span><span> 1     TRUE 
+#&gt; </span><span style='color: #555555;'>2</span><span> 2     TRUE 
+#&gt; </span><span style='color: #555555;'>3</span><span> 3     TRUE 
+#&gt; </span><span style='color: #555555;'>4</span><span> 4     TRUE 
+#&gt; </span><span style='color: #555555;'>5</span><span> 5     TRUE 
+#&gt; </span><span style='color: #555555;'>6</span><span> 6     TRUE 
+#&gt; </span><span style='color: #555555;'># … with 16 more rows</span><span>
+#&gt; </span><span style='color: #555555;'>#
+#&gt; # Edge Data: 36 x 2</span><span>
+#&gt;    from    to
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>
+#&gt; </span><span style='color: #555555;'>1</span><span>     1    15
+#&gt; </span><span style='color: #555555;'>2</span><span>     1    16
+#&gt; </span><span style='color: #555555;'>3</span><span>     1    17
+#&gt; </span><span style='color: #555555;'># … with 33 more rows</span><span></div><div class='input'>
+</div></span></pre>
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-statistical-functions">Statistical functions</a></li>
-      <li><a href="#section-edge-swapping">Edge swapping</a></li>
-      <li><a href="#section-utilities">Utilities</a></li>
-      <li><a href="#section-example-data-sets">Example data sets</a></li>
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#value">Value</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
     </ul>
+
   </div>
 </div>
 
