@@ -15,7 +15,7 @@
 #' @param seed_genes a vector of gene(s) that must be in the gene set to be
 #'   tested (optional)
 #' @param N_perms number of permutation matrices to use (default is 10,000)
-#' @param min_mutex_events minimum number of real mutual exclusive events
+#' @param min_mut_events minimum number of real mutual exclusive events
 #'   required to consider the gene set (default is 2)
 #'
 #' @examples
@@ -31,7 +31,7 @@ rc_test <- function(dat, sample_col, mutgene_col,
                     which_test = c("exclusivity", "comutation"),
                     seed_genes = c(),
                     N_perms = 1e4,
-                    min_mutex_events = 2) {
+                    min_mut_events = 2) {
 
     # choose only one test
     which_test <- stringr::str_to_lower(which_test[[1]])
@@ -64,7 +64,7 @@ rc_test <- function(dat, sample_col, mutgene_col,
         dplyr::mutate(
             t_AM = purrr::map_dbl(gene_sets, test_func, bgr = bipartite_gr)
         ) %>%
-        dplyr::filter(t_AM > !!min_mutex_events)
+        dplyr::filter(t_AM > !!min_mut_events)
     if (nrow(results_tib) < 1) {
         stop("No gene sets to test that pass the minumum number of real mutaully exclusvie events")
     }
@@ -80,17 +80,6 @@ rc_test <- function(dat, sample_col, mutgene_col,
         dplyr::mutate(p_val = t_BM_ge / N_perms)
     return(results_tib)
 }
-
-
-
-# make the sample-gene bipartite graph
-make_sample_gene_biprartite <- function(s, g) {
-    bgr <- tibble::tibble(samples = s, genes = g) %>%
-        tidygraph::as_tbl_graph(directed = FALSE) %N>%
-        tidygraph::mutate(type = name %in% s)
-    return(bgr)
-}
-
 
 
 # start the results tracking tibble with the gene sets and t_BM_gr = 0

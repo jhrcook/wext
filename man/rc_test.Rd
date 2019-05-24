@@ -6,7 +6,7 @@
 \usage{
 rc_test(dat, sample_col, mutgene_col, k = 2,
   which_test = c("exclusivity", "comutation"), seed_genes = c(),
-  N_perms = 10000, min_mutex_events = 2)
+  N_perms = 10000, min_mut_events = 2)
 }
 \arguments{
 \item{dat}{tibble with mutation information}
@@ -25,7 +25,7 @@ tested (optional)}
 
 \item{N_perms}{number of permutation matrices to use (default is 10,000)}
 
-\item{min_mutex_events}{minimum number of real mutual exclusive events
+\item{min_mut_events}{minimum number of real mutual exclusive events
 required to consider the gene set (default is 2)}
 }
 \description{
