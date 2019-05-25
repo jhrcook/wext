@@ -2,9 +2,12 @@
 % Please edit documentation in R/random_edge_nodes.R
 \name{random_edge_nodes}
 \alias{random_edge_nodes}
+\alias{random_edge_nodes2}
 \title{Return the nodes for a randomly selected edge}
 \usage{
 random_edge_nodes(gr, ignore_nodes_connected_to = c())
+
+random_edge_nodes2(gr, max_try = 100)
 }
 \arguments{
 \item{gr}{tidygraph graph object; must have the node attribute \code{.idx}
