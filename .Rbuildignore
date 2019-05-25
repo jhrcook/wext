@@ -12,3 +12,5 @@
 ^pkgdown$
 ^raphael_examples$
 ^data-raw$
+^vignettes/simpleexample-hardway_cache$
+^vignettes/comparing_swappers_cache$

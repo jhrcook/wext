@@ -1,0 +1,118 @@
+---
+title: "Comparing Edge Swap Algorithms"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Comparing Edge Swap Algorithms}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+set.seed(0)
+```
+
+```{r setup, message=FALSE, warning=FALSE}
+library(wext)
+library(tidygraph)
+library(tibble)
+library(dplyr)
+library(bench)
+```
+
+This is just a quick comparison of the edge swapping algorithms used in this package.
+
+The first step is to create a bipartite graph for the test.
+
+```{r test_data}
+v1 <- sample(seq(2, 1e3, 2), 1e4, replace = TRUE)
+v2 <- sample(seq(1, 1e3+1, 2), 1e4, replace = TRUE)
+bgr <- tibble(node1 = as.character(v1),
+              node2 = as.character(v2)) %>% 
+  unique() %>%
+  as_tbl_graph(directed = FALSE) %N>% 
+  mutate(type = name %in% unique(as.character(v1)))
+bgr
+```
+
+This graph has `r igraph::vcount(bgr)` nodes and `r igraph::ecount(bgr)` edges.
+
+The first bipartite edge swapping method is `bipartite_edge_swap()` which relies on the 'igraph' and 'tidygraph' APIs for handling all of the data and logically manipulates a tidygraph graph object. This was the easiest implementation, though I expected that the manipulation of high-level data types would be a time-suck. This first test runs the edge swapping algorithm to swap 100 edges 20 times.
+
+```{r bench_method1, cache=TRUE}
+bench::mark(bipartite_edge_swap(bgr, N = 100),
+            iterations = 20, filter_gc = FALSE) %>% 
+  dplyr::select(-expression)
+```
+
+The second edge swapping algorithm implementation is in `bipartite_edge_swap2()`. This method took more work on my end, though its use of vector manipulations rapidly increased the speed of the algorithm. 
+
+```{r bench_method2, cache=TRUE}
+bench::mark(bipartite_edge_swap2(bgr, N = 100),
+            iterations = 20, filter_gc = FALSE) %>% 
+  dplyr::select(-expression)
+```
+
+This first test ran 100 edge swaps on the graph `bgr`. The first method took 5.82 seconds on average (a median of 10 iterations) while the second took about 820 ms. Thus, the second method is much faster. Another striking difference is the amount of memory each method was allocated - the first method took about 2 GB of RAM! It also called the garbage collector and order of magnitude more frequently.
+
+To specifically test everything *expect* for the edge swapping, I re-ran the same test but only conducting 1 edge swap in each iteration.
+
+```{r bench_methodsnull, cache=TRUE}
+# first method
+bench::mark(bipartite_edge_swap(bgr, N = 1),
+            iterations = 50, filter_gc = FALSE) %>% 
+  dplyr::select(-expression)
+# second method
+bench::mark(bipartite_edge_swap2(bgr, N = 1),
+            iterations = 50, filter_gc = FALSE) %>% 
+  dplyr::select(-expression)
+```
+
+Interestingly, the first method (based around the 'igraph' and 'tidygraph' APIs) is substantially faster to do all of the other steps in the edge swapping process. This is likely because the second method must first transform the bipartite graph `bgr` into the list of vectors while the first method works directly on the tidygraph object (it only does this once per call to `bipartite_edge_swap2`). Still, it may be worth poking around on the setup steps in the second method to improve its efficiency.
+
+To further test this hypothesis, the difference should shrink if I use a smaller bipartite graph.
+
+```{r test_data2}
+v1 <- sample(seq(2, 50, 2), 100, replace = TRUE)
+v2 <- sample(seq(1, 51, 2), 100, replace = TRUE)
+bgr <- tibble(node1 = as.character(v1),
+              node2 = as.character(v2)) %>% 
+  unique() %>%
+  as_tbl_graph(directed = FALSE) %N>% 
+  mutate(type = name %in% unique(as.character(v1)))
+bgr
+```
+
+This smaller graph has `r igraph::vcount(bgr)` nodes and `r igraph::ecount(bgr)` edges. I now re-run the test with only 1 edge swap.
+
+```{r bench_methodsnull2, cache=TRUE}
+# first method
+bench::mark(bipartite_edge_swap(bgr, N = 1),
+            iterations = 50, filter_gc = FALSE) %>% 
+  dplyr::select(-expression)
+# second method
+bench::mark(bipartite_edge_swap2(bgr, N = 1),
+            iterations = 50, filter_gc = FALSE) %>% 
+  dplyr::select(-expression)
+```
+
+Now, the second method is actually faster because it was easier to change to the vector manipulation than lug around the relatively "heavy" tidygraph object (see the `mem_alloc` columns). You can see that the garbage collection intervened a few times (in the `gc/sec` and `n_gc` column).
+
+The next step will be to implement `bipartite_edge_swap2` in C++ using the 'Rcpp' package. This should introduce a few speed boosts, too.
+
+---
+
+For comparison, here is the same test using the heavily optimized edge swapping algorithm in 'igraph'. While fast, this test does not preserve the bipartite nature of the graph, thus I cannot use it for 'WExT'.
+
+```{r bench_igraph}
+bench::mark(
+  igraph::rewire(bgr, igraph::keeping_degseq(loops = FALSE, niter = 100)),
+  iterations = 10, filter_gc = FALSE
+) %>% 
+  dplyr::select(-expression)
+```
+
+I think that one of the reasons for this method's speed is that it is implemented in C++.
