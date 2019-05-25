@@ -22,6 +22,7 @@
 #'
 #' @importFrom magrittr %>%
 #' @importFrom tidygraph %N>% %E>%
+#' @name random_edge_nodes
 #' @export random_edge_nodes
 random_edge_nodes <- function(gr, ignore_nodes_connected_to = c()) {
     # check that the node attribute ".idx" exists
@@ -45,3 +46,43 @@ random_edge_nodes <- function(gr, ignore_nodes_connected_to = c()) {
 }
 
 utils::globalVariables(c(".idx"), add = TRUE)
+
+#' @rdname random_edge_nodes
+#' @export random_edge_nodes2
+random_edge_nodes2 <- function(gr, max_try = 100) {
+    el <- to_bipartite_edgelist(gr)
+    v1 <- unlist(el[1])
+    v2 <- unlist(el[2])
+
+    idx <- c()
+
+    check <- TRUE
+    try_counter <- 0
+    while(check) {
+        if (try_counter > max_try) stop("Unable to swap edges")
+        try_counter <- try_counter + 1
+
+        rand_e1 <- sample(c(1:length(v1)), 1)
+        rand_n11 <- v1[[rand_e1]]
+        rand_n12 <- v2[[rand_e1]]
+
+        adj_n12 <- unique(unlist(v1[v2 == rand_n12]))
+        adj_n11 <- unique(unlist(v2[v1 == rand_n11]))
+
+        idx <- (v1 %in% c(rand_n11, adj_n12)) | (v2 %in% c(rand_n12, adj_n11))
+
+        check <- length(idx) == sum(idx) # do not want these to equal each other
+    }
+
+    v1_cut <- v1[!idx]
+    v2_cut <- v2[!idx]
+
+    rand_e2 <- sample(c(1:length(v1_cut)), 1)
+    rand_n21 <- v1_cut[[rand_e2]]
+    rand_n22 <- v2_cut[[rand_e2]]
+
+    return(list(
+        "e1" = c(rand_n11, rand_n12),
+        "e2" = c(rand_n21, rand_n22)
+    ))
+}
