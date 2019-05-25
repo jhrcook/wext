@@ -57,7 +57,7 @@ calculate_row_col_exclusivity_weights <- function(dat, sample_col, mutgene_col,
     for (i in 1:Q) {
         if (!quiet) cat(i, " ")
         # edge swaps of the bipartite graph
-        perm_el <- bipartite_edge_swap(bipartite_gr, Q = Q) %>%
+        perm_el <- bipartite_edge_swap2(bipartite_gr, Q = Q) %>%
             to_edgelist(col_names = original_colnames)
         # add the permutation to the running total in `tib`
         edge_tally <- dplyr::bind_rows(edge_tally, perm_el) %>%

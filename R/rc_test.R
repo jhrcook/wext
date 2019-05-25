@@ -70,7 +70,7 @@ rc_test <- function(dat, sample_col, mutgene_col,
     }
 
     for (i in 1:N_perms) {
-        perm_bgr <- bipartite_edge_swap(bipartite_gr, Q = 100)
+        perm_bgr <- bipartite_edge_swap2(bipartite_gr, Q = 20)
         results_tib <- purrr::pmap_df(
             results_tib, update_results_tib, f = test_func, bgr = perm_bgr
         )
