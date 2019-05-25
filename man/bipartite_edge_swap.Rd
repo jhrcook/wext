@@ -4,13 +4,13 @@
 \alias{bipartite_edge_swap}
 \title{Swap edges of a bipartite graph}
 \usage{
-bipartite_edge_swap(gr, Q, N = Q * igraph::ecount(gr))
+bipartite_edge_swap(gr, Q = 20, N = Q * igraph::ecount(gr))
 }
 \arguments{
 \item{gr}{a tidygraph object with a node attribute called \code{type} that
 holds boolean values (i.e. either \code{TRUE} or \code{FALSE})}
 
-\item{Q}{number of permutations you are conducting}
+\item{Q}{number of permutations you are conducting; default is 20}
 
 \item{N}{the number of edge swaps; default is \eqn{Q \times |E(G)|}}
 }
