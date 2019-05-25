@@ -5,7 +5,7 @@
 #'
 #' @param gr a tidygraph object with a node attribute called \code{type} that
 #'   holds boolean values (i.e. either \code{TRUE} or \code{FALSE})
-#' @param Q number of permutations you are conducting
+#' @param Q number of permutations you are conducting; default is 20
 #' @param N the number of edge swaps; default is \eqn{Q \times |E(G)|}
 #'
 #' @return the graph with \eqn{N} random edge swaps with constrained marginals
@@ -19,7 +19,7 @@
 #' @importFrom magrittr %>%
 #' @importFrom tidygraph %E>% %N>%
 #' @export bipartite_edge_swap
-bipartite_edge_swap <- function(gr, Q, N = Q * igraph::ecount(gr)) {
+bipartite_edge_swap <- function(gr, Q = 20, N = Q * igraph::ecount(gr)) {
     # check for required node attribute "type"
     check_gr(gr, "type")
 
