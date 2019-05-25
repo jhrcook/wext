@@ -1,15 +1,18 @@
 al
 AppVeyor
 attr
+Bioinformatics
 Ciriello
 Codecov
 devtools
 devtools’
+el
 equalities
 et
 expr
 frac
 ge
+igraph
 ij
 ijl
 il
@@ -20,6 +23,8 @@ notin
 oncogenic
 pakrat
 pkgdown
+pre
+Rcpp
 repo
 RStudio
 subseteq

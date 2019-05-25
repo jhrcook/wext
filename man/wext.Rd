@@ -4,7 +4,7 @@
 \alias{wext}
 \title{wext: The Weight-Exclusivity Test}
 \description{
-The wext package performs the exlcusivity tests described by Leiserson et al.
+The wext package performs the exclusivity tests described by Leiserson et al.
 in "A Weighted Exact Test for Mutually Exclusive Mutations in Cancer"
 (Bioinformatics, 2016).
 }
