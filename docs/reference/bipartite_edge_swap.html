@@ -99,6 +99,9 @@
       <a href="../articles/compare_rc_to_fisher.html">Comparing the RC-test to the Fisher's exact test</a>
     </li>
     <li>
+      <a href="../articles/comparing_swappers.html">Comparing Edge Swap Algorithms</a>
+    </li>
+    <li>
       <a href="../articles/computing_probabilities.html">Computing the Weighted Exclusivity Test (WExT)</a>
     </li>
     <li>
@@ -151,7 +154,7 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>bipartite_edge_swap</span>(<span class='no'>gr</span>, <span class='no'>Q</span>, <span class='kw'>N</span> <span class='kw'>=</span> <span class='no'>Q</span> * <span class='kw pkg'>igraph</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/igraph/topics/gsize'>ecount</a></span>(<span class='no'>gr</span>))</pre>
+    <pre class="usage"><span class='fu'>bipartite_edge_swap</span>(<span class='no'>gr</span>, <span class='kw'>Q</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>N</span> <span class='kw'>=</span> <span class='no'>Q</span> * <span class='kw pkg'>igraph</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/igraph/topics/gsize'>ecount</a></span>(<span class='no'>gr</span>))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -163,7 +166,7 @@ holds boolean values (i.e. either <code>TRUE</code> or <code>FALSE</code>)</p></
     </tr>
     <tr>
       <th>Q</th>
-      <td><p>number of permutations you are conducting</p></td>
+      <td><p>number of permutations you are conducting; default is 20</p></td>
     </tr>
     <tr>
       <th>N</th>

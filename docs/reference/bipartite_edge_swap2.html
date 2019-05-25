@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Swap a single edge — swap_an_edge • wext</title>
+<title>Swap edges of a bipartite graph (method 2) — bipartite_edge_swap2 • wext</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -37,9 +37,10 @@
 
 
 
-<meta property="og:title" content="Swap a single edge — swap_an_edge" />
+<meta property="og:title" content="Swap edges of a bipartite graph (method 2) — bipartite_edge_swap2" />
 
-<meta property="og:description" content="Swap an edge of a bipartite graph while maintaining the partition" />
+<meta property="og:description" content="Run the edge swapping algorithm from Milo et al. (2003) on a
+  bipartite graph while maintaining the separation of the nodes in two groups." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -141,51 +142,92 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Swap a single edge</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jhrcook/wext/blob/master/R/bipartite_edge_swap.R'><code>R/bipartite_edge_swap.R</code></a></small>
-    <div class="hidden name"><code>swap_an_edge.Rd</code></div>
+    <h1>Swap edges of a bipartite graph (method 2)</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jhrcook/wext/blob/master/R/bipartite_edge_swap2.R'><code>R/bipartite_edge_swap2.R</code></a></small>
+    <div class="hidden name"><code>bipartite_edge_swap2.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Swap an edge of a bipartite graph while maintaining the partition</p>
+    <p>Run the edge swapping algorithm from Milo et al. (2003) on a
+  bipartite graph while maintaining the separation of the nodes in two groups.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>swap_an_edge</span>(<span class='no'>gr</span>, <span class='no'>n1</span>, <span class='no'>n2</span>, <span class='kw'>max_try</span> <span class='kw'>=</span> <span class='fl'>100</span>)</pre>
+    <pre class="usage"><span class='fu'>bipartite_edge_swap2</span>(<span class='no'>gr</span>, <span class='kw'>Q</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>N</span> <span class='kw'>=</span> <span class='kw pkg'>igraph</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/igraph/topics/gsize'>ecount</a></span>(<span class='no'>gr</span>) * <span class='no'>Q</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>gr</th>
-      <td><p>tidygraph graph object</p></td>
+      <td><p>a tidygraph object with a node attribute called <code>type</code> that
+holds boolean values (i.e. either <code>TRUE</code> or <code>FALSE</code>)</p></td>
     </tr>
     <tr>
-      <th>n1, n2</th>
-      <td><p>vectors that indicate the grouping of the nodes (by index)</p></td>
+      <th>Q</th>
+      <td><p>number of permutations you are conducting; default is 20</p></td>
     </tr>
     <tr>
-      <th>max_try</th>
-      <td><p>Number of times to try to find two edges to swap. If no
-edges are found, the program will crash with the message "Unable to swap
-edges"</p></td>
+      <th>N</th>
+      <td><p>the number of edge swaps; default is \(Q \times |E(G)|\)</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a tidygraph graph object with two edges swapped</p>
+    <p>the graph with \(N\) random edge swaps with constrained marginals</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Random'>set.seed</a></span>(<span class='fl'>0</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>tidygraph</span>)
-<span class='no'>gr</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>tidygraph</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/tidygraph/topics/create_graphs'>create_ring</a></span>(<span class='fl'>6</span>, <span class='kw'>directed</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>) <span class='kw'>%&gt;%</span>
-    <span class='fu'><a href='https://www.rdocumentation.org/packages/tidygraph/topics/reexports'>mutate</a></span>(<span class='kw'>.idx</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fu'><a href='https://www.rdocumentation.org/packages/tidygraph/topics/reexports'>n</a></span>(), <span class='kw'>name</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"A"</span>, <span class='st'>"b"</span>, <span class='st'>"C"</span>, <span class='st'>"d"</span>, <span class='st'>"E"</span>, <span class='st'>"f"</span>))
-<span class='no'>swaped_gr</span> <span class='kw'>&lt;-</span> <span class='fu'>swap_an_edge</span>(<span class='no'>gr</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>3</span>,<span class='fl'>5</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>4</span>,<span class='fl'>6</span>))
-<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/tidygraph/topics/bind_graphs'>bind_graphs</a></span>(<span class='no'>gr</span>, <span class='no'>swaped_gr</span>))</div><div class='img'><img src='swap_an_edge-1.png' alt='' width='700' height='433' /></div><div class='input'>
-</div></pre>
+<span class='no'>bgr</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>tidygraph</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/tidygraph/topics/create_graphs'>create_ring</a></span>(<span class='fl'>6</span>, <span class='kw'>directed</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='no'>bgr</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>tidygraph</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/tidygraph/topics/reexports'>mutate</a></span>(
+    <span class='no'>bgr</span>,
+    <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>), <span class='fl'>3</span>),
+    <span class='kw'>name</span> <span class='kw'>=</span> <span class='no'>LETTERS</span>[<span class='fl'>1</span>:<span class='fl'>6</span>])
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/print'>print</a></span>(<span class='no'>bgr</span>)</div><div class='output co'>#&gt; <span style='color: #555555;'># A tbl_graph: 6 nodes and 6 edges
+#&gt; #
+#&gt; # A bipartite simple graph with 1 component
+#&gt; #
+#&gt; # Node Data: 6 x 2 (active)</span><span>
+#&gt;   type  name 
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>
+#&gt; </span><span style='color: #555555;'>1</span><span> TRUE  A    
+#&gt; </span><span style='color: #555555;'>2</span><span> FALSE B    
+#&gt; </span><span style='color: #555555;'>3</span><span> TRUE  C    
+#&gt; </span><span style='color: #555555;'>4</span><span> FALSE D    
+#&gt; </span><span style='color: #555555;'>5</span><span> TRUE  E    
+#&gt; </span><span style='color: #555555;'>6</span><span> FALSE F    
+#&gt; </span><span style='color: #555555;'>#
+#&gt; # Edge Data: 6 x 2</span><span>
+#&gt;    from    to
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>
+#&gt; </span><span style='color: #555555;'>1</span><span>     1     2
+#&gt; </span><span style='color: #555555;'>2</span><span>     2     3
+#&gt; </span><span style='color: #555555;'>3</span><span>     3     4
+#&gt; </span><span style='color: #555555;'># … with 3 more rows</span><span></div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/print'>print</a></span>(<span class='fu'>bipartite_edge_swap2</span>(<span class='no'>bgr</span>, <span class='fl'>10</span>))</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tbl_graph: 6 nodes and 6 edges
+#&gt; #
+#&gt; # A bipartite simple graph with 1 component
+#&gt; #
+#&gt; # Node Data: 6 x 2 (active)</span><span>
+#&gt;   name  type 
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>
+#&gt; </span><span style='color: #555555;'>1</span><span> A     TRUE 
+#&gt; </span><span style='color: #555555;'>2</span><span> C     TRUE 
+#&gt; </span><span style='color: #555555;'>3</span><span> E     TRUE 
+#&gt; </span><span style='color: #555555;'>4</span><span> B     FALSE
+#&gt; </span><span style='color: #555555;'>5</span><span> D     FALSE
+#&gt; </span><span style='color: #555555;'>6</span><span> F     FALSE
+#&gt; </span><span style='color: #555555;'>#
+#&gt; # Edge Data: 6 x 2</span><span>
+#&gt;    from    to
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>
+#&gt; </span><span style='color: #555555;'>1</span><span>     1     4
+#&gt; </span><span style='color: #555555;'>2</span><span>     2     5
+#&gt; </span><span style='color: #555555;'>3</span><span>     2     6
+#&gt; </span><span style='color: #555555;'># … with 3 more rows</span><span></div><div class='input'>
+</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

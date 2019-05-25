@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Calculate the weights for the Row-Column-Exclusivity test — calculate_row_col_exclusivity_weights • wext</title>
+<title>Swap a single edge (method 2) — swap_an_edge2 • wext</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -37,13 +37,10 @@
 
 
 
-<meta property="og:title" content="Calculate the weights for the Row-Column-Exclusivity test — calculate_row_col_exclusivity_weights" />
+<meta property="og:title" content="Swap a single edge (method 2) — swap_an_edge2" />
 
-<meta property="og:description" content="The weight for each mutation in the Row-Column-Exclusivity test
-  cannot be calculated exactly for most use cases because there is no closed
-  formula and a very large number of possible matrices to consider. Thus, the
-  weights are calculated empirically from a sufficiently large number of
-  samples of possible matrices." />
+<meta property="og:description" content="Swap an edge of a bipartite graph while maintaining the
+  partition" />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -145,77 +142,63 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Calculate the weights for the Row-Column-Exclusivity test</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jhrcook/wext/blob/master/R/calculate_row_col_exclusivity_weights.R'><code>R/calculate_row_col_exclusivity_weights.R</code></a></small>
-    <div class="hidden name"><code>calculate_row_col_exclusivity_weights.Rd</code></div>
+    <h1>Swap a single edge (method 2)</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jhrcook/wext/blob/master/R/bipartite_edge_swap2.R'><code>R/bipartite_edge_swap2.R</code></a></small>
+    <div class="hidden name"><code>swap_an_edge2.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>The weight for each mutation in the Row-Column-Exclusivity test
-  cannot be calculated exactly for most use cases because there is no closed
-  formula and a very large number of possible matrices to consider. Thus, the
-  weights are calculated empirically from a sufficiently large number of
-  samples of possible matrices.</p>
+    <p>Swap an edge of a bipartite graph while maintaining the
+  partition</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>calculate_row_col_exclusivity_weights</span>(<span class='no'>dat</span>, <span class='no'>sample_col</span>, <span class='no'>mutgene_col</span>,
-  <span class='kw'>Q</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>swap_an_edge2</span>(<span class='no'>el</span>, <span class='kw'>n_edges</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/length'>length</a></span>(<span class='no'>el</span>$<span class='no'>nodes1</span>), <span class='kw'>max_try</span> <span class='kw'>=</span> <span class='fl'>100</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>dat</th>
-      <td><p>tibble with mutation information</p></td>
+      <th>el</th>
+      <td><p>edge list composed of a list of two vectors, one for each group of
+the bipartite graph</p></td>
     </tr>
     <tr>
-      <th>sample_col</th>
-      <td><p>column of samples names (quoted)</p></td>
+      <th>n_edges</th>
+      <td><p>how many edges in the graph; if nothing is passed, this value
+will be measured from the <code>el</code>, but passing this value from a
+pre-calculated variable can save time by not measuring on each edge swap</p></td>
     </tr>
     <tr>
-      <th>mutgene_col</th>
-      <td><p>column of genes that are mutated (quoted)</p></td>
-    </tr>
-    <tr>
-      <th>Q</th>
-      <td><p>number of permutation matrices to use (default is 100)</p></td>
-    </tr>
-    <tr>
-      <th>quiet</th>
-      <td><p>boolean for showing messages as run permutations (default is
-<code>TRUE</code>)</p></td>
+      <th>max_try</th>
+      <td><p>Number of times to try to find two edges to swap. If no
+edges are found, the program will crash with the message "Unable to swap
+edges"</p></td>
     </tr>
     </table>
     
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>a tidygraph graph object with two edges swapped</p>
+    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>wext</span>)
-<span class='fu'>calculate_row_col_exclusivity_weights</span>(<span class='kw'>dat</span> <span class='kw'>=</span> <span class='no'>simple_dataset</span>,
-                                      <span class='kw'>sample_col</span> <span class='kw'>=</span> <span class='no'>sample_name</span>,
-                                      <span class='kw'>mutgene_col</span> <span class='kw'>=</span> <span class='no'>mutated_gene</span>,
-                                      <span class='kw'>Q</span> <span class='kw'>=</span> <span class='fl'>5</span>)</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 72 x 3</span><span>
-#&gt;    sample_name mutated_gene row_col_ex_weights
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>                     </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> 1           a                           1  
-#&gt; </span><span style='color: #555555;'> 2</span><span> 1           b                           1  
-#&gt; </span><span style='color: #555555;'> 3</span><span> 1           c                           0.8
-#&gt; </span><span style='color: #555555;'> 4</span><span> 1           d                           1  
-#&gt; </span><span style='color: #555555;'> 5</span><span> 1           e                           0.2
-#&gt; </span><span style='color: #555555;'> 6</span><span> 1           f                           0.6
-#&gt; </span><span style='color: #555555;'> 7</span><span> 1           g                           0.4
-#&gt; </span><span style='color: #555555;'> 8</span><span> 10          a                           0.2
-#&gt; </span><span style='color: #555555;'> 9</span><span> 10          b                           0.6
-#&gt; </span><span style='color: #555555;'>10</span><span> 10          c                           0.2
-#&gt; </span><span style='color: #555555;'># … with 62 more rows</span><span></div><div class='input'>
-</div></span></pre>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Random'>set.seed</a></span>(<span class='fl'>0</span>)
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>tidygraph</span>)
+<span class='no'>gr</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>tidygraph</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/tidygraph/topics/create_graphs'>create_ring</a></span>(<span class='fl'>6</span>, <span class='kw'>directed</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>) <span class='kw'>%&gt;%</span>
+    <span class='fu'><a href='https://www.rdocumentation.org/packages/tidygraph/topics/reexports'>mutate</a></span>(<span class='kw'>.idx</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fu'><a href='https://www.rdocumentation.org/packages/tidygraph/topics/reexports'>n</a></span>(), <span class='kw'>name</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"A"</span>, <span class='st'>"b"</span>, <span class='st'>"C"</span>, <span class='st'>"d"</span>, <span class='st'>"E"</span>, <span class='st'>"f"</span>))
+<span class='no'>swaped_gr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='swap_an_edge.html'>swap_an_edge</a></span>(<span class='no'>gr</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>3</span>,<span class='fl'>5</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>4</span>,<span class='fl'>6</span>))
+<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/tidygraph/topics/bind_graphs'>bind_graphs</a></span>(<span class='no'>gr</span>, <span class='no'>swaped_gr</span>))</div><div class='img'><img src='swap_an_edge2-1.png' alt='' width='700' height='433' /></div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-            
+      
+      <li><a href="#value">Value</a></li>
+      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

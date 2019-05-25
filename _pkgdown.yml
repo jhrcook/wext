@@ -44,6 +44,12 @@ navbar:
 
 
 reference:
+- title: The WExT package
+  desc: >
+    General information about the package
+  contents:
+  - '`wext`'
+
 - title: Statistical functions
   desc: >
     Functions that underpin the statistics for the Weighted Exclusivity
@@ -61,13 +67,16 @@ reference:
     the Row-Column-Exclusivity test
   contents:
   - '`bipartite_edge_swap`'
+  - '`bipartite_edge_swap2`'
   - '`swap_an_edge`'
+  - '`swap_an_edge2`'
   - '`random_edge_nodes`'
   - '`remove_edge`'
 
 - title: Utilities
   desc: utilitiy functions used throughout
   contents:
+  - '`bipartite_edgelist`'
   - '`matrix_to_tibble`'
   - '`get_node_index`'
   - '`check_gr`'
