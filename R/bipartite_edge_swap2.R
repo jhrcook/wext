@@ -12,40 +12,45 @@
 #' @examples
 #' set.seed(0)
 #' bgr <- tidygraph::create_ring(6, directed = FALSE)
-#' bgr <- tidygraph::mutate(bgr, type = rep(c(TRUE, FALSE), 3))
+#' bgr <- tidygraph::mutate(
+#'     bgr,
+#'     type = rep(c(TRUE, FALSE), 3),
+#'     name = LETTERS[1:6])
 #' print(bgr)
-#' print(bipartite_edge_swap(bgr, 10))
+#' print(bipartite_edge_swap2(bgr, 10))
 #'
 #' @importFrom magrittr %>%
 #' @importFrom tidygraph %E>% %N>%
 #' @export bipartite_edge_swap2
-bipartite_edge_swap2 <- function(bgr, Q = 20, N = igraph::ecount(bgr)*Q) {
+bipartite_edge_swap2 <- function(gr, Q = 20, N = igraph::ecount(gr)*Q) {
     # check for required node attribute "type"
-    check_gr(bgr, "type")
-    check_gr(bgr, "name")
+    check_gr(gr, "type")
+    check_gr(gr, "name")
 
-    bgr_el <- to_bipartite_edgelist(bgr)
-    n_edges <- length(bgr_el$nodes1)
+    gr_el <- to_bipartite_edgelist(gr)
+    n_edges <- length(gr_el$nodes1)
     for (i in 1:N) {
-        bgr_el <- swap_an_edge2(bgr_el, n_edges = n_edges, max_try = 100)
+        gr_el <- swap_an_edge2(gr_el, n_edges = n_edges, max_try = 100)
     }
 
-    swapped_bgr <- edgelist_to_bipartite_graph(bgr_el)
-    return(swapped_bgr)
+    swapped_gr <- edgelist_to_bipartite_graph(gr_el)
+    return(swapped_gr)
 }
 
 
 #' Transform between a bipartite graph and edge list
 #'
-#' @description Turn the bipartite graph into an edglist returns a list of two
+#' @description Turn the bipartite graph into an edge list returns a list of two
 #'   vectors of the nodes for the edges, each corresponding to one of the two
 #'   bipartite graph groups
 #'
 #' @param bgr bipartite graph with node attributes \code{type} and \code{name}
 #' @param el edge list with two vectors for the edges, one for each set of nodes
 #'   in the bipartite graph
+#' @param sample_list which vector in `el` corresponds to the samples
 #'
 #' @importFrom magrittr %>%
+#' @importFrom tidygraph %N>%
 #' @name bipartite_edgelist
 #' @export to_bipartite_edgelist
 to_bipartite_edgelist <- function(bgr) {
@@ -69,9 +74,12 @@ to_bipartite_edgelist <- function(bgr) {
 
 #' @rdname bipartite_edgelist
 #' @export edgelist_to_bipartite_graph
-edgelist_to_bipartite_graph <- function(el) {
-    stop("Need to write this function")
-    # TODO: make sure to include name and type node attributes
+edgelist_to_bipartite_graph <- function(el, sample_list = 1) {
+    if (length(el) != 2) stop(paste("'el' must have two vectors:", length(el)))
+    gr <- tibble::tibble(v1 = unlist(el[1]), v2 = unlist(el[2])) %>%
+        tidygraph::as_tbl_graph(directed = FALSE) %N>%
+        tidygraph::mutate(type = name %in% unlist(el[sample_list]))
+    return(gr)
 }
 
 
@@ -80,11 +88,14 @@ edgelist_to_bipartite_graph <- function(el) {
 #' @description Swap an edge of a bipartite graph while maintaining the
 #'   partition
 #'
-#' @param el edgelist composed of a list of two vectors, one for each group of
+#' @param el edge list composed of a list of two vectors, one for each group of
 #'   the bipartite graph
-#' @param max_try number of times to try to find two edges to swap. If no edges
-#'   are found, the program will crash with the message "Unable to swap edges";
-#'   default is 100
+#' @param n_edges how many edges in the graph; if nothing is passed, this value
+#'   will be measured from the \code{el}, but passing this value from a
+#'   pre-calculated variable can save time by not measuring on each edge swap
+#' @param max_try Number of times to try to find two edges to swap. If no
+#'   edges are found, the program will crash with the message "Unable to swap
+#'   edges"
 #'
 #' @return a tidygraph graph object with two edges swapped
 #'
