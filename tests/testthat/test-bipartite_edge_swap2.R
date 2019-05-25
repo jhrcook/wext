@@ -21,6 +21,39 @@ test_that("the edge list is made correctly for a bipartite graph", {
     )
 })
 
+test_that("an edge list is converted back to a bipartite graph correctly", {
+    library(tidygraph)
+    library(dplyr)
+    library(tibble)
+
+    el <- list(c(1,3,5,7), c(2,4,6,8))
+    gr <- edgelist_to_bipartite_graph(el)
+    expect_true(is.tbl_graph(gr))
+    expect_equal(igraph::ecount(gr), 4)
+    expect_equal(igraph::vcount(gr), 8)
+    expect_true(check_gr(gr, "name"))
+    expect_true(check_gr(gr, "type"))
+
+
+    el <- list(c("A", "A", "A", "B", "B"),
+               c("E", "C", "D", "C", "D"))
+    gr <- edgelist_to_bipartite_graph(el, 1)
+    expect_equal(igraph::vcount(gr), 5)
+    expect_equal(igraph::ecount(gr), 5)
+    expect_true(check_gr(gr, "name"))
+    expect_true(check_gr(gr, "type"))
+    v1 <- gr %N>% filter(type) %>% as_tibble() %>% pull(name) %>% unlist()
+    v2 <- gr %N>% filter(!type) %>% as_tibble() %>% pull(name) %>% unlist()
+    expect_true(all(v1 %in% unlist(el[1])))
+    expect_true(all(v2 %in% unlist(el[2])))
+
+    gr <- edgelist_to_bipartite_graph(el, 2)
+    v1 <- gr %N>% filter(type) %>% as_tibble() %>% pull(name) %>% unlist()
+    v2 <- gr %N>% filter(!type) %>% as_tibble() %>% pull(name) %>% unlist()
+    expect_true(all(v1 %in% unlist(el[2])))
+    expect_true(all(v2 %in% unlist(el[1])))
+})
+
 test_that("swapping of a single edge works (method 2)", {
     library(igraph)
     library(tidygraph)
@@ -62,7 +95,7 @@ test_that("properly swap edges of a bipartite graph", {
     gr <- gr %N>%
         mutate(type = name %in% unlist(simple_dataset$sample_name))
 
-    swapped_gr <- bipartite_edge_swap2(gr, Q = 10)
+    swapped_gr <- bipartite_edge_swap2(gr, Q = 100)
 
     expect_true(vcount(gr) == vcount(swapped_gr))
     expect_true(ecount(gr) == ecount(swapped_gr))
