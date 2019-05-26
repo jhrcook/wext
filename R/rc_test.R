@@ -15,8 +15,10 @@
 #' @param seed_genes a vector of gene(s) that must be in the gene set to be
 #'   tested (optional)
 #' @param N_perms number of permutation matrices to use (default is 10,000)
-#' @param min_mut_events minimum number of real mutual exclusive events
-#'   required to consider the gene set (default is 2)
+#' @param min_mut_events minimum number of real mutual exclusive events required
+#'   to consider the gene set (default is 2)
+#' @param min_times_mut minimum number of times a gene must be mutated in all
+#'   samples to be considered for the gene sets (default is 5)
 #'
 #' @examples
 #' library(wext)
@@ -31,7 +33,8 @@ rc_test <- function(dat, sample_col, mutgene_col,
                     which_test = c("exclusivity", "comutation"),
                     seed_genes = c(),
                     N_perms = 1e4,
-                    min_mut_events = 2) {
+                    min_mut_events = 2,
+                    min_times_mut = 3) {
 
     # choose only one test
     which_test <- stringr::str_to_lower(which_test[[1]])
@@ -60,7 +63,13 @@ rc_test <- function(dat, sample_col, mutgene_col,
         rlang::eval_tidy(mutgene_col, dat)
     )
 
-    results_tib <- make_empty_results_tracker(genes, k, seed_genes = seed_genes) %>%
+    results_tib <- make_empty_results_tracker(
+        bgr = bipartite_gr,
+        k = k,
+        which_test = which_test,
+        seed_genes = seed_genes,
+        min_times_mut = min_times_mut
+    ) %>%
         dplyr::mutate(
             t_AM = purrr::map_dbl(gene_sets, test_func, bgr = bipartite_gr)
         ) %>%
@@ -80,20 +89,6 @@ rc_test <- function(dat, sample_col, mutgene_col,
         dplyr::mutate(p_val = t_BM_ge / N_perms)
     return(results_tib)
 }
-
-
-# start the results tracking tibble with the gene sets and t_BM_gr = 0
-make_empty_results_tracker <- function(gs, k, seed_genes) {
-    combs <- utils::combn(unlist(gs), k) %>%
-        apply(2, list) %>%
-        unlist(recursive = FALSE)
-    if (length(seed_genes) > 0) {
-        idx <- purrr::map_lgl(gs, ~ any(seed_genes %in% .x))
-        combs <- combs[idx]
-    }
-    tibble::tibble(gene_sets = combs, t_BM_ge = 0)
-}
-
 
 
 # update the gene sets in the results tracking tibble using the edge-swapped bgr

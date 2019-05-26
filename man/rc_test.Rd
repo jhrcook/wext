@@ -6,7 +6,7 @@
 \usage{
 rc_test(dat, sample_col, mutgene_col, k = 2,
   which_test = c("exclusivity", "comutation"), seed_genes = c(),
-  N_perms = 10000, min_mut_events = 2)
+  N_perms = 10000, min_mut_events = 2, min_times_mut = 3)
 }
 \arguments{
 \item{dat}{tibble with mutation information}
@@ -25,8 +25,11 @@ tested (optional)}
 
 \item{N_perms}{number of permutation matrices to use (default is 10,000)}
 
-\item{min_mut_events}{minimum number of real mutual exclusive events
-required to consider the gene set (default is 2)}
+\item{min_mut_events}{minimum number of real mutual exclusive events required
+to consider the gene set (default is 2)}
+
+\item{min_times_mut}{minimum number of times a gene must be mutated in all
+samples to be considered for the gene sets (default is 5)}
 }
 \description{
 The Row-Column-Exclusivity or Co-mutation test cannot be

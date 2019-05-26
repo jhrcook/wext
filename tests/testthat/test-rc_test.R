@@ -18,7 +18,8 @@ test_that("the RC-Exclusivity test works", {
                       k = k,
                       which_test = "exclusivity",
                       N_perms = N_perms,
-                      min_mut_events = 0)
+                      min_mut_events = 0,
+                      min_times_mut = 0)
 
     expect_true(tibble::is_tibble(rc_res))
     expect_true(ncol(rc_res) == 4)
@@ -57,7 +58,8 @@ test_that("the RC-Co-mutation test works", {
                       k = k,
                       which_test = "comutation",
                       N_perms = N_perms,
-                      min_mut_events = 0)
+                      min_mut_events = 0,
+                      min_times_mut = 0)
 
     expect_true(tibble::is_tibble(rc_res))
     expect_true(ncol(rc_res) == 4)
