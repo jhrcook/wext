@@ -86,7 +86,7 @@ test_that("swapping of a single edge works (method 2)", {
     }
 })
 
-test_that("properly swap edges of a bipartite graph", {
+test_that("properly swap edges of a bipartite graph (method 2)", {
     library(igraph)
     library(tidygraph)
 
