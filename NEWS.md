@@ -1,9 +1,13 @@
 # wext (development version)
 
+# wext 0.0.0.9002
+
+* Implemented a much faster form of the bipartite edge swapping algorithm. The new method is vector based instead of manipulating the 'tidygraph' graph object through the 'igraph' and 'tidygraph' APIs. I did a quick comparison of the new and original methods in the vignette "Comparing Edge Swap Algorithms."
+
 # wext 0.0.0.9001
 
-* Created vignette explaining the statistics of WExT - the next version will have a vignette explaining the computational methods use to solve it.
-* The package now builds because I add a small example data set from the Raphael GitHub repo to future testing. There is also a single function for turning a named matrix into a tibble.
+* Created vignette explaining the statistics of WExT and algorithm for the Row-Column Exclusivity Test and Weighted-Exclusivity Test.
+* A functional form of the Row-Column Exclusivity Test was created and tested.
 
 # wext 0.0.0.9000
 
