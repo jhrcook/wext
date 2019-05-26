@@ -35,9 +35,9 @@ samples to be considered for the gene sets (default is 5)}
 \item{genes}{a vector of gene(s) to make combinations of size \code{k} from}
 }
 \value{
-a tibble with two columns: \code{gene_sets} contains list objects of
+A tibble with two columns: \code{gene_sets} contains list objects of
   \code{k} genes, \code{t_BM_gr} is a column of zeros that will eventually
-  hold the number of events (either mutual exclusivty or co-mutation) that
+  hold the number of events (either mutual exclusivity or co-mutation) that
   occur between the genes in the gene sets in the permuted bipartite graphs
 }
 \description{

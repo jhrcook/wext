@@ -40,6 +40,7 @@ The Row-Column-Exclusivity or Co-mutation test cannot be
 }
 \examples{
 library(wext)
+set.seed(0)
 rc_test(simple_dataset, sample_name, mutated_gene, k = 2, N_perms = 2)
 
 }

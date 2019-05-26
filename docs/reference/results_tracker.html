@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>The Row-Column-Exclusivity or Co-mutation test — rc_test • wext</title>
+<title>Initialize the mutation event tracker tibble — results_tracker • wext</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -37,13 +37,14 @@
 
 
 
-<meta property="og:title" content="The Row-Column-Exclusivity or Co-mutation test — rc_test" />
+<meta property="og:title" content="Initialize the mutation event tracker tibble — results_tracker" />
 
-<meta property="og:description" content="The Row-Column-Exclusivity or Co-mutation test cannot be
-  calculated exactly for most use cases because there is no closed formula
-  and a very large number of possible matrices to consider. Thus, the
-  probabilities are calculated empirically from a sufficiently large number
-  of samples of possible matrices." />
+<meta property="og:description" content="A tibble that contains the gene sets to consider mutual
+  exclusivity or co-mutation between. This uses a bit of logic to reduce the
+  number of gene sets to consider by accounting the for test at hand
+  (exclusivity or co-mutation), the minimum mutations in a gene to consider
+  it in any gene sets, and a seed gene is the user is interested in
+  interactions with only one or a few genes." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -145,39 +146,38 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>The Row-Column-Exclusivity or Co-mutation test</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jhrcook/wext/blob/master/R/rc_test.R'><code>R/rc_test.R</code></a></small>
-    <div class="hidden name"><code>rc_test.Rd</code></div>
+    <h1>Initialize the mutation event tracker tibble</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jhrcook/wext/blob/master/R/make_empty_results_tracker.R'><code>R/make_empty_results_tracker.R</code></a></small>
+    <div class="hidden name"><code>results_tracker.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>The Row-Column-Exclusivity or Co-mutation test cannot be
-  calculated exactly for most use cases because there is no closed formula
-  and a very large number of possible matrices to consider. Thus, the
-  probabilities are calculated empirically from a sufficiently large number
-  of samples of possible matrices.</p>
+    <p>A tibble that contains the gene sets to consider mutual
+  exclusivity or co-mutation between. This uses a bit of logic to reduce the
+  number of gene sets to consider by accounting the for test at hand
+  (exclusivity or co-mutation), the minimum mutations in a gene to consider
+  it in any gene sets, and a seed gene is the user is interested in
+  interactions with only one or a few genes.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>rc_test</span>(<span class='no'>dat</span>, <span class='no'>sample_col</span>, <span class='no'>mutgene_col</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>which_test</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"exclusivity"</span>, <span class='st'>"comutation"</span>), <span class='kw'>seed_genes</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(),
-  <span class='kw'>N_perms</span> <span class='kw'>=</span> <span class='fl'>10000</span>, <span class='kw'>min_mut_events</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>min_times_mut</span> <span class='kw'>=</span> <span class='fl'>3</span>)</pre>
+    <pre class="usage"><span class='fu'>make_empty_results_tracker</span>(<span class='no'>bgr</span>, <span class='no'>k</span>, <span class='no'>which_test</span>, <span class='no'>seed_genes</span>, <span class='no'>min_times_mut</span>)
+
+<span class='fu'>exclusivity_results_tracker</span>(<span class='no'>bgr</span>, <span class='no'>k</span>, <span class='no'>seed_genes</span>, <span class='no'>min_times_mut</span>)
+
+<span class='fu'>comutation_results_tracker</span>(<span class='no'>bgr</span>, <span class='no'>k</span>, <span class='no'>seed_genes</span>, <span class='no'>min_times_mut</span>)
+
+<span class='fu'>make_combs_tibble</span>(<span class='no'>genes</span>, <span class='no'>k</span>, <span class='no'>seed_genes</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>dat</th>
-      <td><p>tibble with mutation information</p></td>
-    </tr>
-    <tr>
-      <th>sample_col</th>
-      <td><p>column of samples names (quoted)</p></td>
-    </tr>
-    <tr>
-      <th>mutgene_col</th>
-      <td><p>column of genes that are mutated (quoted)</p></td>
+      <th>bgr</th>
+      <td><p>a bipartite edge graph that has the node attributes <code>type</code>
+and <code>name</code>; these attributes are not checked for explicitly, but will
+throw an error if not present</p></td>
     </tr>
     <tr>
       <th>k</th>
@@ -194,39 +194,69 @@ co-mutation (<code>"comutation"</code>); (default is <code>"comutation"</code>)<
 tested (optional)</p></td>
     </tr>
     <tr>
-      <th>N_perms</th>
-      <td><p>number of permutation matrices to use (default is 10,000)</p></td>
-    </tr>
-    <tr>
-      <th>min_mut_events</th>
-      <td><p>minimum number of real mutual exclusive events required
-to consider the gene set (default is 2)</p></td>
-    </tr>
-    <tr>
       <th>min_times_mut</th>
       <td><p>minimum number of times a gene must be mutated in all
 samples to be considered for the gene sets (default is 5)</p></td>
     </tr>
+    <tr>
+      <th>genes</th>
+      <td><p>a vector of gene(s) to make combinations of size <code>k</code> from</p></td>
+    </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>a tibble with two columns: <code>gene_sets</code> contains list objects of
+  <code>k</code> genes, <code>t_BM_gr</code> is a column of zeros that will eventually
+  hold the number of events (either mutual exclusivity or co-mutation) that
+  occur between the genes in the gene sets in the permuted bipartite graphs</p>
+    
+    <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
+
+    <ul>
+<li><p><code>exclusivity_results_tracker</code>: Create the tracker when testing for mutual
+exclusivity.</p></li>
+<li><p><code>comutation_results_tracker</code>: Create the tracker when testing for co-mutation.</p></li>
+<li><p><code>make_combs_tibble</code>: Create the final tibble object with the gene sets
+of size <code>k</code>.</p></li>
+</ul>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>wext</span>)
-<span class='fu'>rc_test</span>(<span class='no'>simple_dataset</span>, <span class='no'>sample_name</span>, <span class='no'>mutated_gene</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>N_perms</span> <span class='kw'>=</span> <span class='fl'>2</span>)</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 5 x 4</span><span>
-#&gt;   gene_sets t_BM_ge  t_AM p_val
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;list&gt;</span><span>      </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       2     7     1
-#&gt; </span><span style='color: #555555;'>2</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       0     7     0
-#&gt; </span><span style='color: #555555;'>3</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       0    12     0
-#&gt; </span><span style='color: #555555;'>4</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       0     9     0
-#&gt; </span><span style='color: #555555;'>5</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       0     9     0</div><div class='input'>
+<span class='no'>bgr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='make_sample_gene_bipartite.html'>make_sample_gene_bipartite</a></span>(
+    <span class='no'>simple_dataset</span>$<span class='no'>sample_name</span>,
+    <span class='no'>simple_dataset</span>$<span class='no'>mutated_gene</span>
+)
+<span class='fu'>make_empty_results_tracker</span>(<span class='no'>bgr</span>, <span class='fl'>2</span>, <span class='st'>"exclusivity"</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(), <span class='fl'>2</span>)</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 15 x 2</span><span>
+#&gt;    gene_sets t_BM_ge
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;list&gt;</span><span>      </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       0
+#&gt; </span><span style='color: #555555;'> 2</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       0
+#&gt; </span><span style='color: #555555;'> 3</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       0
+#&gt; </span><span style='color: #555555;'> 4</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       0
+#&gt; </span><span style='color: #555555;'> 5</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       0
+#&gt; </span><span style='color: #555555;'> 6</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       0
+#&gt; </span><span style='color: #555555;'> 7</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       0
+#&gt; </span><span style='color: #555555;'> 8</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       0
+#&gt; </span><span style='color: #555555;'> 9</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       0
+#&gt; </span><span style='color: #555555;'>10</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       0
+#&gt; </span><span style='color: #555555;'>11</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       0
+#&gt; </span><span style='color: #555555;'>12</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       0
+#&gt; </span><span style='color: #555555;'>13</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       0
+#&gt; </span><span style='color: #555555;'>14</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       0
+#&gt; </span><span style='color: #555555;'>15</span><span> </span><span style='color: #555555;'>&lt;chr [2]&gt;</span><span>       0</div><div class='input'>
 </div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-            
+      
+      <li><a href="#value">Value</a></li>
+
+      <li><a href="#functions">Functions</a></li>
+      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

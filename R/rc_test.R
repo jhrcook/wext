@@ -22,6 +22,7 @@
 #'
 #' @examples
 #' library(wext)
+#' set.seed(0)
 #' rc_test(simple_dataset, sample_name, mutated_gene, k = 2, N_perms = 2)
 #'
 #' @importFrom magrittr %>%

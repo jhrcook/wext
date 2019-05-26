@@ -18,9 +18,9 @@
 #' @param min_times_mut minimum number of times a gene must be mutated in all
 #'   samples to be considered for the gene sets (default is 5)
 #'
-#' @return a tibble with two columns: \code{gene_sets} contains list objects of
+#' @return A tibble with two columns: \code{gene_sets} contains list objects of
 #'   \code{k} genes, \code{t_BM_gr} is a column of zeros that will eventually
-#'   hold the number of events (either mutual exclusivty or co-mutation) that
+#'   hold the number of events (either mutual exclusivity or co-mutation) that
 #'   occur between the genes in the gene sets in the permuted bipartite graphs
 #'
 #' @examples

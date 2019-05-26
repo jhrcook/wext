@@ -81,6 +81,8 @@ reference:
   - '`get_node_index`'
   - '`check_gr`'
   - '`make_sample_gene_bipartite`'
+  - '`filter_by_mutation_frequency`'
+  - '`results_tracker`'
 
 - title: Example data sets
   desc: Small data sets used for examples and testing
