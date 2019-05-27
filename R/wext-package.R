@@ -27,3 +27,10 @@
 #'
 #' @name wext
 NULL
+
+
+## usethis namespace: start
+#' @useDynLib wext, .registration = TRUE
+#' @importFrom Rcpp sourceCpp
+## usethis namespace: end
+NULL
