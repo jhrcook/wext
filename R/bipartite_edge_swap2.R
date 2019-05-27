@@ -104,7 +104,7 @@ edgelist_to_bipartite_graph <- function(el, sample_list = 1) {
 #' library(tidygraph)
 #' gr <- tidygraph::create_ring(6, directed = FALSE) %>%
 #'     mutate(.idx = 1:n(), name = c("A", "b", "C", "d", "E", "f"))
-#' swaped_gr <- swap_an_edge(gr, c(1,3,5), c(2,4,6))
+#' swaped_gr <- swap_an_edge2(gr, c(1,3,5), c(2,4,6))
 #' plot(bind_graphs(gr, swaped_gr))
 #'
 #' @importFrom magrittr %>%
