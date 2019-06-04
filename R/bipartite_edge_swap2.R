@@ -38,50 +38,6 @@ bipartite_edge_swap2 <- function(gr, Q = 20, N = igraph::ecount(gr)*Q) {
 }
 
 
-#' Transform between a bipartite graph and edge list
-#'
-#' @description Turn the bipartite graph into an edge list returns a list of two
-#'   vectors of the nodes for the edges, each corresponding to one of the two
-#'   bipartite graph groups
-#'
-#' @param bgr bipartite graph with node attributes \code{type} and \code{name}
-#' @param el edge list with two vectors for the edges, one for each set of nodes
-#'   in the bipartite graph
-#' @param sample_list which vector in `el` corresponds to the samples
-#'
-#' @importFrom magrittr %>%
-#' @importFrom tidygraph %N>%
-#' @name bipartite_edgelist
-#' @export to_bipartite_edgelist
-to_bipartite_edgelist <- function(bgr) {
-    if (igraph::ecount(bgr) < 1) stop("graph has no edges")
-    if (igraph::vcount(bgr) < 1) stop("graph has no vertices")
-
-    g1 <- tidygraph::as_tibble(bgr, active = "nodes") %>%
-        dplyr::filter(type) %>% dplyr::pull(name) %>% unlist()
-    g2 <- tidygraph::as_tibble(bgr, active = "nodes") %>%
-        dplyr::filter(!type) %>% dplyr::pull(name) %>% unlist()
-    el <- igraph::as_edgelist(bgr, names = TRUE)
-    v1 <- unlist(apply(el, 1, function(edge) edge[edge %in% g1]))
-    v2 <- unlist(apply(el, 1, function(edge) edge[edge %in% g2]))
-
-    return(list(
-        "nodes1" = v1,
-        "nodes2" = v2
-    ))
-}
-
-
-#' @rdname bipartite_edgelist
-#' @export edgelist_to_bipartite_graph
-edgelist_to_bipartite_graph <- function(el, sample_list = 1) {
-    if (length(el) != 2) stop(paste("'el' must have two vectors:", length(el)))
-    gr <- tibble::tibble(v1 = unlist(el[1]), v2 = unlist(el[2])) %>%
-        tidygraph::as_tbl_graph(directed = FALSE) %N>%
-        tidygraph::mutate(type = name %in% unlist(el[sample_list]))
-    return(gr)
-}
-
 
 #' Swap a single edge (method 2)
 #'
@@ -140,4 +96,50 @@ swap_an_edge2 <- function(el, n_edges = length(el$nodes1), max_try = 100) {
     el$nodes2[[rand_e2]] <- rand_n12
 
     return(el)
+}
+
+
+
+#' Transform between a bipartite graph and edge list
+#'
+#' @description Turn the bipartite graph into an edge list returns a list of two
+#'   vectors of the nodes for the edges, each corresponding to one of the two
+#'   bipartite graph groups
+#'
+#' @param bgr bipartite graph with node attributes \code{type} and \code{name}
+#' @param el edge list with two vectors for the edges, one for each set of nodes
+#'   in the bipartite graph
+#' @param sample_list which vector in `el` corresponds to the samples
+#'
+#' @importFrom magrittr %>%
+#' @importFrom tidygraph %N>%
+#' @name bipartite_edgelist
+#' @export to_bipartite_edgelist
+to_bipartite_edgelist <- function(bgr) {
+    if (igraph::ecount(bgr) < 1) stop("graph has no edges")
+    if (igraph::vcount(bgr) < 1) stop("graph has no vertices")
+
+    g1 <- tidygraph::as_tibble(bgr, active = "nodes") %>%
+        dplyr::filter(type) %>% dplyr::pull(name) %>% unlist()
+    g2 <- tidygraph::as_tibble(bgr, active = "nodes") %>%
+        dplyr::filter(!type) %>% dplyr::pull(name) %>% unlist()
+    el <- igraph::as_edgelist(bgr, names = TRUE)
+    v1 <- unlist(apply(el, 1, function(edge) edge[edge %in% g1]))
+    v2 <- unlist(apply(el, 1, function(edge) edge[edge %in% g2]))
+
+    return(list(
+        "nodes1" = v1,
+        "nodes2" = v2
+    ))
+}
+
+
+#' @rdname bipartite_edgelist
+#' @export edgelist_to_bipartite_graph
+edgelist_to_bipartite_graph <- function(el, sample_list = 1) {
+    if (length(el) != 2) stop(paste("'el' must have two vectors:", length(el)))
+    gr <- tibble::tibble(v1 = unlist(el[1]), v2 = unlist(el[2])) %>%
+        tidygraph::as_tbl_graph(directed = FALSE) %N>%
+        tidygraph::mutate(type = name %in% unlist(el[sample_list]))
+    return(gr)
 }
