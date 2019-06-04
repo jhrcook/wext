@@ -99,6 +99,7 @@ test_that("properly swap edges of a bipartite graph (method 2)", {
 
     expect_true(vcount(gr) == vcount(swapped_gr))
     expect_true(ecount(gr) == ecount(swapped_gr))
+    expect_true(igraph::is_simple(swapped_gr))
 
     el <- as_edgelist(swapped_gr, names = TRUE)
 

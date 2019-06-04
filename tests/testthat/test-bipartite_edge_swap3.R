@@ -1,5 +1,5 @@
 
-test_that("properly swap edges of a bipartite graph (method 3)", {
+test_that("properly swap edges of a bipartite graph (method 2 with C++)", {
     library(igraph)
     library(tidygraph)
 
@@ -8,11 +8,11 @@ test_that("properly swap edges of a bipartite graph (method 3)", {
     gr <- gr %N>%
         mutate(type = name %in% unlist(simple_dataset$sample_name))
 
-    # swapped_gr <- bipartite_edge_swap3(gr, Q = 100)
-    swapped_gr <- bipartite_edge_swap3(gr, N = 10)
+    swapped_gr <- bipartite_edge_swap3(gr, Q = 100)
 
     expect_true(vcount(gr) == vcount(swapped_gr))
     expect_true(ecount(gr) == ecount(swapped_gr))
+    expect_true(igraph::is_simple(swapped_gr))
 
     el <- as_edgelist(swapped_gr, names = TRUE)
 
