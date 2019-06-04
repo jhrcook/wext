@@ -27,7 +27,8 @@ bgr <- tidygraph::create_ring(6, directed = FALSE)
 bgr <- tidygraph::mutate(
     bgr,
     type = rep(c(TRUE, FALSE), 3),
-    name = LETTERS[1:6])
+    name = LETTERS[1:6]
+)
 print(bgr)
 print(bipartite_edge_swap2(bgr, 10))
 

@@ -15,7 +15,8 @@
 #' bgr <- tidygraph::mutate(
 #'     bgr,
 #'     type = rep(c(TRUE, FALSE), 3),
-#'     name = LETTERS[1:6])
+#'     name = LETTERS[1:6]
+#' )
 #' print(bgr)
 #' print(bipartite_edge_swap2(bgr, 10))
 #'
@@ -57,11 +58,13 @@ bipartite_edge_swap2 <- function(gr, Q = 20, N = igraph::ecount(gr)*Q) {
 #'
 #' @examples
 #' set.seed(0)
-#' library(tidygraph)
-#' gr <- tidygraph::create_ring(6, directed = FALSE) %>%
-#'     mutate(.idx = 1:n(), name = c("A", "b", "C", "d", "E", "f"))
-#' swaped_gr <- swap_an_edge2(gr, c(1,3,5), c(2,4,6))
-#' plot(bind_graphs(gr, swaped_gr))
+#' suppressPackageStartupMessages(library(tidygraph))
+#' gr <- create_ring(6, directed = FALSE) %>%
+#'     mutate(type = rep(c(TRUE, FALSE), 3),
+#'            name = LETTERS[1:6])
+#' el <- to_bipartite_edgelist(gr)
+#' swaped_el <- swap_an_edge2(el)
+#' plot(bind_graphs(gr, edgelist_to_bipartite_graph(swaped_el)))
 #'
 #' @importFrom magrittr %>%
 #' @export swap_an_edge2

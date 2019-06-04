@@ -68,8 +68,10 @@ reference:
   contents:
   - '`bipartite_edge_swap`'
   - '`bipartite_edge_swap2`'
+  - '`bipartite_edge_swap3`'
   - '`swap_an_edge`'
   - '`swap_an_edge2`'
+  - '`swap_an_edgeC`'
   - '`random_edge_nodes`'
   - '`remove_edge`'
 

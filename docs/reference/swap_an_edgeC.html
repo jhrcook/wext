@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Swap a single edge (method 2) — swap_an_edge2 • wext</title>
+<title>Swap a single edge (method 2 in C++) — swap_an_edgeC • wext</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -37,10 +37,12 @@
 
 
 
-<meta property="og:title" content="Swap a single edge (method 2) — swap_an_edge2" />
+<meta property="og:title" content="Swap a single edge (method 2 in C++) — swap_an_edgeC" />
 
 <meta property="og:description" content="Swap an edge of a bipartite graph while maintaining the
-  partition" />
+  bipartite nature. This function is not perfectly named as it runs more
+  than a single edge swap (whereas the R implemented functions only run a
+  single swap)." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -142,57 +144,51 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Swap a single edge (method 2)</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jhrcook/wext/blob/master/R/bipartite_edge_swap2.R'><code>R/bipartite_edge_swap2.R</code></a></small>
-    <div class="hidden name"><code>swap_an_edge2.Rd</code></div>
+    <h1>Swap a single edge (method 2 in C++)</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jhrcook/wext/blob/master/R/RcppExports.R'><code>R/RcppExports.R</code></a></small>
+    <div class="hidden name"><code>swap_an_edgeC.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
     <p>Swap an edge of a bipartite graph while maintaining the
-  partition</p>
+  bipartite nature. This function is not perfectly named as it runs more
+  than a single edge swap (whereas the R implemented functions only run a
+  single swap).</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>swap_an_edge2</span>(<span class='no'>el</span>, <span class='kw'>n_edges</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/length'>length</a></span>(<span class='no'>el</span>$<span class='no'>nodes1</span>), <span class='kw'>max_try</span> <span class='kw'>=</span> <span class='fl'>100</span>)</pre>
+    <pre class="usage"><span class='fu'>swap_an_edgeC</span>(<span class='no'>n1</span>, <span class='no'>n2</span>, <span class='no'>N</span>, <span class='no'>max_try</span>, <span class='no'>quiet</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>el</th>
-      <td><p>edge list composed of a list of two vectors, one for each group of
-the bipartite graph</p></td>
+      <th>n1, n2</th>
+      <td><p>the graph built as a set of two vectors with the nodes for each edge</p></td>
     </tr>
     <tr>
-      <th>n_edges</th>
-      <td><p>how many edges in the graph; if nothing is passed, this value
-will be measured from the <code>el</code>, but passing this value from a
-pre-calculated variable can save time by not measuring on each edge swap</p></td>
+      <th>N</th>
+      <td><p>the number of edges to swap (one at a time)</p></td>
     </tr>
     <tr>
       <th>max_try</th>
-      <td><p>Number of times to try to find two edges to swap. If no
-edges are found, the program will crash with the message "Unable to swap
-edges"</p></td>
+      <td><p>Number of times to try to find two edges to swap. No message
+is relayed for a single unsuccessful edge swap; instead a message at the
+end prints the number of successful edge swaps in total.</p></td>
+    </tr>
+    <tr>
+      <th>quiet</th>
+      <td><p>boolean for if you want the number of successful edge swaps
+printed</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a tidygraph graph object with two edges swapped</p>
+    <p><code>n1</code> with nodes swapped</p>
     
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Random'>set.seed</a></span>(<span class='fl'>0</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/message'>suppressPackageStartupMessages</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>tidygraph</span>))
-<span class='no'>gr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/tidygraph/topics/create_graphs'>create_ring</a></span>(<span class='fl'>6</span>, <span class='kw'>directed</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>) <span class='kw'>%&gt;%</span>
-    <span class='fu'><a href='https://www.rdocumentation.org/packages/tidygraph/topics/reexports'>mutate</a></span>(<span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>), <span class='fl'>3</span>),
-           <span class='kw'>name</span> <span class='kw'>=</span> <span class='no'>LETTERS</span>[<span class='fl'>1</span>:<span class='fl'>6</span>])
-<span class='no'>el</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='bipartite_edgelist.html'>to_bipartite_edgelist</a></span>(<span class='no'>gr</span>)
-<span class='no'>swaped_el</span> <span class='kw'>&lt;-</span> <span class='fu'>swap_an_edge2</span>(<span class='no'>el</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/tidygraph/topics/bind_graphs'>bind_graphs</a></span>(<span class='no'>gr</span>, <span class='fu'><a href='bipartite_edgelist.html'>edgelist_to_bipartite_graph</a></span>(<span class='no'>swaped_el</span>)))</div><div class='img'><img src='swap_an_edge2-1.png' alt='' width='700' height='433' /></div><div class='input'>
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -200,9 +196,7 @@ edges"</p></td>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+          </ul>
 
   </div>
 </div>
