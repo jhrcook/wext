@@ -37,12 +37,8 @@ bipartite_edge_swap3 <- function(gr, Q = 20, N = igraph::ecount(gr)*Q) {
     n1_num <- match(n1, n1_idx)
     n2_num <- match(n2, n2_idx)
 
-    n_edges <- length(n1_num)
-    for (i in 1:N) {
-        n1_num <- swap_an_edge3(n1_num, n2_num,
-                                n_edges = n_edges,
-                                max_try = 100)
-    }
+    # use an function implemented in C++ using Rcpp
+    n1_num <- swap_an_edgeC(n1_num, n2_num, N = N, max_try = 100)
 
     swapped_el <- list(
         "nodes1" = n1_idx[n1_num],
