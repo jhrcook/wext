@@ -5,13 +5,15 @@ using namespace Rcpp;
 //' Swap a single edge (method 2 in C++)
 //'
 //' @description Swap an edge of a bipartite graph while maintaining the
-//'   partition
+//'   bipartite nature. This function is not perfectly named as it runs more
+//'   than a single edge swap (whereas the R implemented functions only run a
+//'   single swap).
 //'
 //' @param n1,n2 the graph built as a set of two vectors with the nodes for each edge
 //' @param N the number of edges to swap (one at a time)
-//' @param max_try Number of times to try to find two edges to swap. If no
-//'   edges are found, the program will crash with the message "Unable to swap
-//'   edges"
+//' @param max_try Number of times to try to find two edges to swap. No message
+//'   is relayed for a single unsuccessful edge swap; instead a message at the
+//'   end prints the number of successful edge swaps in total.
 //'
 //' @return \code{n1} with nodes swapped
 //'
@@ -26,6 +28,8 @@ IntegerVector swap_an_edgeC(IntegerVector n1, IntegerVector n2, int N, int max_t
     int rand_e1 = 0;
     int rand_n11 = 0;
     int rand_n12 = 0;
+
+    int edge_swap_counter = 0;
 
     // do N edge swaps
     for (int i=0; i<N; i++) {
@@ -52,6 +56,8 @@ IntegerVector swap_an_edgeC(IntegerVector n1, IntegerVector n2, int N, int max_t
         }
 
         if (!CHECKER) {
+            edge_swap_counter++;
+
             // number of available edges to swap with
             int num_available_edges = 0;
             for (int k=0; k<n_edges; k++) {
@@ -79,5 +85,8 @@ IntegerVector swap_an_edgeC(IntegerVector n1, IntegerVector n2, int N, int max_t
             CHECKER = true;
         }
     }
+
+    Rcout << "number of successful edge swaps: " << edge_swap_counter << std::endl;
+
     return n1;
 }

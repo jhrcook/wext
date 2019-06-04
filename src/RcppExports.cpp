@@ -5,23 +5,23 @@
 
 using namespace Rcpp;
 
-// swap_an_edge3
-NumericVector swap_an_edge3(NumericVector n1, NumericVector n2, int n_edges, int max_try);
-RcppExport SEXP _wext_swap_an_edge3(SEXP n1SEXP, SEXP n2SEXP, SEXP n_edgesSEXP, SEXP max_trySEXP) {
+// swap_an_edgeC
+IntegerVector swap_an_edgeC(IntegerVector n1, IntegerVector n2, int N, int max_try);
+RcppExport SEXP _wext_swap_an_edgeC(SEXP n1SEXP, SEXP n2SEXP, SEXP NSEXP, SEXP max_trySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type n1(n1SEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type n2(n2SEXP);
-    Rcpp::traits::input_parameter< int >::type n_edges(n_edgesSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type n1(n1SEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type n2(n2SEXP);
+    Rcpp::traits::input_parameter< int >::type N(NSEXP);
     Rcpp::traits::input_parameter< int >::type max_try(max_trySEXP);
-    rcpp_result_gen = Rcpp::wrap(swap_an_edge3(n1, n2, n_edges, max_try));
+    rcpp_result_gen = Rcpp::wrap(swap_an_edgeC(n1, n2, N, max_try));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_wext_swap_an_edge3", (DL_FUNC) &_wext_swap_an_edge3, 4},
+    {"_wext_swap_an_edgeC", (DL_FUNC) &_wext_swap_an_edgeC, 4},
     {NULL, NULL, 0}
 };
 

@@ -4,13 +4,15 @@
 #' Swap a single edge (method 2 in C++)
 #'
 #' @description Swap an edge of a bipartite graph while maintaining the
-#'   partition
+#'   bipartite nature. This function is not perfectly named as it runs more
+#'   than a single edge swap (whereas the R implemented functions only run a
+#'   single swap).
 #'
 #' @param n1,n2 the graph built as a set of two vectors with the nodes for each edge
 #' @param N the number of edges to swap (one at a time)
-#' @param max_try Number of times to try to find two edges to swap. If no
-#'   edges are found, the program will crash with the message "Unable to swap
-#'   edges"
+#' @param max_try Number of times to try to find two edges to swap. No message
+#'   is relayed for a single unsuccessful edge swap; instead a message at the
+#'   end prints the number of successful edge swaps in total.
 #'
 #' @return \code{n1} with nodes swapped
 #'
