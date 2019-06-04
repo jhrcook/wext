@@ -56,7 +56,17 @@ bench::mark(bipartite_edge_swap2(bgr, N = 100),
   dplyr::select(-expression)
 ```
 
-This first test ran 100 edge swaps on the graph `bgr`. The first method took 5.82 seconds on average (a median of 10 iterations) while the second took about 820 ms. Thus, the second method is much faster. Another striking difference is the amount of memory each method was allocated - the first method took about 2 GB of RAM! It also called the garbage collector and order of magnitude more frequently.
+This first test ran 100 edge swaps on the graph `bgr`. The first method took 5.82 seconds on average (a median of 10 iterations) while the second took about 820 ms. Thus, the second method is much faster. Another striking difference is the amount of memory each method was allocated - the first method took about 2 GB of RAM! It also called the garbage collector an order of magnitude more frequently.
+
+The function `bipartite_edge_swap3()` implements the same algorithm used in method 2 in C++.
+
+```{r bench_methodC, cache=TRUE}
+bench::mark(bipartite_edge_swap3(bgr, N = 100),
+            iterations = 20, filter_gc = FALSE) %>% 
+  dplyr::select(-expression)
+```
+
+
 
 To specifically test everything *expect* for the edge swapping, I re-ran the same test but only conducting 1 edge swap in each iteration.
 
@@ -67,6 +77,10 @@ bench::mark(bipartite_edge_swap(bgr, N = 1),
   dplyr::select(-expression)
 # second method
 bench::mark(bipartite_edge_swap2(bgr, N = 1),
+            iterations = 50, filter_gc = FALSE) %>% 
+  dplyr::select(-expression)
+# second method in C++
+bench::mark(bipartite_edge_swap3(bgr, N = 1),
             iterations = 50, filter_gc = FALSE) %>% 
   dplyr::select(-expression)
 ```
@@ -97,11 +111,13 @@ bench::mark(bipartite_edge_swap(bgr, N = 1),
 bench::mark(bipartite_edge_swap2(bgr, N = 1),
             iterations = 50, filter_gc = FALSE) %>% 
   dplyr::select(-expression)
+# second method in C++
+bench::mark(bipartite_edge_swap3(bgr, N = 1),
+            iterations = 50, filter_gc = FALSE) %>% 
+  dplyr::select(-expression)
 ```
 
 Now, the second method is actually faster because it was easier to change to the vector manipulation than lug around the relatively "heavy" tidygraph object (see the `mem_alloc` columns). You can see that the garbage collection intervened a few times (in the `gc/sec` and `n_gc` column).
-
-The next step will be to implement `bipartite_edge_swap2` in C++ using the 'Rcpp' package. This should introduce a few speed boosts, too.
 
 ---
 
