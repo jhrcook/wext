@@ -6,8 +6,8 @@
 using namespace Rcpp;
 
 // swap_an_edgeC
-IntegerVector swap_an_edgeC(IntegerVector n1, IntegerVector n2, int N, int max_try);
-RcppExport SEXP _wext_swap_an_edgeC(SEXP n1SEXP, SEXP n2SEXP, SEXP NSEXP, SEXP max_trySEXP) {
+IntegerVector swap_an_edgeC(IntegerVector n1, IntegerVector n2, int N, int max_try, bool quiet);
+RcppExport SEXP _wext_swap_an_edgeC(SEXP n1SEXP, SEXP n2SEXP, SEXP NSEXP, SEXP max_trySEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -15,13 +15,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< IntegerVector >::type n2(n2SEXP);
     Rcpp::traits::input_parameter< int >::type N(NSEXP);
     Rcpp::traits::input_parameter< int >::type max_try(max_trySEXP);
-    rcpp_result_gen = Rcpp::wrap(swap_an_edgeC(n1, n2, N, max_try));
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    rcpp_result_gen = Rcpp::wrap(swap_an_edgeC(n1, n2, N, max_try, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_wext_swap_an_edgeC", (DL_FUNC) &_wext_swap_an_edgeC, 4},
+    {"_wext_swap_an_edgeC", (DL_FUNC) &_wext_swap_an_edgeC, 5},
     {NULL, NULL, 0}
 };
 

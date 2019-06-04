@@ -4,7 +4,8 @@
 \alias{bipartite_edge_swap3}
 \title{Swap edges of a bipartite graph (method 3)}
 \usage{
-bipartite_edge_swap3(gr, Q = 20, N = igraph::ecount(gr) * Q)
+bipartite_edge_swap3(gr, Q = 20, N = igraph::ecount(gr) * Q,
+  quiet = TRUE)
 }
 \arguments{
 \item{gr}{a tidygraph object with a node attribute called \code{type} that
@@ -13,13 +14,17 @@ holds boolean values (i.e. either \code{TRUE} or \code{FALSE})}
 \item{Q}{number of permutations you are conducting; default is 20}
 
 \item{N}{the number of edge swaps; default is \eqn{Q \times |E(G)|}}
+
+\item{quiet}{boolean for if you want the number of successful edge swaps
+printed; default \code{TRUE}}
 }
 \value{
 the graph with \eqn{N} random edge swaps with constrained marginals
 }
 \description{
 Run the edge swapping algorithm from Milo et al. (2003) on a
-  bipartite graph while maintaining the separation of the nodes in two groups.
+  bipartite graph while maintaining the separation of the nodes in two
+  groups.
 }
 \examples{
 set.seed(0)
@@ -29,6 +34,6 @@ bgr <- tidygraph::mutate(
     type = rep(c(TRUE, FALSE), 3),
     name = LETTERS[1:6])
 print(bgr)
-print(bipartite_edge_swap2(bgr, 10))
+print(bipartite_edge_swap3(bgr, 10))
 
 }

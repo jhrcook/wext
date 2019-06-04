@@ -13,11 +13,13 @@
 #' @param max_try Number of times to try to find two edges to swap. No message
 #'   is relayed for a single unsuccessful edge swap; instead a message at the
 #'   end prints the number of successful edge swaps in total.
+#' @param quiet boolean for if you want the number of successful edge swaps
+#'   printed
 #'
 #' @return \code{n1} with nodes swapped
 #'
 #' @export swap_an_edgeC
-swap_an_edgeC <- function(n1, n2, N, max_try) {
-    .Call(`_wext_swap_an_edgeC`, n1, n2, N, max_try)
+swap_an_edgeC <- function(n1, n2, N, max_try, quiet) {
+    .Call(`_wext_swap_an_edgeC`, n1, n2, N, max_try, quiet)
 }
 

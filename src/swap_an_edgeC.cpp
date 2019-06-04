@@ -14,12 +14,14 @@ using namespace Rcpp;
 //' @param max_try Number of times to try to find two edges to swap. No message
 //'   is relayed for a single unsuccessful edge swap; instead a message at the
 //'   end prints the number of successful edge swaps in total.
+//' @param quiet boolean for if you want the number of successful edge swaps
+//'   printed
 //'
 //' @return \code{n1} with nodes swapped
 //'
 //' @export swap_an_edgeC
 // [[Rcpp::export]]
-IntegerVector swap_an_edgeC(IntegerVector n1, IntegerVector n2, int N, int max_try) {
+IntegerVector swap_an_edgeC(IntegerVector n1, IntegerVector n2, int N, int max_try, bool quiet) {
 
     int n_edges = n1.size();
     bool CHECKER = true;
@@ -86,7 +88,9 @@ IntegerVector swap_an_edgeC(IntegerVector n1, IntegerVector n2, int N, int max_t
         }
     }
 
-    Rcout << "number of successful edge swaps: " << edge_swap_counter << std::endl;
+    if (!quiet) {
+        Rcout << "number of successful edge swaps: " << edge_swap_counter << std::endl;
+    }
 
     return n1;
 }

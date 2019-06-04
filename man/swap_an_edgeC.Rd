@@ -4,7 +4,7 @@
 \alias{swap_an_edgeC}
 \title{Swap a single edge (method 2 in C++)}
 \usage{
-swap_an_edgeC(n1, n2, N, max_try)
+swap_an_edgeC(n1, n2, N, max_try, quiet)
 }
 \arguments{
 \item{n1, n2}{the graph built as a set of two vectors with the nodes for each edge}
@@ -14,6 +14,9 @@ swap_an_edgeC(n1, n2, N, max_try)
 \item{max_try}{Number of times to try to find two edges to swap. No message
 is relayed for a single unsuccessful edge swap; instead a message at the
 end prints the number of successful edge swaps in total.}
+
+\item{quiet}{boolean for if you want the number of successful edge swaps
+printed}
 }
 \value{
 \code{n1} with nodes swapped
