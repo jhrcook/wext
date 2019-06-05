@@ -1,10 +1,16 @@
 #' The Row-Column-Exclusivity or Co-mutation test
 #'
-#' @description The Row-Column-Exclusivity or Co-mutation test cannot be
-#'   calculated exactly for most use cases because there is no closed formula
-#'   and a very large number of possible matrices to consider. Thus, the
-#'   probabilities are calculated empirically from a sufficiently large number
-#'   of samples of possible matrices.
+#' The Row-Column-Exclusivity or Co-mutation test measures the liklihood of
+#' seeing the number of mutually exclusive or co-mutation events between sets of
+#' genes of size \code{k} given the number of mutations per gene and per sample.
+#' By accounting for the number of mutations per sample, this test is more
+#' sensitive than using a one-sided Fisher's exact test (for when \code{k=2}) or
+#' CoMEt (for when \code{k>2}).
+#'
+#' This test cannot be calculated exactly for most use cases because there is no
+#' closed formula and a very large number of possible matrices to consider.
+#' Thus, the probabilities are calculated empirically from a sufficiently large
+#' number of samples of possible matrices.
 #'
 #' @param dat tibble with mutation information
 #' @param sample_col column of samples names (quoted)
@@ -80,7 +86,7 @@ rc_test <- function(dat, sample_col, mutgene_col,
     }
 
     for (i in 1:N_perms) {
-        perm_bgr <- bipartite_edge_swap2(bipartite_gr, Q = 20)
+        perm_bgr <- bipartite_edge_swap3(bipartite_gr, Q = 20)
         results_tib <- purrr::pmap_df(
             results_tib, update_results_tib, f = test_func, bgr = perm_bgr
         )
