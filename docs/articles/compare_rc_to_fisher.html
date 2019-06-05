@@ -115,125 +115,152 @@
 
     
     
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(ggplot2)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(dplyr)</a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(wext)</a></code></pre></div>
 <p>This vignette compares the results of the classic one-sided Fisher’s test for mutual exclusivity and the Row-Column Exclusivity test on a simple data set.</p>
 <div id="the-input-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#the-input-data" class="anchor"></a>The Input Data</h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">simple_dataset <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">sample_name =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(sample_name, <span class="dt">levels =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/character">as.character</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">14</span>))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/ggplot2/topics/ggplot">ggplot</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/ggplot2/topics/aes">aes</a></span>(<span class="dt">x =</span> sample_name, <span class="dt">y =</span> mutated_gene)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/ggplot2/topics/geom_tile">geom_tile</a></span>(<span class="dt">color =</span> <span class="st">"grey50"</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/ggplot2/topics/ggtheme">theme_bw</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">simple_dataset <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">sample_name =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(sample_name, <span class="dt">levels =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/character">as.character</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">14</span>))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> sample_name, <span class="dt">y =</span> mutated_gene)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="st">  </span><span class="kw">geom_tile</span>(<span class="dt">color =</span> <span class="st">"grey50"</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="st">  </span><span class="kw">theme_bw</span>()</a></code></pre></div>
 <p><img src="compare_rc_to_fisher_files/figure-html/viz_data-1.png" width="700"></p>
-<p>From the plot, it seems that genes “c” and “d” strongly co-mutate while “a” and “b” are strongly mutually exclusive. Samples “1” and “2” have more mutation than the others.</p>
+<p>From the plot, it seems that genes “c” and “d” strongly co-mutate while “a” and “b” are strongly mutually exclusive. Samples “1” and “2” have more mutation than the others while samples “11” and “12” have only two mutations each. This information is taken into account in the RC test but not the one-sided Fisher’s exact test.</p>
 </div>
 <div id="one-sided-fishers-exact-test" class="section level2">
 <h2 class="hasAnchor">
 <a href="#one-sided-fishers-exact-test" class="anchor"></a>One-sided Fisher’s exact test</h2>
 <p>The following functions perform a one-sided Fisher’s exact test for a odds ratio less than 1. <code>one_sided_fish()</code> takes the data and the column holding the samples and their mutations. It then runs each combination of two genes through the Fisher’s exact test in <code>single_one_sided_fish()</code></p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># conduct a one-sided Fisher's exact test between all genes in `mutgene_col`</span></a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co"># of `dat`</span></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3">one_sided_fish &lt;-<span class="st"> </span><span class="cf">function</span>(dat, sample_col, mutgene_col) {</a>
-<a class="sourceLine" id="cb3-4" data-line-number="4">    original_colnames &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(</a>
-<a class="sourceLine" id="cb3-5" data-line-number="5">        rlang<span class="op">::</span><span class="kw"><a href="https://rlang.r-lib.org/reference/as_string.html">as_string</a></span>(rlang<span class="op">::</span><span class="kw"><a href="https://rlang.r-lib.org/reference/quotation.html">ensym</a></span>(sample_col)),</a>
-<a class="sourceLine" id="cb3-6" data-line-number="6">        rlang<span class="op">::</span><span class="kw"><a href="https://rlang.r-lib.org/reference/as_string.html">as_string</a></span>(rlang<span class="op">::</span><span class="kw"><a href="https://rlang.r-lib.org/reference/quotation.html">ensym</a></span>(mutgene_col))</a>
-<a class="sourceLine" id="cb3-7" data-line-number="7">    )</a>
-<a class="sourceLine" id="cb3-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb3-9" data-line-number="9">    <span class="co"># enquote the input column names</span></a>
-<a class="sourceLine" id="cb3-10" data-line-number="10">    sample_col &lt;-<span class="st"> </span>rlang<span class="op">::</span><span class="kw"><a href="https://rlang.r-lib.org/reference/quotation.html">enquo</a></span>(sample_col)</a>
-<a class="sourceLine" id="cb3-11" data-line-number="11">    mutgene_col &lt;-<span class="st"> </span>rlang<span class="op">::</span><span class="kw"><a href="https://rlang.r-lib.org/reference/quotation.html">enquo</a></span>(mutgene_col)</a>
-<a class="sourceLine" id="cb3-12" data-line-number="12"></a>
-<a class="sourceLine" id="cb3-13" data-line-number="13">    <span class="co"># vector of all genes</span></a>
-<a class="sourceLine" id="cb3-14" data-line-number="14">    genes &lt;-<span class="st"> </span>rlang<span class="op">::</span><span class="kw"><a href="https://rlang.r-lib.org/reference/eval_tidy.html">eval_tidy</a></span>(mutgene_col, dat) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unlist">unlist</a></span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>()</a>
-<a class="sourceLine" id="cb3-15" data-line-number="15">    </a>
-<a class="sourceLine" id="cb3-16" data-line-number="16">    results_tib &lt;-<span class="st"> </span><span class="kw"><a href="../reference/results_tracker.html">make_empty_results_tracker</a></span>(genes, <span class="dv">2</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>()) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb3-17" data-line-number="17"><span class="st">        </span>purrr<span class="op">::</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/map2.html">pmap</a></span>(single_one_sided_fish, <span class="dt">data =</span> dat,</a>
-<a class="sourceLine" id="cb3-18" data-line-number="18">                    <span class="dt">sample_col =</span> <span class="op">!!</span>sample_col, <span class="dt">mutgene_col =</span> <span class="op">!!</span>mutgene_col) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb3-19" data-line-number="19"><span class="st">      </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_rows</a></span>()</a>
-<a class="sourceLine" id="cb3-20" data-line-number="20">    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(results_tib)</a>
-<a class="sourceLine" id="cb3-21" data-line-number="21">}</a>
-<a class="sourceLine" id="cb3-22" data-line-number="22"></a>
-<a class="sourceLine" id="cb3-23" data-line-number="23"><span class="co"># conduct a one-sided Fisher's exact test between the genes in `gene_set` using</span></a>
-<a class="sourceLine" id="cb3-24" data-line-number="24"><span class="co"># the data in `data`</span></a>
-<a class="sourceLine" id="cb3-25" data-line-number="25">single_one_sided_fish &lt;-<span class="st"> </span><span class="cf">function</span>(gene_sets, data, sample_col, mutgene_col) {</a>
-<a class="sourceLine" id="cb3-26" data-line-number="26">    <span class="co"># enquote the input column names</span></a>
-<a class="sourceLine" id="cb3-27" data-line-number="27">    sample_col &lt;-<span class="st"> </span>rlang<span class="op">::</span><span class="kw"><a href="https://rlang.r-lib.org/reference/quotation.html">enquo</a></span>(sample_col)</a>
-<a class="sourceLine" id="cb3-28" data-line-number="28">    mutgene_col &lt;-<span class="st"> </span>rlang<span class="op">::</span><span class="kw"><a href="https://rlang.r-lib.org/reference/quotation.html">enquo</a></span>(mutgene_col)</a>
-<a class="sourceLine" id="cb3-29" data-line-number="29">    cont_tbl &lt;-<span class="st"> </span>data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb3-30" data-line-number="30"><span class="st">        </span><span class="kw">make_contingency_table</span>(<span class="dt">genes =</span> gene_sets, <span class="op">!!</span>sample_col, <span class="op">!!</span>mutgene_col)</a>
-<a class="sourceLine" id="cb3-31" data-line-number="31">    fe &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/fisher.test">fisher.test</a></span>(cont_tbl,<span class="dt">alternative =</span> <span class="st">"less"</span>)</a>
-<a class="sourceLine" id="cb3-32" data-line-number="32">    tibble<span class="op">::</span><span class="kw"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span>(<span class="dt">gene_sets =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(gene_sets),</a>
-<a class="sourceLine" id="cb3-33" data-line-number="33">                   <span class="dt">fish_pval =</span> fe<span class="op">$</span>p.value,</a>
-<a class="sourceLine" id="cb3-34" data-line-number="34">                   <span class="dt">oddsratio =</span> fe<span class="op">$</span>estimate)</a>
-<a class="sourceLine" id="cb3-35" data-line-number="35">}</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># conduct a one-sided Fisher's exact test between all genes in `mutgene_col`</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co"># of `dat`</span></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">one_sided_fish &lt;-<span class="st"> </span><span class="cf">function</span>(dat, sample_col, mutgene_col,</a>
+<a class="sourceLine" id="cb2-4" data-line-number="4">                           <span class="dt">which_test =</span> <span class="st">"exclusivity"</span>) {</a>
+<a class="sourceLine" id="cb2-5" data-line-number="5">    original_colnames &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(</a>
+<a class="sourceLine" id="cb2-6" data-line-number="6">        rlang<span class="op">::</span><span class="kw"><a href="https://rlang.r-lib.org/reference/as_string.html">as_string</a></span>(rlang<span class="op">::</span><span class="kw"><a href="https://rlang.r-lib.org/reference/quotation.html">ensym</a></span>(sample_col)),</a>
+<a class="sourceLine" id="cb2-7" data-line-number="7">        rlang<span class="op">::</span><span class="kw"><a href="https://rlang.r-lib.org/reference/as_string.html">as_string</a></span>(rlang<span class="op">::</span><span class="kw"><a href="https://rlang.r-lib.org/reference/quotation.html">ensym</a></span>(mutgene_col))</a>
+<a class="sourceLine" id="cb2-8" data-line-number="8">    )</a>
+<a class="sourceLine" id="cb2-9" data-line-number="9">    </a>
+<a class="sourceLine" id="cb2-10" data-line-number="10">    <span class="co"># determine side of Fisher's given the test to perform</span></a>
+<a class="sourceLine" id="cb2-11" data-line-number="11">    <span class="cf">if</span> (which_test <span class="op">%in%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"exclusivity"</span>, <span class="st">"e"</span>)) {</a>
+<a class="sourceLine" id="cb2-12" data-line-number="12">      side &lt;-<span class="st"> "l"</span></a>
+<a class="sourceLine" id="cb2-13" data-line-number="13">    } <span class="cf">else</span> <span class="cf">if</span> (which_test <span class="op">%in%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"comutation"</span>, <span class="st">"c"</span>)) {</a>
+<a class="sourceLine" id="cb2-14" data-line-number="14">      side &lt;-<span class="st"> "g"</span></a>
+<a class="sourceLine" id="cb2-15" data-line-number="15">    }</a>
+<a class="sourceLine" id="cb2-16" data-line-number="16">    </a>
+<a class="sourceLine" id="cb2-17" data-line-number="17">    <span class="co"># enquote the input column names</span></a>
+<a class="sourceLine" id="cb2-18" data-line-number="18">    sample_col &lt;-<span class="st"> </span>rlang<span class="op">::</span><span class="kw"><a href="https://rlang.r-lib.org/reference/quotation.html">enquo</a></span>(sample_col)</a>
+<a class="sourceLine" id="cb2-19" data-line-number="19">    mutgene_col &lt;-<span class="st"> </span>rlang<span class="op">::</span><span class="kw"><a href="https://rlang.r-lib.org/reference/quotation.html">enquo</a></span>(mutgene_col)</a>
+<a class="sourceLine" id="cb2-20" data-line-number="20"></a>
+<a class="sourceLine" id="cb2-21" data-line-number="21">    <span class="co"># vector of all genes</span></a>
+<a class="sourceLine" id="cb2-22" data-line-number="22">    genes &lt;-<span class="st"> </span>rlang<span class="op">::</span><span class="kw"><a href="https://rlang.r-lib.org/reference/eval_tidy.html">eval_tidy</a></span>(mutgene_col, dat) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unlist">unlist</a></span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>()</a>
+<a class="sourceLine" id="cb2-23" data-line-number="23">    </a>
+<a class="sourceLine" id="cb2-24" data-line-number="24">    results_tib &lt;-<span class="st"> </span><span class="kw">make_empty_fish_results_tracker</span>(genes, <span class="dv">2</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>()) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-25" data-line-number="25"><span class="st">        </span>purrr<span class="op">::</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/map2.html">pmap</a></span>(</a>
+<a class="sourceLine" id="cb2-26" data-line-number="26">            single_one_sided_fish,</a>
+<a class="sourceLine" id="cb2-27" data-line-number="27">            <span class="dt">data =</span> dat, <span class="dt">sample_col =</span> <span class="op">!!</span>sample_col,</a>
+<a class="sourceLine" id="cb2-28" data-line-number="28">            <span class="dt">mutgene_col =</span> <span class="op">!!</span>mutgene_col, <span class="dt">side =</span> side</a>
+<a class="sourceLine" id="cb2-29" data-line-number="29">        ) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb2-30" data-line-number="30"><span class="st">        </span><span class="kw">bind_rows</span>()</a>
+<a class="sourceLine" id="cb2-31" data-line-number="31">    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(results_tib)</a>
+<a class="sourceLine" id="cb2-32" data-line-number="32">}</a>
+<a class="sourceLine" id="cb2-33" data-line-number="33"></a>
+<a class="sourceLine" id="cb2-34" data-line-number="34"><span class="co"># conduct a one-sided Fisher's exact test between the genes in `gene_set` using</span></a>
+<a class="sourceLine" id="cb2-35" data-line-number="35"><span class="co"># the data in `data`</span></a>
+<a class="sourceLine" id="cb2-36" data-line-number="36">single_one_sided_fish &lt;-<span class="st"> </span><span class="cf">function</span>(gene_sets, data, sample_col, mutgene_col, side) {</a>
+<a class="sourceLine" id="cb2-37" data-line-number="37">    <span class="co"># enquote the input column names</span></a>
+<a class="sourceLine" id="cb2-38" data-line-number="38">    sample_col &lt;-<span class="st"> </span>rlang<span class="op">::</span><span class="kw"><a href="https://rlang.r-lib.org/reference/quotation.html">enquo</a></span>(sample_col)</a>
+<a class="sourceLine" id="cb2-39" data-line-number="39">    mutgene_col &lt;-<span class="st"> </span>rlang<span class="op">::</span><span class="kw"><a href="https://rlang.r-lib.org/reference/quotation.html">enquo</a></span>(mutgene_col)</a>
+<a class="sourceLine" id="cb2-40" data-line-number="40">    cont_tbl &lt;-<span class="st"> </span>data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-41" data-line-number="41"><span class="st">        </span><span class="kw">make_contingency_table</span>(<span class="dt">genes =</span> gene_sets, <span class="op">!!</span>sample_col, <span class="op">!!</span>mutgene_col)</a>
+<a class="sourceLine" id="cb2-42" data-line-number="42">    fe &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/fisher.test">fisher.test</a></span>(cont_tbl, <span class="dt">alternative =</span> side)</a>
+<a class="sourceLine" id="cb2-43" data-line-number="43">    tibble<span class="op">::</span><span class="kw"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span>(<span class="dt">gene_sets =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(gene_sets),</a>
+<a class="sourceLine" id="cb2-44" data-line-number="44">                   <span class="dt">fish_pval =</span> fe<span class="op">$</span>p.value,</a>
+<a class="sourceLine" id="cb2-45" data-line-number="45">                   <span class="dt">oddsratio =</span> fe<span class="op">$</span>estimate)</a>
+<a class="sourceLine" id="cb2-46" data-line-number="46">}</a></code></pre></div>
 <p><code>make_contingency_table()</code> creates the 2x2 contingency table as input for the Fisher’s exact test in <code>single_one_sided_fish()</code>.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co"># construct the contingency table (2x2)</span></a>
-<a class="sourceLine" id="cb4-2" data-line-number="2">make_contingency_table &lt;-<span class="st"> </span><span class="cf">function</span>(dat, genes, sample_col, mutgene_col) {</a>
-<a class="sourceLine" id="cb4-3" data-line-number="3">    <span class="co"># enquote the input column names</span></a>
-<a class="sourceLine" id="cb4-4" data-line-number="4">    sample_col &lt;-<span class="st"> </span>rlang<span class="op">::</span><span class="kw"><a href="https://rlang.r-lib.org/reference/quotation.html">enquo</a></span>(sample_col)</a>
-<a class="sourceLine" id="cb4-5" data-line-number="5">    mutgene_col &lt;-<span class="st"> </span>rlang<span class="op">::</span><span class="kw"><a href="https://rlang.r-lib.org/reference/quotation.html">enquo</a></span>(mutgene_col)</a>
-<a class="sourceLine" id="cb4-6" data-line-number="6">    </a>
-<a class="sourceLine" id="cb4-7" data-line-number="7">    genes &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unlist">unlist</a></span>(genes)</a>
-<a class="sourceLine" id="cb4-8" data-line-number="8">    g1 &lt;-<span class="st"> </span>genes[[<span class="dv">1</span>]]</a>
-<a class="sourceLine" id="cb4-9" data-line-number="9">    g2 &lt;-<span class="st"> </span>genes[[<span class="dv">2</span>]]</a>
-<a class="sourceLine" id="cb4-10" data-line-number="10">    </a>
-<a class="sourceLine" id="cb4-11" data-line-number="11">    all_samples &lt;-<span class="st"> </span>rlang<span class="op">::</span><span class="kw"><a href="https://rlang.r-lib.org/reference/eval_tidy.html">eval_tidy</a></span>(sample_col, dat) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unlist">unlist</a></span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>()</a>
-<a class="sourceLine" id="cb4-12" data-line-number="12">    </a>
-<a class="sourceLine" id="cb4-13" data-line-number="13">    g1_mut &lt;-<span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(dat, <span class="op">!!</span>mutgene_col <span class="op">==</span><span class="st"> </span><span class="op">!!</span>g1) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span>(<span class="op">!!</span>sample_col) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>()</a>
-<a class="sourceLine" id="cb4-14" data-line-number="14">    g1_wt &lt;-<span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/setops.html">setdiff</a></span>(all_samples, g1_mut)</a>
-<a class="sourceLine" id="cb4-15" data-line-number="15">    g2_mut &lt;-<span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(dat, <span class="op">!!</span>mutgene_col <span class="op">==</span><span class="st"> </span><span class="op">!!</span>g2) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span>(<span class="op">!!</span>sample_col) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>()</a>
-<a class="sourceLine" id="cb4-16" data-line-number="16">    g2_wt &lt;-<span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/setops.html">setdiff</a></span>(all_samples, g2_mut)</a>
-<a class="sourceLine" id="cb4-17" data-line-number="17">    </a>
-<a class="sourceLine" id="cb4-18" data-line-number="18">    A &lt;-<span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/setops.html">intersect</a></span>(g1_mut, g2_mut) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>()</a>
-<a class="sourceLine" id="cb4-19" data-line-number="19">    B &lt;-<span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/setops.html">intersect</a></span>(g1_mut, g2_wt) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>()</a>
-<a class="sourceLine" id="cb4-20" data-line-number="20">    C &lt;-<span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/setops.html">intersect</a></span>(g1_wt, g2_mut) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>()</a>
-<a class="sourceLine" id="cb4-21" data-line-number="21">    D &lt;-<span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/setops.html">intersect</a></span>(g1_wt, g2_wt) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>()</a>
-<a class="sourceLine" id="cb4-22" data-line-number="22">    </a>
-<a class="sourceLine" id="cb4-23" data-line-number="23">    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/matrix">matrix</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(A, B, C, D), <span class="dt">nrow =</span> <span class="dv">2</span>)</a>
-<a class="sourceLine" id="cb4-24" data-line-number="24">}</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># construct the contingency table (2x2)</span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">make_contingency_table &lt;-<span class="st"> </span><span class="cf">function</span>(dat, genes, sample_col, mutgene_col) {</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3">    <span class="co"># enquote the input column names</span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4">    sample_col &lt;-<span class="st"> </span>rlang<span class="op">::</span><span class="kw"><a href="https://rlang.r-lib.org/reference/quotation.html">enquo</a></span>(sample_col)</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5">    mutgene_col &lt;-<span class="st"> </span>rlang<span class="op">::</span><span class="kw"><a href="https://rlang.r-lib.org/reference/quotation.html">enquo</a></span>(mutgene_col)</a>
+<a class="sourceLine" id="cb3-6" data-line-number="6">    </a>
+<a class="sourceLine" id="cb3-7" data-line-number="7">    genes &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unlist">unlist</a></span>(genes)</a>
+<a class="sourceLine" id="cb3-8" data-line-number="8">    g1 &lt;-<span class="st"> </span>genes[[<span class="dv">1</span>]]</a>
+<a class="sourceLine" id="cb3-9" data-line-number="9">    g2 &lt;-<span class="st"> </span>genes[[<span class="dv">2</span>]]</a>
+<a class="sourceLine" id="cb3-10" data-line-number="10">    </a>
+<a class="sourceLine" id="cb3-11" data-line-number="11">    all_samples &lt;-<span class="st"> </span>rlang<span class="op">::</span><span class="kw"><a href="https://rlang.r-lib.org/reference/eval_tidy.html">eval_tidy</a></span>(sample_col, dat) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unlist">unlist</a></span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>()</a>
+<a class="sourceLine" id="cb3-12" data-line-number="12">    </a>
+<a class="sourceLine" id="cb3-13" data-line-number="13">    g1_mut &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/filter">filter</a></span>(dat, <span class="op">!!</span>mutgene_col <span class="op">==</span><span class="st"> </span><span class="op">!!</span>g1) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pull</span>(<span class="op">!!</span>sample_col) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>()</a>
+<a class="sourceLine" id="cb3-14" data-line-number="14">    g1_wt &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sets">setdiff</a></span>(all_samples, g1_mut)</a>
+<a class="sourceLine" id="cb3-15" data-line-number="15">    g2_mut &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/filter">filter</a></span>(dat, <span class="op">!!</span>mutgene_col <span class="op">==</span><span class="st"> </span><span class="op">!!</span>g2) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pull</span>(<span class="op">!!</span>sample_col) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>()</a>
+<a class="sourceLine" id="cb3-16" data-line-number="16">    g2_wt &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sets">setdiff</a></span>(all_samples, g2_mut)</a>
+<a class="sourceLine" id="cb3-17" data-line-number="17">    </a>
+<a class="sourceLine" id="cb3-18" data-line-number="18">    A &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sets">intersect</a></span>(g1_mut, g2_mut) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>()</a>
+<a class="sourceLine" id="cb3-19" data-line-number="19">    B &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sets">intersect</a></span>(g1_mut, g2_wt) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>()</a>
+<a class="sourceLine" id="cb3-20" data-line-number="20">    C &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sets">intersect</a></span>(g1_wt, g2_mut) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>()</a>
+<a class="sourceLine" id="cb3-21" data-line-number="21">    D &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sets">intersect</a></span>(g1_wt, g2_wt) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>()</a>
+<a class="sourceLine" id="cb3-22" data-line-number="22">    </a>
+<a class="sourceLine" id="cb3-23" data-line-number="23">    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/matrix">matrix</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(A, B, C, D), <span class="dt">nrow =</span> <span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb3-24" data-line-number="24">}</a></code></pre></div>
 <p><code><a href="../reference/results_tracker.html">make_empty_results_tracker()</a></code> initializes the results tracker with a single column <code>gene_sets</code> containing lists of ever combination of <code>k</code> genes in <code>gs</code>. For this use, <code>k = 2</code> and <code>seed_genes</code> can be ignored (<code>seed_genes = c()</code>).</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># start the results tracking tibble with the gene sets and t_BM_gr = 0</span></a>
-<a class="sourceLine" id="cb5-2" data-line-number="2">make_empty_results_tracker &lt;-<span class="st"> </span><span class="cf">function</span>(gs, k, seed_genes) {</a>
-<a class="sourceLine" id="cb5-3" data-line-number="3">    combs &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/combn">combn</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unlist">unlist</a></span>(gs), k) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="st">        </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/apply">apply</a></span>(<span class="dv">2</span>, list) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="st">        </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unlist">unlist</a></span>(<span class="dt">recursive =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb5-6" data-line-number="6">    <span class="cf">if</span> (<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(seed_genes) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>) {</a>
-<a class="sourceLine" id="cb5-7" data-line-number="7">        idx &lt;-<span class="st"> </span>purrr<span class="op">::</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/map.html">map_lgl</a></span>(gs, <span class="op">~</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/any">any</a></span>(seed_genes <span class="op">%in%</span><span class="st"> </span>.x))</a>
-<a class="sourceLine" id="cb5-8" data-line-number="8">        combs &lt;-<span class="st"> </span>combs[idx]</a>
-<a class="sourceLine" id="cb5-9" data-line-number="9">    }</a>
-<a class="sourceLine" id="cb5-10" data-line-number="10">    tibble<span class="op">::</span><span class="kw"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span>(<span class="dt">gene_sets =</span> combs)</a>
-<a class="sourceLine" id="cb5-11" data-line-number="11">}</a></code></pre></div>
-<p>Running the test produces results that generally agree with the prior visualization. The mutations to “a” and “b” seem to be the only significantly mutually exclusive set.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="co"># column `gene_sets_print` shows the gene sets when printed</span></a>
-<a class="sourceLine" id="cb6-2" data-line-number="2">fish_test &lt;-<span class="st"> </span><span class="kw">one_sided_fish</span>(simple_dataset, sample_name, mutated_gene) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="st">    </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">gene_sets_print =</span> purrr<span class="op">::</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/map.html">map_chr</a></span>(gene_sets, <span class="op">~</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(.x[[<span class="dv">1</span>]], <span class="st">"-"</span>, .x[[<span class="dv">2</span>]]))) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="st">    </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(fish_pval, gene_sets_print, oddsratio)</a>
-<a class="sourceLine" id="cb6-5" data-line-number="5">fish_test</a>
-<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co">#&gt; # A tibble: 28 x 4</span></a>
-<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#&gt;    gene_sets fish_pval oddsratio gene_sets_print</span></a>
-<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt;    &lt;list&gt;        &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;          </span></a>
-<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co">#&gt;  1 &lt;chr [2]&gt;   0.00932     0     a-b            </span></a>
-<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="co">#&gt;  2 &lt;chr [2]&gt;   0.308       0     a-g            </span></a>
-<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="co">#&gt;  3 &lt;chr [2]&gt;   0.308       0     e-b            </span></a>
-<a class="sourceLine" id="cb6-12" data-line-number="12"><span class="co">#&gt;  4 &lt;chr [2]&gt;   0.343       0.362 c-b            </span></a>
-<a class="sourceLine" id="cb6-13" data-line-number="13"><span class="co">#&gt;  5 &lt;chr [2]&gt;   0.343       0.362 d-b            </span></a>
-<a class="sourceLine" id="cb6-14" data-line-number="14"><span class="co">#&gt;  6 &lt;chr [2]&gt;   0.571       0     a-h            </span></a>
-<a class="sourceLine" id="cb6-15" data-line-number="15"><span class="co">#&gt;  7 &lt;chr [2]&gt;   0.571       0     f-b            </span></a>
-<a class="sourceLine" id="cb6-16" data-line-number="16"><span class="co">#&gt;  8 &lt;chr [2]&gt;   0.604       0.527 c-e            </span></a>
-<a class="sourceLine" id="cb6-17" data-line-number="17"><span class="co">#&gt;  9 &lt;chr [2]&gt;   0.604       0.527 c-g            </span></a>
-<a class="sourceLine" id="cb6-18" data-line-number="18"><span class="co">#&gt; 10 &lt;chr [2]&gt;   0.604       0.527 d-e            </span></a>
-<a class="sourceLine" id="cb6-19" data-line-number="19"><span class="co">#&gt; # … with 18 more rows</span></a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co"># start the results tracking tibble with the gene sets and t_BM_gr = 0</span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">make_empty_fish_results_tracker &lt;-<span class="st"> </span><span class="cf">function</span>(gs, k, seed_genes) {</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">    combs &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/combn">combn</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unlist">unlist</a></span>(gs), k) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="st">        </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/apply">apply</a></span>(<span class="dv">2</span>, list) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="st">        </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unlist">unlist</a></span>(<span class="dt">recursive =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb4-6" data-line-number="6">    <span class="cf">if</span> (<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(seed_genes) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>) {</a>
+<a class="sourceLine" id="cb4-7" data-line-number="7">        idx &lt;-<span class="st"> </span>purrr<span class="op">::</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/map.html">map_lgl</a></span>(gs, <span class="op">~</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/any">any</a></span>(seed_genes <span class="op">%in%</span><span class="st"> </span>.x))</a>
+<a class="sourceLine" id="cb4-8" data-line-number="8">        combs &lt;-<span class="st"> </span>combs[idx]</a>
+<a class="sourceLine" id="cb4-9" data-line-number="9">    }</a>
+<a class="sourceLine" id="cb4-10" data-line-number="10">    tibble<span class="op">::</span><span class="kw"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span>(<span class="dt">gene_sets =</span> combs)</a>
+<a class="sourceLine" id="cb4-11" data-line-number="11">}</a></code></pre></div>
 </div>
-<div id="row-column-exclusivity-test" class="section level2">
+<div id="comparing-tests-for-mutual-exclusivity" class="section level2">
 <h2 class="hasAnchor">
-<a href="#row-column-exclusivity-test" class="anchor"></a>Row-Column Exclusivity test</h2>
-<p>This test conditions on the rows and columns of the mutation matrix, thus accounting for the number of mutations per gene and per sample. This comes at a <em>severe</em> efficiency cost as the RC test is very slow to run. Here, I run the test using 10,000 permutations.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">rc_res &lt;-<span class="st"> </span><span class="kw"><a href="../reference/rc_test.html">rc_test</a></span>(simple_dataset, sample_name, mutated_gene, <span class="dt">N_perms =</span> <span class="dv">100</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">gene_sets_print =</span> purrr<span class="op">::</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/map.html">map_chr</a></span>(gene_sets, <span class="op">~</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(.x[[<span class="dv">1</span>]], <span class="st">"-"</span>, .x[[<span class="dv">2</span>]]))) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(p_val, gene_sets_print)</a></code></pre></div>
+<a href="#comparing-tests-for-mutual-exclusivity" class="anchor"></a>Comparing tests for mutual exclusivity</h2>
+<div id="one-sided-fishers-exact-test-1" class="section level3">
+<h3 class="hasAnchor">
+<a href="#one-sided-fishers-exact-test-1" class="anchor"></a>One-sided Fisher’s exact test</h3>
+<p>Running the test produces results that generally agree with the prior visualization. The mutations to “a” and “b” seem to be the only significantly mutually exclusive set.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># column `gene_sets_print` shows the gene sets when printed</span></a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">fish_test &lt;-<span class="st"> </span><span class="kw">one_sided_fish</span>(simple_dataset, sample_name, mutated_gene) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">gene_sets_print =</span> purrr<span class="op">::</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/map.html">map_chr</a></span>(gene_sets, <span class="op">~</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(.x[[<span class="dv">1</span>]], <span class="st">"-"</span>, .x[[<span class="dv">2</span>]]))) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="st">    </span><span class="kw">arrange</span>(fish_pval, gene_sets_print, oddsratio)</a>
+<a class="sourceLine" id="cb5-5" data-line-number="5">fish_test</a>
+<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="co">#&gt; # A tibble: 28 x 4</span></a>
+<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="co">#&gt;    gene_sets fish_pval oddsratio gene_sets_print</span></a>
+<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="co">#&gt;    &lt;list&gt;        &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;          </span></a>
+<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="co">#&gt;  1 &lt;chr [2]&gt;   0.00932     0     a-b            </span></a>
+<a class="sourceLine" id="cb5-10" data-line-number="10"><span class="co">#&gt;  2 &lt;chr [2]&gt;   0.308       0     a-g            </span></a>
+<a class="sourceLine" id="cb5-11" data-line-number="11"><span class="co">#&gt;  3 &lt;chr [2]&gt;   0.308       0     e-b            </span></a>
+<a class="sourceLine" id="cb5-12" data-line-number="12"><span class="co">#&gt;  4 &lt;chr [2]&gt;   0.343       0.362 c-b            </span></a>
+<a class="sourceLine" id="cb5-13" data-line-number="13"><span class="co">#&gt;  5 &lt;chr [2]&gt;   0.343       0.362 d-b            </span></a>
+<a class="sourceLine" id="cb5-14" data-line-number="14"><span class="co">#&gt;  6 &lt;chr [2]&gt;   0.571       0     a-h            </span></a>
+<a class="sourceLine" id="cb5-15" data-line-number="15"><span class="co">#&gt;  7 &lt;chr [2]&gt;   0.571       0     f-b            </span></a>
+<a class="sourceLine" id="cb5-16" data-line-number="16"><span class="co">#&gt;  8 &lt;chr [2]&gt;   0.604       0.527 c-e            </span></a>
+<a class="sourceLine" id="cb5-17" data-line-number="17"><span class="co">#&gt;  9 &lt;chr [2]&gt;   0.604       0.527 c-g            </span></a>
+<a class="sourceLine" id="cb5-18" data-line-number="18"><span class="co">#&gt; 10 &lt;chr [2]&gt;   0.604       0.527 d-e            </span></a>
+<a class="sourceLine" id="cb5-19" data-line-number="19"><span class="co">#&gt; # … with 18 more rows</span></a></code></pre></div>
+</div>
+<div id="row-column-exclusivity-test" class="section level3">
+<h3 class="hasAnchor">
+<a href="#row-column-exclusivity-test" class="anchor"></a>Row-Column Exclusivity test</h3>
+<p>This test conditions on the rows and columns of the mutation matrix, thus accounting for the number of mutations per gene and per sample. This comes at a cost in speed of computation as the RC test is much slower to run. Here, I run the test using 10,000 permutations. Also, the paramters <code>min_mut_events</code> and <code>min_times_mut</code> are set to 0 becasue the test data set is so small; on real data, these should be non-zero values (the defaults are 2 and 3, respectively) to ignore very rare events.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">rc_res &lt;-<span class="st"> </span><span class="kw"><a href="../reference/rc_test.html">rc_test</a></span>(simple_dataset, sample_name, mutated_gene, <span class="dt">k =</span> <span class="dv">2</span>,</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">                  <span class="dt">which_test =</span> <span class="st">"exclusivity"</span>, <span class="dt">N_perms =</span> <span class="fl">1e4</span>,</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">                  <span class="dt">min_mut_events =</span> <span class="dv">0</span>, <span class="dt">min_times_mut =</span> <span class="dv">0</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">gene_sets_print =</span> purrr<span class="op">::</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/map.html">map_chr</a></span>(gene_sets, <span class="op">~</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(.x[[<span class="dv">1</span>]], <span class="st">"-"</span>, .x[[<span class="dv">2</span>]]))) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="st">  </span><span class="kw">arrange</span>(p_val, gene_sets_print)</a></code></pre></div>
+</div>
+<div id="comparing-results" class="section level3">
+<h3 class="hasAnchor">
+<a href="#comparing-results" class="anchor"></a>Comparing results</h3>
+<p>By comparing the p-values returned by each test, we can see which was more sensitive.</p>
+<p>The first plot below just shows the p-values for each gene set tested, and the second shows the difference between values. . For most of the comparisons, the Fisher’s exact test returned higher p-values</p>
+<p><img src="compare_rc_to_fisher_files/figure-html/plot_pvals-1.png" width="700"></p>
+<p><img src="compare_rc_to_fisher_files/figure-html/plot_diff-1.png" width="700"></p>
+<p>Both tests easily identify the obvious and robust mutually exclusive mutational pattern of genes “a” and “b”. The Fisher’s exact test returned a smaller p-value for the gene sets a-c, a-d, c-b, and d-b. These four gene sets show a large degree of co-mutation and a few instances of exclusivity. Where the RC-test outperforms the Fisher’s exact test is with the more rare, yet strict, patterns of mutual exclusivity such as gene sets a-g or a-h, and e-b and f-b. Even more striking are the rare events between “e” and “f” which are both rarely mutated but always mutually exclusive. Their rarity diminishes the sensitivity of the Fisher’s exact test, but the RC-test, by using the mutational frequencies of the samples, is better at recognizing these these potentially important trends.</p>
+</div>
 </div>
   </div>
 
@@ -244,7 +271,7 @@
       <ul class="nav nav-pills nav-stacked">
 <li><a href="#the-input-data">The Input Data</a></li>
       <li><a href="#one-sided-fishers-exact-test">One-sided Fisher’s exact test</a></li>
-      <li><a href="#row-column-exclusivity-test">Row-Column Exclusivity test</a></li>
+      <li><a href="#comparing-tests-for-mutual-exclusivity">Comparing tests for mutual exclusivity</a></li>
       </ul>
 </div>
       </div>

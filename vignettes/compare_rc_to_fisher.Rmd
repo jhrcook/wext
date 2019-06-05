@@ -7,17 +7,15 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
     collapse = TRUE,
     comment = "#>"
 )
-```
-
-```{r setup, message=FALSE, warning=FALSE}
 library(ggplot2)
 library(dplyr)
 library(wext)
+set.seed(0)
 ```
 
 This vignette compares the results of the classic one-sided Fisher's test for mutual exclusivity and the Row-Column Exclusivity test on a simple data set.
@@ -32,21 +30,29 @@ simple_dataset %>%
   theme_bw()
 ```
 
-From the plot, it seems that genes "c" and "d" strongly co-mutate while "a" and "b" are strongly mutually exclusive. Samples "1" and "2" have more mutation than the others.
+From the plot, it seems that genes "c" and "d" strongly co-mutate while "a" and "b" are strongly mutually exclusive. Samples "1" and "2" have more mutation than the others while samples "11" and "12" have only two mutations each. This information is taken into account in the RC test but not the one-sided Fisher's exact test. 
 
 ## One-sided Fisher's exact test
 
 The following functions perform a one-sided Fisher's exact test for a odds ratio less than 1. `one_sided_fish()` takes the data and the column holding the samples and their mutations. It then runs each combination of two genes through the Fisher's exact test in `single_one_sided_fish()`
 
-```{r}
+```{r fisher_functions}
 # conduct a one-sided Fisher's exact test between all genes in `mutgene_col`
 # of `dat`
-one_sided_fish <- function(dat, sample_col, mutgene_col) {
+one_sided_fish <- function(dat, sample_col, mutgene_col,
+                           which_test = "exclusivity") {
     original_colnames <- c(
         rlang::as_string(rlang::ensym(sample_col)),
         rlang::as_string(rlang::ensym(mutgene_col))
     )
-
+    
+    # determine side of Fisher's given the test to perform
+    if (which_test %in% c("exclusivity", "e")) {
+      side <- "l"
+    } else if (which_test %in% c("comutation", "c")) {
+      side <- "g"
+    }
+    
     # enquote the input column names
     sample_col <- rlang::enquo(sample_col)
     mutgene_col <- rlang::enquo(mutgene_col)
@@ -54,22 +60,25 @@ one_sided_fish <- function(dat, sample_col, mutgene_col) {
     # vector of all genes
     genes <- rlang::eval_tidy(mutgene_col, dat) %>% unlist() %>% unique()
     
-    results_tib <- make_empty_results_tracker(genes, 2, c()) %>%
-        purrr::pmap(single_one_sided_fish, data = dat,
-                    sample_col = !!sample_col, mutgene_col = !!mutgene_col) %>% 
-      bind_rows()
+    results_tib <- make_empty_fish_results_tracker(genes, 2, c()) %>%
+        purrr::pmap(
+            single_one_sided_fish,
+            data = dat, sample_col = !!sample_col,
+            mutgene_col = !!mutgene_col, side = side
+        ) %>% 
+        bind_rows()
     return(results_tib)
 }
 
 # conduct a one-sided Fisher's exact test between the genes in `gene_set` using
 # the data in `data`
-single_one_sided_fish <- function(gene_sets, data, sample_col, mutgene_col) {
+single_one_sided_fish <- function(gene_sets, data, sample_col, mutgene_col, side) {
     # enquote the input column names
     sample_col <- rlang::enquo(sample_col)
     mutgene_col <- rlang::enquo(mutgene_col)
     cont_tbl <- data %>%
         make_contingency_table(genes = gene_sets, !!sample_col, !!mutgene_col)
-    fe <- fisher.test(cont_tbl,alternative = "less")
+    fe <- fisher.test(cont_tbl, alternative = side)
     tibble::tibble(gene_sets = list(gene_sets),
                    fish_pval = fe$p.value,
                    oddsratio = fe$estimate)
@@ -79,7 +88,7 @@ single_one_sided_fish <- function(gene_sets, data, sample_col, mutgene_col) {
 
 `make_contingency_table()` creates the 2x2 contingency table as input for the Fisher's exact test in `single_one_sided_fish()`.
 
-```{r}
+```{r contingencytable_function}
 # construct the contingency table (2x2)
 make_contingency_table <- function(dat, genes, sample_col, mutgene_col) {
     # enquote the input column names
@@ -108,9 +117,9 @@ make_contingency_table <- function(dat, genes, sample_col, mutgene_col) {
 
 `make_empty_results_tracker()` initializes the results tracker with a single column `gene_sets` containing lists of ever combination of `k` genes in `gs`. For this use, `k = 2` and `seed_genes` can be ignored (`seed_genes = c()`).
 
-```{r}
+```{r resultstracker_function}
 # start the results tracking tibble with the gene sets and t_BM_gr = 0
-make_empty_results_tracker <- function(gs, k, seed_genes) {
+make_empty_fish_results_tracker <- function(gs, k, seed_genes) {
     combs <- combn(unlist(gs), k) %>%
         apply(2, list) %>%
         unlist(recursive = FALSE)
@@ -122,9 +131,13 @@ make_empty_results_tracker <- function(gs, k, seed_genes) {
 }
 ```
 
+## Comparing tests for mutual exclusivity
+
+### One-sided Fisher's exact test
+
 Running the test produces results that generally agree with the prior visualization. The mutations to "a" and "b" seem to be the only significantly mutually exclusive set.
 
-```{r}
+```{r run_fisher}
 # column `gene_sets_print` shows the gene sets when printed
 fish_test <- one_sided_fish(simple_dataset, sample_name, mutated_gene) %>% 
     mutate(gene_sets_print = purrr::map_chr(gene_sets, ~ paste0(.x[[1]], "-", .x[[2]]))) %>% 
@@ -132,13 +145,62 @@ fish_test <- one_sided_fish(simple_dataset, sample_name, mutated_gene) %>%
 fish_test
 ```
 
-## Row-Column Exclusivity test
+### Row-Column Exclusivity test
 
-This test conditions on the rows and columns of the mutation matrix, thus accounting for the number of mutations per gene and per sample. This comes at a *severe* efficiency cost as the RC test is very slow to run. Here, I run the test using 10,000 permutations.
+This test conditions on the rows and columns of the mutation matrix, thus accounting for the number of mutations per gene and per sample. This comes at a cost in speed of computation as the RC test is much slower to run. Here, I run the test using 10,000 permutations. Also, the paramters `min_mut_events` and `min_times_mut` are set to 0 becasue the test data set is so small; on real data, these should be non-zero values (the defaults are 2 and 3, respectively) to ignore very rare events.
 
-```{r rc_test, eval = FALSE}
-rc_res <- rc_test(simple_dataset, sample_name, mutated_gene, N_perms = 100) %>% 
+```{r rc_test, eval = TRUE, cache = TRUE}
+rc_res <- rc_test(simple_dataset, sample_name, mutated_gene, k = 2,
+                  which_test = "exclusivity", N_perms = 1e4,
+                  min_mut_events = 0, min_times_mut = 0) %>% 
   mutate(gene_sets_print = purrr::map_chr(gene_sets, ~ paste0(.x[[1]], "-", .x[[2]]))) %>% 
   arrange(p_val, gene_sets_print)
 ```
 
+### Comparing results
+
+By comparing the p-values returned by each test, we can see which was more sensitive.
+
+The first plot below just shows the p-values for each gene set tested, and the second shows the difference between values. . For most of the comparisons, the Fisher's exact test returned higher p-values
+
+```{r compare_resultstib, echo = FALSE}
+comp_results <- dplyr::full_join(
+    fish_test, rc_res, by = "gene_sets_print", suffix = c("_fish", "_rctest")
+) %>%
+  dplyr::select(gene_sets_print, t_BM_ge, t_AM, fish_pval, p_val) %>% 
+  dplyr::rename(rctest_pval = "p_val")
+```
+
+```{r plot_pvals, echo = FALSE, warning = FALSE}
+comp_results %>%
+    tidyr::gather(key = "test", value = "pval",
+                  -gene_sets_print, -t_BM_ge, -t_AM) %>% 
+    ggplot(aes(x = gene_sets_print, y = pval)) +
+    geom_point(aes(color = test), position = position_dodge(width = 0.7)) +
+    scale_color_manual(
+      values = c("fish_pval" = "dodgerblue", "rctest_pval" = "tomato")
+    ) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 60)) +
+  scale_y_continuous(limits = c(0,1), expand = c(0,0.05)) +
+  labs(x = "gene sets", y = "p-values",
+       title = "Results of Fisher and RC-test for exclusivity")
+```
+
+```{r plot_diff, echo = FALSE, warning = FALSE}
+comp_results %>%
+    dplyr::mutate(diff_pval = fish_pval - rctest_pval,
+                  pval_col = ifelse(diff_pval < 0, "Fisher", "RC-Test")) %>% 
+    ggplot(aes(x = gene_sets_print, y = diff_pval)) +
+    geom_col(aes(fill = pval_col)) +
+    scale_fill_manual(
+      values = c("Fisher" = "dodgerblue", "RC-Test" = "tomato")
+    ) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 60)) +
+    labs(x = "gene sets", y = "difference in p-values\n(Fisher - RC-test)",
+         fill = "more sensitive test",
+         title = "Difference in results between Fisher and RC-test")
+```
+
+Both tests easily identify the obvious and robust mutually exclusive mutational pattern of genes "a" and "b". The Fisher's exact test returned a smaller p-value for the gene sets a-c, a-d, c-b, and d-b. These four gene sets show a large degree of co-mutation and a few instances of exclusivity. Where the RC-test outperforms the Fisher's exact test is with the more rare, yet strict, patterns of mutual exclusivity such as gene sets a-g or a-h, and e-b and f-b. Even more striking are the rare events between "e" and "f" which are both rarely mutated but always mutually exclusive. Their rarity diminishes the sensitivity of the Fisher's exact test, but the RC-test, by using the mutational frequencies of the samples, is better at recognizing these these potentially important trends.
