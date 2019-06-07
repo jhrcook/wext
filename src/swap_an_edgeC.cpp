@@ -11,11 +11,11 @@ using namespace Rcpp;
 //'
 //' @param n1,n2 the graph built as a set of two vectors with the nodes for each edge
 //' @param N the number of edges to swap (one at a time)
-//' @param max_try Number of times to try to find two edges to swap. No message
-//'   is relayed for a single unsuccessful edge swap; instead a message at the
-//'   end prints the number of successful edge swaps in total.
-//' @param quiet boolean for if you want the number of successful edge swaps
-//'   printed
+//' @param max_try number of times to try to find two edges to swap; no message
+//'   is relayed for a single unsuccessful edge swap - instead a message at the
+//'   end prints the number of successful edge swaps in total
+//' @param quiet boolean for if you want a message if not \code{N} edge swaps
+//'   are performed
 //'
 //' @return \code{n1} with nodes swapped
 //'
@@ -23,57 +23,39 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 IntegerVector swap_an_edgeC(IntegerVector n1, IntegerVector n2, int N, int max_try, bool quiet) {
 
+    // number of edges
     int n_edges = n1.size();
-    bool CHECKER = true;
-    LogicalVector idx(n_edges, true);
 
-    int rand_e1 = 0;
-    int rand_n11 = 0;
-    int rand_n12 = 0;
+    // trackers
+    int successes = 0;
+    int counter = 0;
+    int total_attempts = N + max_try;
 
-    int edge_swap_counter = 0;
+    // calculate all random edges to use at one time (faster)
+    IntegerVector random_edges = sample(n_edges, total_attempts, true) - 1;
 
-    // do N edge swaps
-    for (int i=0; i<N; i++) {
+    // perform all edge swaps or hit maximum fails
+    while (successes <= N & counter <= total_attempts) {
+        // get first edge and its nodes to swap
+        int rand_e1 = random_edges[counter];
+        int rand_n11 = n1[rand_e1];
+        int rand_n12 = n2[rand_e1];
 
-        // get an edge to swap that has other swapping partners
-        for (int j=0; j<max_try; j++) {
-            // get first edge and its nodes to swap
-            rand_e1 = rand() % n_edges;
-            rand_n11 = n1[rand_e1];
-            rand_n12 = n2[rand_e1];
+        // get other nodes adjacent to the edge selected
+        IntegerVector adj_n12 = unique(ifelse(n2 == rand_n12, n1, 0));
+        IntegerVector adj_n11 = unique(ifelse(n1 == rand_n11, n2, 0));
 
-            // get other nodes adjacent to the edge selected
-            IntegerVector adj_n12 = unique(ifelse(n2 == rand_n12, n1, 0));
-            IntegerVector adj_n11 = unique(ifelse(n1 == rand_n11, n2, 0));
+        // which edges can be chosen to swap with (false == can be swapped with)
+        LogicalVector idx = in(n1, adj_n12) | in(n2, adj_n11);
 
-            // which edges can be chosen to swap with (false == can be swapped with)
-            idx = in(n1, adj_n12) | in(n2, adj_n11);
-
-            // if all idx is true --> no other edges to swap with; try again
-            CHECKER = is_true(all(idx));
-            if (!CHECKER) {
-                break;
-            }
-        }
-
-        if (!CHECKER) {
-            edge_swap_counter++;
-
-            // number of available edges to swap with
-            int num_available_edges = 0;
-            for (int k=0; k<n_edges; k++) {
-                if (idx[k] == false) {
-                    num_available_edges++;
-                }
-            }
-
+        // if all idx is true --> no other edges to swap with; try again
+        if (!is_true(all(idx))) {
             // vector of other edges to swap with
-            IntegerVector available_edges(num_available_edges);
+            IntegerVector available_edges;
             int available_edges_counter = 0;
             for (int k=0; k<n_edges; k++) {
                 if (idx[k] == false) {
-                    available_edges[available_edges_counter] = k;
+                    available_edges.push_back(k);
                     available_edges_counter++;
                 }
             }
@@ -83,14 +65,19 @@ IntegerVector swap_an_edgeC(IntegerVector n1, IntegerVector n2, int N, int max_t
             n1[rand_e1] = n1[rand_e2];
             n1[rand_e2] = rand_n11;
 
-            Rcpp::checkUserInterrupt();
-            CHECKER = true;
+            successes++;
         }
+        counter++;
+
+        // good-guy Rcpp programmer: checks for user interupts
+        Rcpp::checkUserInterrupt();
     }
 
-    if (!quiet) {
-        Rcout << "number of successful edge swaps: " << edge_swap_counter << std::endl;
+    // message about number of successful edge swaps
+    if (quiet == false & successes != N) {
+        Rcout << "Did not reach total number of edge swaps!\n --> only" << successes << "edges swapped" << std::endl;
     }
 
+    // return the first edge list (the other was never modified)
     return n1;
 }

@@ -4,15 +4,13 @@
 \alias{swap_an_edge2}
 \title{Swap a single edge (method 2)}
 \usage{
-swap_an_edge2(el, n_edges = length(el$nodes1), max_try = 100)
+swap_an_edge2(el, N, max_try = 100)
 }
 \arguments{
 \item{el}{edge list composed of a list of two vectors, one for each group of
 the bipartite graph}
 
-\item{n_edges}{how many edges in the graph; if nothing is passed, this value
-will be measured from the \code{el}, but passing this value from a
-pre-calculated variable can save time by not measuring on each edge swap}
+\item{N}{the number of edge swaps}
 
 \item{max_try}{Number of times to try to find two edges to swap. If no
 edges are found, the program will crash with the message "Unable to swap
@@ -32,7 +30,7 @@ gr <- create_ring(6, directed = FALSE) \%>\%
     mutate(type = rep(c(TRUE, FALSE), 3),
            name = LETTERS[1:6])
 el <- to_bipartite_edgelist(gr)
-swaped_el <- swap_an_edge2(el)
+swaped_el <- swap_an_edge2(el, 10)
 plot(bind_graphs(gr, edgelist_to_bipartite_graph(swaped_el)))
 
 }

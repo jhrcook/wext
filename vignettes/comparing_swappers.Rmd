@@ -50,9 +50,9 @@ bench::mark(bipartite_edge_swap(bgr, N = 100),
 
 The second edge swapping algorithm implementation is in `bipartite_edge_swap2()`. This method took more work on my end, though its use of vector manipulations rapidly increased the speed of the algorithm. 
 
-```{r bench_method2, cache=TRUE}
+```{r bench_method2, cache=FALSE}
 bench::mark(bipartite_edge_swap2(bgr, N = 100),
-            iterations = 20, filter_gc = FALSE) %>% 
+            iterations = 50, filter_gc = FALSE) %>% 
   dplyr::select(-expression)
 ```
 
@@ -60,9 +60,9 @@ This first test ran 100 edge swaps on the graph `bgr`. The first method took 5.8
 
 The function `bipartite_edge_swap3()` implements the same algorithm used in method 2 in C++.
 
-```{r bench_methodC, cache=TRUE}
+```{r bench_methodC, cache=FALSE}
 bench::mark(bipartite_edge_swap3(bgr, N = 100),
-            iterations = 20, filter_gc = FALSE) %>% 
+            iterations = 50, filter_gc = FALSE) %>% 
   dplyr::select(-expression)
 ```
 
@@ -70,7 +70,7 @@ bench::mark(bipartite_edge_swap3(bgr, N = 100),
 
 To specifically test everything *expect* for the edge swapping, I re-ran the same test but only conducting 1 edge swap in each iteration.
 
-```{r bench_methodsnull, cache=TRUE}
+```{r bench_methodsnull, cache=FALSE}
 # first method
 bench::mark(bipartite_edge_swap(bgr, N = 1),
             iterations = 50, filter_gc = FALSE) %>% 
@@ -102,7 +102,7 @@ bgr
 
 This smaller graph has `r igraph::vcount(bgr)` nodes and `r igraph::ecount(bgr)` edges. I now re-run the test with only 1 edge swap.
 
-```{r bench_methodsnull2, cache=TRUE}
+```{r bench_methodsnull2, cache=FALSE}
 # first method
 bench::mark(bipartite_edge_swap(bgr, N = 1),
             iterations = 50, filter_gc = FALSE) %>% 
@@ -126,7 +126,7 @@ For comparison, here is the same test using the heavily optimized edge swapping 
 ```{r bench_igraph}
 bench::mark(
   igraph::rewire(bgr, igraph::keeping_degseq(loops = FALSE, niter = 100)),
-  iterations = 10, filter_gc = FALSE
+  iterations = 30, filter_gc = FALSE
 ) %>% 
   dplyr::select(-expression)
 ```

@@ -10,11 +10,11 @@
 #'
 #' @param n1,n2 the graph built as a set of two vectors with the nodes for each edge
 #' @param N the number of edges to swap (one at a time)
-#' @param max_try Number of times to try to find two edges to swap. No message
-#'   is relayed for a single unsuccessful edge swap; instead a message at the
-#'   end prints the number of successful edge swaps in total.
-#' @param quiet boolean for if you want the number of successful edge swaps
-#'   printed
+#' @param max_try number of times to try to find two edges to swap; no message
+#'   is relayed for a single unsuccessful edge swap - instead a message at the
+#'   end prints the number of successful edge swaps in total
+#' @param quiet boolean for if you want a message if not \code{N} edge swaps
+#'   are performed
 #'
 #' @return \code{n1} with nodes swapped
 #'

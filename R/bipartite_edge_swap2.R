@@ -29,10 +29,7 @@ bipartite_edge_swap2 <- function(gr, Q = 20, N = igraph::ecount(gr)*Q) {
     check_gr(gr, "name")
 
     gr_el <- to_bipartite_edgelist(gr)
-    n_edges <- length(gr_el$nodes1)
-    for (i in 1:N) {
-        gr_el <- swap_an_edge2(gr_el, n_edges = n_edges, max_try = 100)
-    }
+    gr_el <- swap_an_edge2(gr_el, N = N, max_try = 100)
 
     swapped_gr <- edgelist_to_bipartite_graph(gr_el)
     return(swapped_gr)
@@ -47,9 +44,7 @@ bipartite_edge_swap2 <- function(gr, Q = 20, N = igraph::ecount(gr)*Q) {
 #'
 #' @param el edge list composed of a list of two vectors, one for each group of
 #'   the bipartite graph
-#' @param n_edges how many edges in the graph; if nothing is passed, this value
-#'   will be measured from the \code{el}, but passing this value from a
-#'   pre-calculated variable can save time by not measuring on each edge swap
+#' @param N the number of edge swaps
 #' @param max_try Number of times to try to find two edges to swap. If no
 #'   edges are found, the program will crash with the message "Unable to swap
 #'   edges"
@@ -63,26 +58,32 @@ bipartite_edge_swap2 <- function(gr, Q = 20, N = igraph::ecount(gr)*Q) {
 #'     mutate(type = rep(c(TRUE, FALSE), 3),
 #'            name = LETTERS[1:6])
 #' el <- to_bipartite_edgelist(gr)
-#' swaped_el <- swap_an_edge2(el)
+#' swaped_el <- swap_an_edge2(el, 10)
 #' plot(bind_graphs(gr, edgelist_to_bipartite_graph(swaped_el)))
 #'
 #' @importFrom magrittr %>%
 #' @export swap_an_edge2
-swap_an_edge2 <- function(el, n_edges = length(el$nodes1), max_try = 100) {
+swap_an_edge2 <- function(el, N, max_try = 100) {
     # check that `el` has the expected vectors
     if (!all(names(el) == c("nodes1", "nodes2"))) {
         stop(paste("'el' does not have the correctly named vectors:",
                    names(el)))
     }
 
-    idx <- c()
-    check <- TRUE
-    try_counter <- 0
-    while(check) {
-        if (try_counter > max_try) stop("Unable to swap edges")
-        try_counter <- try_counter + 1
+    successes = 0
+    counter = 0
+    total_attempts <- N + max_try
 
-        rand_e1 <- sample(c(1:n_edges), 1)
+    # random edges to use (compute all at the beginning)
+    random_edges <- sample(
+        c(1:length(el[[1]])),
+        total_attempts,
+        replace = TRUE
+    )
+
+    while((successes <= N) & (counter <= total_attempts)) {
+        counter <- counter + 1
+        rand_e1 <- random_edges[[counter]]
         rand_n11 <- el$nodes1[[rand_e1]]
         rand_n12 <- el$nodes2[[rand_e1]]
 
@@ -92,11 +93,18 @@ swap_an_edge2 <- function(el, n_edges = length(el$nodes1), max_try = 100) {
         idx <- ((el$nodes1 %in% adj_n12) | (el$nodes2 %in% adj_n11))
 
         # if TRUE: the random nodes are adjacent to all other nodes
-        check <- all(idx)
+        if (!all(idx)) {
+            rand_e2 <- sample(which(!idx), 1)
+            el$nodes2[[rand_e1]] <- el$nodes2[[rand_e2]]
+            el$nodes2[[rand_e2]] <- rand_n12
+
+            successes <- successes + 1
+        }
     }
-    rand_e2 <- sample(which(!idx), 1)
-    el$nodes2[[rand_e1]] <- el$nodes2[[rand_e2]]
-    el$nodes2[[rand_e2]] <- rand_n12
+
+    if (successes != N) {
+        message(paste("Did not reach total number of edge swaps!\n --> only", successes, "edges swapped"))
+    }
 
     return(el)
 }
