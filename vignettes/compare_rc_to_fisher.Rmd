@@ -151,7 +151,7 @@ This test conditions on the rows and columns of the mutation matrix, thus accoun
 
 ```{r rc_test, eval = TRUE, cache = TRUE}
 rc_res <- rc_test(simple_dataset, sample_name, mutated_gene, k = 2,
-                  which_test = "exclusivity", N_perms = 1e4,
+                  which_test = "exclusivity", N_perms = 10,
                   min_mut_events = 0, min_times_mut = 0) %>% 
   mutate(gene_sets_print = purrr::map_chr(gene_sets, ~ paste0(.x[[1]], "-", .x[[2]]))) %>% 
   arrange(p_val, gene_sets_print)

@@ -35,7 +35,8 @@ IntegerVector swap_an_edgeC(IntegerVector n1, IntegerVector n2, int N, int max_t
     IntegerVector random_edges = sample(n_edges, total_attempts, true) - 1;
 
     // perform all edge swaps or hit maximum fails
-    while (successes <= N & counter <= total_attempts) {
+    while (successes < N & counter < total_attempts) {
+        // Rcout << "Counter: " << counter << std::endl;
         // get first edge and its nodes to swap
         int rand_e1 = random_edges[counter];
         int rand_n11 = n1[rand_e1];
@@ -52,11 +53,9 @@ IntegerVector swap_an_edgeC(IntegerVector n1, IntegerVector n2, int N, int max_t
         if (!is_true(all(idx))) {
             // vector of other edges to swap with
             IntegerVector available_edges;
-            int available_edges_counter = 0;
             for (int k=0; k<n_edges; k++) {
                 if (idx[k] == false) {
                     available_edges.push_back(k);
-                    available_edges_counter++;
                 }
             }
 

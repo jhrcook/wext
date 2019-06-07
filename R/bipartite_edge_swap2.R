@@ -81,7 +81,7 @@ swap_an_edge2 <- function(el, N, max_try = 100) {
         replace = TRUE
     )
 
-    while((successes <= N) & (counter <= total_attempts)) {
+    while((successes < N) & (counter < total_attempts)) {
         counter <- counter + 1
         rand_e1 <- random_edges[[counter]]
         rand_n11 <- el$nodes1[[rand_e1]]

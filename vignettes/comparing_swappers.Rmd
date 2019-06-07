@@ -42,9 +42,9 @@ This graph has `r igraph::vcount(bgr)` nodes and `r igraph::ecount(bgr)` edges.
 
 The first bipartite edge swapping method is `bipartite_edge_swap()` which relies on the 'igraph' and 'tidygraph' APIs for handling all of the data and logically manipulates a tidygraph graph object. This was the easiest implementation, though I expected that the manipulation of high-level data types would be a time-suck. This first test runs the edge swapping algorithm to swap 100 edges 20 times.
 
-```{r bench_method1, cache=TRUE, eval=FALSE}
+```{r bench_method1, cache=TRUE, eval=TRUE}
 bench::mark(bipartite_edge_swap(bgr, N = 100),
-            iterations = 20, filter_gc = FALSE) %>% 
+            iterations = 5, filter_gc = FALSE) %>% 
   dplyr::select(-expression)
 ```
 
@@ -52,7 +52,7 @@ The second edge swapping algorithm implementation is in `bipartite_edge_swap2()`
 
 ```{r bench_method2, cache=FALSE}
 bench::mark(bipartite_edge_swap2(bgr, N = 100),
-            iterations = 50, filter_gc = FALSE) %>% 
+            iterations = 20, filter_gc = FALSE) %>% 
   dplyr::select(-expression)
 ```
 
@@ -61,8 +61,8 @@ This first test ran 100 edge swaps on the graph `bgr`. The first method took 5.8
 The function `bipartite_edge_swap3()` implements the same algorithm used in method 2 in C++.
 
 ```{r bench_methodC, cache=FALSE}
-bench::mark(bipartite_edge_swap3(bgr, N = 100),
-            iterations = 50, filter_gc = FALSE) %>% 
+microbenchmark::microbenchmark(bipartite_edge_swap3(bgr, N = 100),
+            times = 2) %>% 
   dplyr::select(-expression)
 ```
 
