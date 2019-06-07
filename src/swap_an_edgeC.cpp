@@ -51,11 +51,21 @@ IntegerVector swap_an_edgeC(IntegerVector n1, IntegerVector n2, int N, int max_t
 
         // if all idx is true --> no other edges to swap with; try again
         if (!is_true(all(idx))) {
-            // vector of other edges to swap with
-            IntegerVector available_edges;
+            // number of available edges to swap with
+            int num_available_edges = 0;
             for (int k=0; k<n_edges; k++) {
                 if (idx[k] == false) {
-                    available_edges.push_back(k);
+                    num_available_edges++;
+                }
+            }
+
+            // vector of other edges to swap with
+            IntegerVector available_edges(num_available_edges);
+            int available_edges_counter = 0;
+            for (int k=0; k<n_edges; k++) {
+                if (idx[k] == false) {
+                    available_edges[available_edges_counter] = k;
+                    available_edges_counter++;
                 }
             }
 
