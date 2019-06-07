@@ -42,7 +42,7 @@ This graph has `r igraph::vcount(bgr)` nodes and `r igraph::ecount(bgr)` edges.
 
 The first bipartite edge swapping method is `bipartite_edge_swap()` which relies on the 'igraph' and 'tidygraph' APIs for handling all of the data and logically manipulates a tidygraph graph object. This was the easiest implementation, though I expected that the manipulation of high-level data types would be a time-suck. This first test runs the edge swapping algorithm to swap 100 edges 20 times.
 
-```{r bench_method1, cache=TRUE}
+```{r bench_method1, cache=TRUE, eval=FALSE}
 bench::mark(bipartite_edge_swap(bgr, N = 100),
             iterations = 20, filter_gc = FALSE) %>% 
   dplyr::select(-expression)
