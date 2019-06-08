@@ -4,6 +4,7 @@ attr
 Bioinformatics
 Ciriello
 Codecov
+CoMEt
 devtools
 devtools’
 el
@@ -23,9 +24,6 @@ notin
 oncogenic
 pakrat
 pkgdown
-pre
-Rcpp
-repo
 RStudio
 subseteq
 th

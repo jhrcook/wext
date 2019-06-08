@@ -147,7 +147,7 @@ fish_test
 
 ### Row-Column Exclusivity test
 
-This test conditions on the rows and columns of the mutation matrix, thus accounting for the number of mutations per gene and per sample. This comes at a cost in speed of computation as the RC test is much slower to run. Here, I run the test using 10,000 permutations. Also, the paramters `min_mut_events` and `min_times_mut` are set to 0 becasue the test data set is so small; on real data, these should be non-zero values (the defaults are 2 and 3, respectively) to ignore very rare events.
+This test conditions on the rows and columns of the mutation matrix, thus accounting for the number of mutations per gene and per sample. This comes at a cost in speed of computation as the RC test is much slower to run. Here, I run the test using 10,000 permutations. Also, the parameters `min_mut_events` and `min_times_mut` are set to 0 because the test data set is so small; on real data, these should be non-zero values (the defaults are 2 and 3, respectively) to ignore very rare events.
 
 ```{r rc_test, eval = TRUE, cache = TRUE}
 rc_res <- rc_test(simple_dataset, sample_name, mutated_gene, k = 2,
