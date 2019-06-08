@@ -42,35 +42,37 @@ This graph has `r igraph::vcount(bgr)` nodes and `r igraph::ecount(bgr)` edges.
 
 The first bipartite edge swapping method is `bipartite_edge_swap()` which relies on the 'igraph' and 'tidygraph' APIs for handling all of the data and logically manipulates a tidygraph graph object. This was the easiest implementation, though I expected that the manipulation of high-level data types would be a time-suck. This first test runs the edge swapping algorithm to swap 100 edges 20 times.
 
-```{r bench_method1, cache=TRUE}
-bench::mark(bipartite_edge_swap(bgr, N = 100),
+```{r bench_method1, cache=TRUE, eval=TRUE}
+m1 <- bench::mark(bipartite_edge_swap(bgr, N = 100),
             iterations = 20, filter_gc = FALSE) %>% 
   dplyr::select(-expression)
 ```
 
-The second edge swapping algorithm implementation is in `bipartite_edge_swap2()`. This method took more work on my end, though its use of vector manipulations rapidly increased the speed of the algorithm. 
+The second edge swapping algorithm implementation is in `bipartite_edge_swap2()`. This method took more work on my end, though its use of vector manipulations rapidly increased the speed of the algorithm. (As it is much faster,  I now run 50 iterations for the benchmark.)
 
 ```{r bench_method2, cache=TRUE}
-bench::mark(bipartite_edge_swap2(bgr, N = 100),
-            iterations = 20, filter_gc = FALSE) %>% 
+m2 <- bench::mark(bipartite_edge_swap2(bgr, N = 100),
+            iterations = 50, filter_gc = FALSE) %>% 
   dplyr::select(-expression)
+m2
 ```
 
-This first test ran 100 edge swaps on the graph `bgr`. The first method took 5.82 seconds on average (a median of 10 iterations) while the second took about 820 ms. Thus, the second method is much faster. Another striking difference is the amount of memory each method was allocated - the first method took about 2 GB of RAM! It also called the garbage collector an order of magnitude more frequently.
+This first test ran 100 edge swaps on the graph `bgr`. The first method took `r round(m1$median, 2)` s on average (a median of 20 iterations) while the second took `r round(m2$median, 3)*1000` ms on average. Thus, the second method is much faster. Another striking difference is the amount of memory each method was allocated - the first method took about 2 GB of RAM! It also called the garbage collector an order of magnitude more frequently.
 
 The function `bipartite_edge_swap3()` implements the same algorithm used in method 2 in C++.
 
 ```{r bench_methodC, cache=TRUE}
-bench::mark(bipartite_edge_swap3(bgr, N = 100),
-            iterations = 20, filter_gc = FALSE) %>% 
+m2_C <- bench::mark(bipartite_edge_swap3(bgr, N = 100),
+            iterations = 50, filter_gc = FALSE) %>% 
   dplyr::select(-expression)
+m2_C
 ```
 
-
+This is the fastest method, requiring `r round(m2_C$median, 3)*1000` ms on average with even less RAM required.
 
 To specifically test everything *expect* for the edge swapping, I re-ran the same test but only conducting 1 edge swap in each iteration.
 
-```{r bench_methodsnull, cache=TRUE}
+```{r bench_methodsnull}
 # first method
 bench::mark(bipartite_edge_swap(bgr, N = 1),
             iterations = 50, filter_gc = FALSE) %>% 
@@ -102,7 +104,7 @@ bgr
 
 This smaller graph has `r igraph::vcount(bgr)` nodes and `r igraph::ecount(bgr)` edges. I now re-run the test with only 1 edge swap.
 
-```{r bench_methodsnull2, cache=TRUE}
+```{r bench_methodsnull2}
 # first method
 bench::mark(bipartite_edge_swap(bgr, N = 1),
             iterations = 50, filter_gc = FALSE) %>% 
@@ -126,9 +128,7 @@ For comparison, here is the same test using the heavily optimized edge swapping 
 ```{r bench_igraph}
 bench::mark(
   igraph::rewire(bgr, igraph::keeping_degseq(loops = FALSE, niter = 100)),
-  iterations = 10, filter_gc = FALSE
+  iterations = 30, filter_gc = FALSE
 ) %>% 
   dplyr::select(-expression)
 ```
-
-I think that one of the reasons for this method's speed is that it is implemented in C++.

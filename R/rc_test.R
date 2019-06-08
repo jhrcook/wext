@@ -1,6 +1,6 @@
 #' The Row-Column-Exclusivity or Co-mutation test
 #'
-#' The Row-Column-Exclusivity or Co-mutation test measures the liklihood of
+#' The Row-Column-Exclusivity or Co-mutation test measures the likelihood of
 #' seeing the number of mutually exclusive or co-mutation events between sets of
 #' genes of size \code{k} given the number of mutations per gene and per sample.
 #' By accounting for the number of mutations per sample, this test is more

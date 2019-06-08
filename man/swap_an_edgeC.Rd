@@ -11,12 +11,12 @@ swap_an_edgeC(n1, n2, N, max_try, quiet)
 
 \item{N}{the number of edges to swap (one at a time)}
 
-\item{max_try}{Number of times to try to find two edges to swap. No message
-is relayed for a single unsuccessful edge swap; instead a message at the
-end prints the number of successful edge swaps in total.}
+\item{max_try}{number of times to try to find two edges to swap; no message
+is relayed for a single unsuccessful edge swap - instead a message at the
+end prints the number of successful edge swaps in total}
 
-\item{quiet}{boolean for if you want the number of successful edge swaps
-printed}
+\item{quiet}{boolean for if you want a message if not \code{N} edge swaps
+are performed}
 }
 \value{
 \code{n1} with nodes swapped

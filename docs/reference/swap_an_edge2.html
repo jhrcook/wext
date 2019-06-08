@@ -154,7 +154,7 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>swap_an_edge2</span>(<span class='no'>el</span>, <span class='kw'>n_edges</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/length'>length</a></span>(<span class='no'>el</span>$<span class='no'>nodes1</span>), <span class='kw'>max_try</span> <span class='kw'>=</span> <span class='fl'>100</span>)</pre>
+    <pre class="usage"><span class='fu'>swap_an_edge2</span>(<span class='no'>el</span>, <span class='no'>N</span>, <span class='kw'>max_try</span> <span class='kw'>=</span> <span class='fl'>100</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -165,10 +165,8 @@
 the bipartite graph</p></td>
     </tr>
     <tr>
-      <th>n_edges</th>
-      <td><p>how many edges in the graph; if nothing is passed, this value
-will be measured from the <code>el</code>, but passing this value from a
-pre-calculated variable can save time by not measuring on each edge swap</p></td>
+      <th>N</th>
+      <td><p>the number of edge swaps</p></td>
     </tr>
     <tr>
       <th>max_try</th>
@@ -190,7 +188,7 @@ edges"</p></td>
     <span class='fu'><a href='https://www.rdocumentation.org/packages/tidygraph/topics/reexports'>mutate</a></span>(<span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>), <span class='fl'>3</span>),
            <span class='kw'>name</span> <span class='kw'>=</span> <span class='no'>LETTERS</span>[<span class='fl'>1</span>:<span class='fl'>6</span>])
 <span class='no'>el</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='bipartite_edgelist.html'>to_bipartite_edgelist</a></span>(<span class='no'>gr</span>)
-<span class='no'>swaped_el</span> <span class='kw'>&lt;-</span> <span class='fu'>swap_an_edge2</span>(<span class='no'>el</span>)
+<span class='no'>swaped_el</span> <span class='kw'>&lt;-</span> <span class='fu'>swap_an_edge2</span>(<span class='no'>el</span>, <span class='fl'>10</span>)
 <span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/tidygraph/topics/bind_graphs'>bind_graphs</a></span>(<span class='no'>gr</span>, <span class='fu'><a href='bipartite_edgelist.html'>edgelist_to_bipartite_graph</a></span>(<span class='no'>swaped_el</span>)))</div><div class='img'><img src='swap_an_edge2-1.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></pre>
   </div>

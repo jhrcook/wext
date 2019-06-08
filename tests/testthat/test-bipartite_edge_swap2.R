@@ -54,37 +54,6 @@ test_that("an edge list is converted back to a bipartite graph correctly", {
     expect_true(all(v2 %in% unlist(el[1])))
 })
 
-test_that("swapping of a single edge works (method 2)", {
-    library(igraph)
-    library(tidygraph)
-    library(dplyr)
-
-    # return a bolean vector of length(xs) for if each x in xs is even
-    is_even <- function(xs) purrr::map_lgl(xs, .is_even)
-    .is_even <- function(x) x %% 2 == 0
-
-    # check that only one of the nodes for each edge is even
-    check_edges <- function(nodes) {
-        set1 <- LETTERS[seq(1, 10, 2)]
-        xor(nodes[[1]] %in% set1, nodes[[2]] %in% set1)
-    }
-
-    gr <- create_ring(10) %>%
-        mutate(.idx = 1:n(),
-               name = c("A", "b", "C", "d", "E", "f", "G", "h", "I", "j"),
-               type = rep(c(TRUE, FALSE), 5))
-    el <- wext::to_bipartite_edgelist(gr)
-    for (i in 1:100) {
-        set.seed(i)
-        swap_el <- swap_an_edge2(el)
-        expect_true(n_distinct(unlist(swap_el)) == vcount(gr))
-        expect_true(length(swap_el$nodes1) == ecount(gr))
-        expect_true(length(swap_el$nodes2) == ecount(gr))
-        check_el <- tibble::tibble(n1 = swap_el$nodes1, n2 = swap_el$nodes2)
-        checks <- apply(check_el, 1, check_edges)
-        expect_true(all(checks))
-    }
-})
 
 test_that("properly swap edges of a bipartite graph (method 2)", {
     library(igraph)
