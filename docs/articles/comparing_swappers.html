@@ -156,7 +156,12 @@
 <p>The first bipartite edge swapping method is <code><a href="../reference/bipartite_edge_swap.html">bipartite_edge_swap()</a></code> which relies on the ‘igraph’ and ‘tidygraph’ APIs for handling all of the data and logically manipulates a tidygraph graph object. This was the easiest implementation, though I expected that the manipulation of high-level data types would be a time-suck. This first test runs the edge swapping algorithm to swap 100 edges 20 times.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">m1 &lt;-<span class="st"> </span>bench<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/bench/topics/mark">mark</a></span>(<span class="kw"><a href="../reference/bipartite_edge_swap.html">bipartite_edge_swap</a></span>(bgr, <span class="dt">N =</span> <span class="dv">100</span>),</a>
 <a class="sourceLine" id="cb3-2" data-line-number="2">            <span class="dt">iterations =</span> <span class="dv">20</span>, <span class="dt">filter_gc =</span> <span class="ot">FALSE</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="op">-</span>expression)</a></code></pre></div>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="op">-</span>expression)</a>
+<a class="sourceLine" id="cb3-4" data-line-number="4">m1</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt; # A tibble: 1 x 5</span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt;        min   median `itr/sec` mem_alloc `gc/sec`</span></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt;   &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt; 1    6.82s    7.38s     0.136    1.96GB     9.44</span></a></code></pre></div>
 <p>The second edge swapping algorithm implementation is in <code><a href="../reference/bipartite_edge_swap2.html">bipartite_edge_swap2()</a></code>. This method took more work on my end, though its use of vector manipulations rapidly increased the speed of the algorithm. (As it is much faster, I now run 50 iterations for the benchmark.)</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">m2 &lt;-<span class="st"> </span>bench<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/bench/topics/mark">mark</a></span>(<span class="kw"><a href="../reference/bipartite_edge_swap2.html">bipartite_edge_swap2</a></span>(bgr, <span class="dt">N =</span> <span class="dv">100</span>),</a>
 <a class="sourceLine" id="cb4-2" data-line-number="2">            <span class="dt">iterations =</span> <span class="dv">50</span>, <span class="dt">filter_gc =</span> <span class="ot">FALSE</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
@@ -166,7 +171,7 @@
 <a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#&gt;        min   median `itr/sec` mem_alloc `gc/sec`</span></a>
 <a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co">#&gt;   &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span></a>
 <a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co">#&gt; 1    506ms    625ms      1.54     227MB     11.7</span></a></code></pre></div>
-<p>This first test ran 100 edge swaps on the graph <code>bgr</code>. The first method took 6.13 s on average (a median of 20 iterations) while the second took 625 ms on average. Thus, the second method is much faster. Another striking difference is the amount of memory each method was allocated - the first method took about 2 GB of RAM! It also called the garbage collector an order of magnitude more frequently.</p>
+<p>This first test ran 100 edge swaps on the graph <code>bgr</code>. The first method took 7.38 s on average (a median of 20 iterations) while the second took 625 ms on average. Thus, the second method is much faster. Another striking difference is the amount of memory each method was allocated - the first method took about 2 GB of RAM! It also called the garbage collector an order of magnitude more frequently.</p>
 <p>The function <code><a href="../reference/bipartite_edge_swap3.html">bipartite_edge_swap3()</a></code> implements the same algorithm used in method 2 in C++.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">m2_C &lt;-<span class="st"> </span>bench<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/bench/topics/mark">mark</a></span>(<span class="kw"><a href="../reference/bipartite_edge_swap3.html">bipartite_edge_swap3</a></span>(bgr, <span class="dt">N =</span> <span class="dv">100</span>),</a>
 <a class="sourceLine" id="cb5-2" data-line-number="2">            <span class="dt">iterations =</span> <span class="dv">50</span>, <span class="dt">filter_gc =</span> <span class="ot">FALSE</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
@@ -185,7 +190,7 @@
 <a class="sourceLine" id="cb6-5" data-line-number="5"><span class="co">#&gt; # A tibble: 1 x 5</span></a>
 <a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co">#&gt;        min   median `itr/sec` mem_alloc `gc/sec`</span></a>
 <a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#&gt;   &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt; 1     54ms   60.9ms      13.7    21.6MB     3.85</span></a>
+<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt; 1   61.5ms   71.6ms      12.8      21MB     2.56</span></a>
 <a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co"># second method</span></a>
 <a class="sourceLine" id="cb6-10" data-line-number="10">bench<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/bench/topics/mark">mark</a></span>(<span class="kw"><a href="../reference/bipartite_edge_swap2.html">bipartite_edge_swap2</a></span>(bgr, <span class="dt">N =</span> <span class="dv">1</span>),</a>
 <a class="sourceLine" id="cb6-11" data-line-number="11">            <span class="dt">iterations =</span> <span class="dv">50</span>, <span class="dt">filter_gc =</span> <span class="ot">FALSE</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
@@ -193,7 +198,7 @@
 <a class="sourceLine" id="cb6-13" data-line-number="13"><span class="co">#&gt; # A tibble: 1 x 5</span></a>
 <a class="sourceLine" id="cb6-14" data-line-number="14"><span class="co">#&gt;        min   median `itr/sec` mem_alloc `gc/sec`</span></a>
 <a class="sourceLine" id="cb6-15" data-line-number="15"><span class="co">#&gt;   &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb6-16" data-line-number="16"><span class="co">#&gt; 1    373ms    420ms      2.39     160MB     3.91</span></a>
+<a class="sourceLine" id="cb6-16" data-line-number="16"><span class="co">#&gt; 1    438ms    494ms      1.96     160MB     2.62</span></a>
 <a class="sourceLine" id="cb6-17" data-line-number="17"><span class="co"># second method in C++</span></a>
 <a class="sourceLine" id="cb6-18" data-line-number="18">bench<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/bench/topics/mark">mark</a></span>(<span class="kw"><a href="../reference/bipartite_edge_swap3.html">bipartite_edge_swap3</a></span>(bgr, <span class="dt">N =</span> <span class="dv">1</span>),</a>
 <a class="sourceLine" id="cb6-19" data-line-number="19">            <span class="dt">iterations =</span> <span class="dv">50</span>, <span class="dt">filter_gc =</span> <span class="ot">FALSE</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
@@ -201,7 +206,7 @@
 <a class="sourceLine" id="cb6-21" data-line-number="21"><span class="co">#&gt; # A tibble: 1 x 5</span></a>
 <a class="sourceLine" id="cb6-22" data-line-number="22"><span class="co">#&gt;        min   median `itr/sec` mem_alloc `gc/sec`</span></a>
 <a class="sourceLine" id="cb6-23" data-line-number="23"><span class="co">#&gt;   &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb6-24" data-line-number="24"><span class="co">#&gt; 1    350ms    415ms      2.41     160MB     3.96</span></a></code></pre></div>
+<a class="sourceLine" id="cb6-24" data-line-number="24"><span class="co">#&gt; 1    451ms    502ms      1.95     160MB     2.61</span></a></code></pre></div>
 <p>Interestingly, the first method (based around the ‘igraph’ and ‘tidygraph’ APIs) is substantially faster to do all of the other steps in the edge swapping process. This is likely because the second method must first transform the bipartite graph <code>bgr</code> into the list of vectors while the first method works directly on the tidygraph object (it only does this once per call to <code>bipartite_edge_swap2</code>). Still, it may be worth poking around on the setup steps in the second method to improve its efficiency.</p>
 <p>To further test this hypothesis, the difference should shrink if I use a smaller bipartite graph.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">v1 &lt;-<span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/sample.html">sample</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">2</span>, <span class="dv">50</span>, <span class="dv">2</span>), <span class="dv">100</span>, <span class="dt">replace =</span> <span class="ot">TRUE</span>)</a>
@@ -242,7 +247,7 @@
 <a class="sourceLine" id="cb8-5" data-line-number="5"><span class="co">#&gt; # A tibble: 1 x 5</span></a>
 <a class="sourceLine" id="cb8-6" data-line-number="6"><span class="co">#&gt;        min   median `itr/sec` mem_alloc `gc/sec`</span></a>
 <a class="sourceLine" id="cb8-7" data-line-number="7"><span class="co">#&gt;   &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb8-8" data-line-number="8"><span class="co">#&gt; 1     22ms   23.8ms      36.2     324KB     7.95</span></a>
+<a class="sourceLine" id="cb8-8" data-line-number="8"><span class="co">#&gt; 1   23.7ms   34.9ms      25.9     324KB     5.69</span></a>
 <a class="sourceLine" id="cb8-9" data-line-number="9"><span class="co"># second method</span></a>
 <a class="sourceLine" id="cb8-10" data-line-number="10">bench<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/bench/topics/mark">mark</a></span>(<span class="kw"><a href="../reference/bipartite_edge_swap2.html">bipartite_edge_swap2</a></span>(bgr, <span class="dt">N =</span> <span class="dv">1</span>),</a>
 <a class="sourceLine" id="cb8-11" data-line-number="11">            <span class="dt">iterations =</span> <span class="dv">50</span>, <span class="dt">filter_gc =</span> <span class="ot">FALSE</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
@@ -250,7 +255,7 @@
 <a class="sourceLine" id="cb8-13" data-line-number="13"><span class="co">#&gt; # A tibble: 1 x 5</span></a>
 <a class="sourceLine" id="cb8-14" data-line-number="14"><span class="co">#&gt;        min   median `itr/sec` mem_alloc `gc/sec`</span></a>
 <a class="sourceLine" id="cb8-15" data-line-number="15"><span class="co">#&gt;   &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb8-16" data-line-number="16"><span class="co">#&gt; 1   5.54ms   5.88ms      141.     202KB     8.43</span></a>
+<a class="sourceLine" id="cb8-16" data-line-number="16"><span class="co">#&gt; 1   6.05ms   8.05ms      112.     202KB     4.47</span></a>
 <a class="sourceLine" id="cb8-17" data-line-number="17"><span class="co"># second method in C++</span></a>
 <a class="sourceLine" id="cb8-18" data-line-number="18">bench<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/bench/topics/mark">mark</a></span>(<span class="kw"><a href="../reference/bipartite_edge_swap3.html">bipartite_edge_swap3</a></span>(bgr, <span class="dt">N =</span> <span class="dv">1</span>),</a>
 <a class="sourceLine" id="cb8-19" data-line-number="19">            <span class="dt">iterations =</span> <span class="dv">50</span>, <span class="dt">filter_gc =</span> <span class="ot">FALSE</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
@@ -258,7 +263,7 @@
 <a class="sourceLine" id="cb8-21" data-line-number="21"><span class="co">#&gt; # A tibble: 1 x 5</span></a>
 <a class="sourceLine" id="cb8-22" data-line-number="22"><span class="co">#&gt;        min   median `itr/sec` mem_alloc `gc/sec`</span></a>
 <a class="sourceLine" id="cb8-23" data-line-number="23"><span class="co">#&gt;   &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb8-24" data-line-number="24"><span class="co">#&gt; 1   5.51ms   6.09ms      130.     202KB     5.20</span></a></code></pre></div>
+<a class="sourceLine" id="cb8-24" data-line-number="24"><span class="co">#&gt; 1   5.95ms   7.88ms      115.     202KB     6.88</span></a></code></pre></div>
 <p>Now, the second method is actually faster because it was easier to change to the vector manipulation than lug around the relatively “heavy” tidygraph object (see the <code>mem_alloc</code> columns). You can see that the garbage collection intervened a few times (in the <code>gc/sec</code> and <code>n_gc</code> column).</p>
 <hr>
 <p>For comparison, here is the same test using the heavily optimized edge swapping algorithm in ‘igraph’. While fast, this test does not preserve the bipartite nature of the graph, thus I cannot use it for ‘WExT’.</p>
@@ -270,7 +275,7 @@
 <a class="sourceLine" id="cb9-6" data-line-number="6"><span class="co">#&gt; # A tibble: 1 x 5</span></a>
 <a class="sourceLine" id="cb9-7" data-line-number="7"><span class="co">#&gt;        min   median `itr/sec` mem_alloc `gc/sec`</span></a>
 <a class="sourceLine" id="cb9-8" data-line-number="8"><span class="co">#&gt;   &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb9-9" data-line-number="9"><span class="co">#&gt; 1    200µs    207µs     4688.    44.2KB        0</span></a></code></pre></div>
+<a class="sourceLine" id="cb9-9" data-line-number="9"><span class="co">#&gt; 1    230µs    239µs     3923.    44.2KB        0</span></a></code></pre></div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

@@ -46,6 +46,7 @@ The first bipartite edge swapping method is `bipartite_edge_swap()` which relies
 m1 <- bench::mark(bipartite_edge_swap(bgr, N = 100),
             iterations = 20, filter_gc = FALSE) %>% 
   dplyr::select(-expression)
+m1
 ```
 
 The second edge swapping algorithm implementation is in `bipartite_edge_swap2()`. This method took more work on my end, though its use of vector manipulations rapidly increased the speed of the algorithm. (As it is much faster,  I now run 50 iterations for the benchmark.)
