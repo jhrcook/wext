@@ -70,13 +70,13 @@ swap_an_edge2 <- function(el, N, max_try = 100) {
                    names(el)))
     }
 
-    successes = 0
-    counter = 0
+    successes <- 0
+    counter <- 0
     total_attempts <- N + max_try
 
     # random edges to use (compute all at the beginning)
     random_edges <- sample(
-        c(1:length(el[[1]])),
+        seq_along(el[[1]]),
         total_attempts,
         replace = TRUE
     )
@@ -94,9 +94,14 @@ swap_an_edge2 <- function(el, N, max_try = 100) {
 
         # if TRUE: the random nodes are adjacent to all other nodes
         if (!all(idx)) {
-            rand_e2 <- sample(which(!idx), 1)
-            el$nodes2[[rand_e1]] <- el$nodes2[[rand_e2]]
-            el$nodes2[[rand_e2]] <- rand_n12
+            available_edges <- which(!idx)
+            if (length(available_edges) > 1) {
+                rand_e2 <- sample(available_edges, 1)
+            } else {
+                rand_e2 <- available_edges[[1]]
+            }
+            el$nodes1[[rand_e1]] <- el$nodes1[[rand_e2]]
+            el$nodes1[[rand_e2]] <- rand_n11
 
             successes <- successes + 1
         }
