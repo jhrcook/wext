@@ -39,8 +39,10 @@ make_empty_results_tracker <- function(bgr, k, which_test,
                                        seed_genes, min_times_mut) {
     if (which_test %in% c("exclusivity", "e")) {
         return(exclusivity_results_tracker(bgr, k, seed_genes, min_times_mut))
-    } else {
+    } else if (which_test %in% c("comutation", "c")) {
         return(comutation_results_tracker(bgr, k, seed_genes, min_times_mut))
+    } else {
+        stop(paste0("'", which_test, "' is not a choice of test."))
     }
 }
 
